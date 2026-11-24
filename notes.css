@@ -1,0 +1,37 @@
+/* floating notes (src/js/85-notes.js). Loaded by that module; visitor notes stay in this browser only. */
+.notes-launch{margin-left:2px}
+.notes-layer{position:fixed;inset:0;z-index:57;pointer-events:none}
+.note-win{position:absolute;pointer-events:auto;display:flex;flex-direction:column;min-width:220px;min-height:160px;max-width:calc(100vw - 8px);max-height:calc(100vh - 8px);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;box-shadow:0 10px 30px #000a;resize:both;overflow:hidden}
+.note-win:focus-within{border-color:var(--fg3)}
+.note-win.drop-on{border-color:#416AFF;box-shadow:0 0 0 2px #416AFF88,0 10px 30px #000a}
+.note-win.flash{border-color:var(--gold)}
+.note-win.unsaved .note-state{color:var(--gold)}
+.note-bar{display:flex;align-items:center;gap:6px;padding:4px 4px 4px 10px;background:var(--bg3);border-bottom:1px solid var(--line);cursor:move;user-select:none;touch-action:none;flex:0 0 auto}
+.note-bar:focus-visible{outline:2px solid #416AFF;outline-offset:-2px}
+.note-title{flex:1 1 auto;min-width:0;margin:0;font:12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-rename{flex:1 1 auto;min-width:0;background:var(--bg);border:1px solid var(--line2);color:var(--fg);font:12px var(--mono);padding:3px 6px;border-radius:3px}
+.note-state{font:10.5px var(--mono);color:var(--fg3)}
+.note-btns{display:flex;gap:2px;flex:0 0 auto}
+.note-btn{background:none;border:1px solid transparent;color:var(--fg2);width:26px;height:26px;border-radius:4px;font:13px var(--mono);line-height:1;padding:0;cursor:pointer}
+.note-btn:hover,.note-btn:focus-visible{border-color:var(--line2);color:var(--fg)}
+.note-body{flex:1 1 auto;min-height:0;width:100%;box-sizing:border-box;resize:none;border:0;outline:none;background:var(--bg2);color:var(--fg);font:13px/1.45 var(--mono);padding:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.note-body:focus-visible{box-shadow:inset 0 0 0 1px #416AFF}
+.note-foot{flex:0 0 auto;font:10.5px var(--mono);padding:3px 10px 5px;border-top:1px solid var(--line)}
+.notes-dock{position:fixed;left:calc(var(--sidebar) + 12px);bottom:12px;z-index:56;display:flex;flex-wrap:wrap;gap:6px;max-width:60vw}
+.notes-dock .btn{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 4px 14px #0008}
+.notes-menu{position:fixed;z-index:65;background:var(--bg2);border:1px solid var(--line2);border-radius:6px;box-shadow:0 10px 30px #000a;padding:4px;max-height:70vh;overflow-y:auto}
+.notes-menu [role=menuitem]{display:block;width:100%;text-align:left;background:none;border:0;color:var(--fg);font:12px var(--mono);padding:7px 9px;border-radius:4px;white-space:normal;overflow-wrap:anywhere}
+.notes-menu [role=menuitem]:hover,.notes-menu [role=menuitem]:focus{background:var(--bg3);outline:none}
+.notes-menu [role=menuitem]:disabled{color:var(--fg3);cursor:default;background:none}
+.notes-menu-sep{height:1px;background:var(--line);margin:4px 2px}
+.notes-ghost{position:fixed;z-index:70;pointer-events:none;background:var(--bg3);border:1px solid #416AFF;color:var(--fg);font:12px var(--mono);padding:4px 8px;border-radius:4px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.notes-on [data-notes-drag]{cursor:grab}
+body.notes-dragging .note-win{border-style:dashed}
+@media (max-width:900px){
+  .notes-launch{font-size:10.5px;padding:3px 6px}
+  .note-win{left:6px!important;right:6px;top:calc(var(--top) + 6px)!important;width:auto!important;height:min(46vh,420px)!important;resize:none}
+  .note-bar{cursor:default}
+  .notes-dock{left:6px;right:6px;bottom:6px;max-width:none}
+  body.panel-open .notes-dock{bottom:calc(55vh + 6px)}
+}
+@media print{.notes-layer,.notes-dock,.notes-menu,.notes-ghost,.notes-launch,#btn-to-note{display:none!important}}

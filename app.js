@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-24T15:07:07.298Z */
+/* NoticerMap — built 2026-11-24T15:47:38.506Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -551,7 +551,8 @@ function renderFilters() {
   if (!filtersBuilt) {
     filtersBuilt = true;
     const tc = {}; D.entities.forEach(e => (tc[e.type] = (tc[e.type] || 0) + 1));
-    $('#f-types').innerHTML = usedTypes.map(t => chip(t === 'event' ? TYPE[t].plural : TYPE[t].label, TYPE[t].color, true, `data-type="${t}"${t === 'event' ? ' data-guide="events"' : ''}`, tc[t])).join('');
+    const typeChips = ['theory', ...usedTypes.filter(x => x !== 'theory')].filter(x => usedTypes.includes(x));
+    $('#f-types').innerHTML = typeChips.map(t => chip(t === 'event' ? TYPE[t].plural : TYPE[t].label, TYPE[t].color, true, `data-type="${t}"${t === 'event' ? ' data-guide="events"' : ''}${t === 'theory' ? ' data-guide="theories"' : ''}`, tc[t])).join('');
     const pc = {}; D.entities.forEach(e => { const p = e.province || '—'; pc[p] = (pc[p] || 0) + 1; });
     $('#f-provs').innerHTML = allProvs.map(p => chip(p === '—' ? 'none' : p, null, true, `data-prov="${esc(p)}" title="${esc(p === '—' ? 'No province' : provName(p))}"`, pc[p])).join('');
     const sc = {}; D.links.forEach(l => (sc[l.status] = (sc[l.status] || 0) + 1));
@@ -1298,12 +1299,217 @@ $('#m-min').addEventListener('change', e => { S.min = +e.target.value; update();
 $('#m-top').addEventListener('change', e => { S.top = +e.target.value; update(); });
 $('#m-focus').addEventListener('change', e => { S.mfocus = e.target.checked; update(); });
 
+// ---- 39-lobby-purpose.js
+/* lobbying purpose helpers; keep in sync with lib/lobby-purpose.mjs */
+// Display-only lobbying purpose, taken from existing link / lobbying / source fields.
+// Never infers a subject and never edits graph data.
+const SUBJECT_NOT_STATED = 'subject not stated in registry record';
+const LOBBY_PURPOSE_TYPES = new Set(['lobbied', 'lobbied_on']);
+
+const str = v => (v == null ? '' : String(v).trim());
+const arr = v => (Array.isArray(v) ? v : v == null || v === '' ? [] : [v]);
+
+function textOf(v) {
+  if (v == null || v === '') return '';
+  if (typeof v === 'string' || typeof v === 'number') return str(v);
+  if (typeof v === 'object') return str(v.name || v.label || v.title || v.text || v.bill || v.subject || '');
+  return '';
+}
+
+function add(out, seen, value, kind) {
+  for (const v of arr(value)) {
+    const t = textOf(v);
+    if (!t) continue;
+    const k = t.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push({ text: t, kind });
+  }
+}
+
+// Officials and institutions, if already recorded on communications or the link.
+function officialBits(c) {
+  const bits = [];
+  for (const o of [...arr(c.officials), ...arr(c.official)]) {
+    const nm = textOf(typeof o === 'object' && o ? o.name || o.official : o);
+    const ti = typeof o === 'object' && o ? str(o.title || o.position) : '';
+    if (nm) bits.push(ti ? `${nm} (${ti})` : nm);
+  }
+  if (c.institution) bits.push(textOf(c.institution));
+  return bits;
+}
+
+function isLobbyingLink(l) {
+  return !!(l && LOBBY_PURPOSE_TYPES.has(l.type));
+}
+
+// Specific recorded purposes: OCL subjects, then bill / program / contract / policy,
+// then officials / institution when those fields exist. No invented wording.
+function purposeItems(link) {
+  if (!link) return [];
+  const x = (link.lobbying && typeof link.lobbying === 'object') ? link.lobbying : {};
+  const out = []; const seen = new Set();
+  add(out, seen, x.subjects ?? link.subjects ?? x.subject ?? link.subject, 'subject');
+  add(out, seen, x.bill ?? link.bill, 'bill');
+  add(out, seen, x.legislation_cited ?? link.legislation_cited, 'legislation');
+  add(out, seen, x.session ?? link.session, 'session');
+  add(out, seen, x.activities ?? link.activities, 'activity');
+  add(out, seen, x.program ?? link.program, 'program');
+  add(out, seen, x.policy ?? link.policy, 'policy');
+  add(out, seen, x.contract ?? link.contract, 'contract');
+  add(out, seen, x.summary ?? link.summary, 'summary');
+  add(out, seen, x.targets ?? link.targets, 'target');
+  add(out, seen, x.institution ?? link.institution, 'institution');
+  for (const c of arr(x.communications ?? link.communications)) {
+    if (!c || typeof c !== 'object') continue;
+    add(out, seen, c.subjects ?? c.subject_matters, 'subject');
+    for (const b of officialBits(c)) add(out, seen, b, 'official');
+  }
+  return out;
+}
+
+function hasRecordedPurpose(link) {
+  return purposeItems(link).length > 0;
+}
+
+function purposeInline(link) {
+  const items = purposeItems(link);
+  if (!items.length) return SUBJECT_NOT_STATED;
+  const first = items[0].text;
+  const more = items.length - 1;
+  return more > 0 ? `${first} +${more} more` : first;
+}
+
+function countLobbyingWithoutSubject(links) {
+  const lobby = (links || []).filter(isLobbyingLink);
+  const missing = lobby.filter(l => !hasRecordedPurpose(l));
+  return { total: lobby.length, missing: missing.length, with_purpose: lobby.length - missing.length };
+}
+
+// ---- 39-timeline-layout.js
+/* timeline layout helpers; keep in sync with lib/timeline-layout.mjs */
+// Pure helpers for the timeline: spread nearby marks, place labels without overlap,
+// and zoom/pan the time window. Used by src/js/40-timeline.js and unit tests.
+
+const MIN_MARK_GAP = 10;
+const LABEL_PAD = 4;
+
+// Assign vertical lanes so marks whose x is within minGap of a mark already
+// in that lane move to the next lane. Stable by input order.
+function laneOffsets(xs, minGap = MIN_MARK_GAP) {
+  const lanes = [];
+  return xs.map(x => {
+    let i = 0;
+    for (; i < lanes.length; i++) if (Math.abs(x - lanes[i]) >= minGap) break;
+    if (i === lanes.length) lanes.push(x);
+    else lanes[i] = x;
+    return i;
+  });
+}
+
+// Nudge x positions so consecutive (sorted) marks are at least minGap apart,
+// staying inside [xMin, xMax] when provided. Returns new x list (same order).
+function spreadXs(xs, minGap = MIN_MARK_GAP, xMin = -Infinity, xMax = Infinity) {
+  const n = xs.length;
+  if (!n) return [];
+  const idx = xs.map((x, i) => i).sort((a, b) => xs[a] - xs[b] || a - b);
+  const out = xs.slice();
+  let prev = -Infinity;
+  for (const i of idx) {
+    let x = out[i];
+    if (prev !== -Infinity && x - prev < minGap) x = prev + minGap;
+    out[i] = x;
+    prev = x;
+  }
+  const last = out[idx[idx.length - 1]];
+  if (last > xMax) {
+    const overflow = last - xMax;
+    for (const i of idx) out[i] -= overflow;
+  }
+  if (out[idx[0]] < xMin) {
+    const shift = xMin - out[idx[0]];
+    for (const i of idx) out[i] += shift;
+  }
+  return out;
+}
+
+// Greedy left-to-right label placement. Each item: {x, y, w, h, text, prefer}.
+// Returns the same items with {show, lx, ly}. Hidden labels are show:false.
+function placeLabels(items, minGap = LABEL_PAD) {
+  const placed = [];
+  return (items || []).map(it => {
+    const w = it.w || 0, h = it.h || 12;
+    const lx = it.x, ly = it.y;
+    const box = { x: lx, y: ly, w, h };
+    const hits = placed.some(p => box.x < p.x + p.w + minGap && box.x + box.w + minGap > p.x && box.y < p.y + p.h + minGap && box.y + box.h + minGap > p.y);
+    if (hits) return { ...it, show: false, lx, ly };
+    placed.push(box);
+    return { ...it, show: true, lx, ly };
+  });
+}
+
+function boxesOverlap(a, b, pad = 0) {
+  return a.x < b.x + b.w + pad && a.x + a.w + pad > b.x && a.y < b.y + b.h + pad && a.y + a.h + pad > b.y;
+}
+
+function zoomWindow(win, factor, center) {
+  const a = win.a, b = win.b;
+  const c = center == null ? (a + b) / 2 : center;
+  const h = Math.max(15, ((b - a) / 2) * factor);
+  return { ...win, a: c - h, b: c + h };
+}
+
+function panWindow(win, delta) {
+  return { ...win, a: win.a + delta, b: win.b + delta };
+}
+
+// Two boxes (marks or labels) with the same lane must be >= minGap apart on x.
+function noOverlap(boxes, minGap = MIN_MARK_GAP) {
+  const byLane = new Map();
+  for (const b of boxes) {
+    const k = b.lane == null ? 0 : b.lane;
+    (byLane.get(k) || byLane.set(k, []).get(k)).push(b);
+  }
+  for (const arr of byLane.values()) {
+    arr.sort((a, b) => a.x - b.x);
+    for (let i = 1; i < arr.length; i++) {
+      const prev = arr[i - 1], cur = arr[i];
+      const prevR = prev.x + (prev.w || 0);
+      if (cur.x - prevR < minGap) return false;
+    }
+  }
+  return true;
+}
+
 // ---- 40-timeline.js
-/* timeline: lanes of dated claims (by relationship or status), zoomable; plus a keyboard-friendly list */
-let tlWin = null, tlShown = 100;
+/* timeline: lanes of dated claims (by relationship or status), zoomable and pannable;
+   marks are spread so same/near dates do not pile up; visible labels avoid collisions;
+   hover/tap tooltip shows full title, date and status. Hollow-star style is unchanged. */
+let tlWin = null, tlShown = 100, tlPan = null;
+const TL_GAP = 10;
+function tlTooltipHtml(kind, rec) {
+  if (kind === 'link') {
+    const l = rec;
+    const when = (S.basis === 'reported' ? l.reported : l.date) || 'undated';
+    const st = STATUS[l.status] || {};
+    const purpose = (typeof isLobbyingLink === 'function' && isLobbyingLink(l) && typeof purposeInline === 'function') ? purposeInline(l) : '';
+    return `<div><strong>${esc(name(l.from))} → ${esc(LT(l.type).label)} → ${esc(name(l.to))}</strong></div><div>${esc(when)} · ${esc(st.label || l.status || '')}${l.amount_cad ? ' · ' + fmtCAD(l.amount_cad) : ''}</div>${purpose ? `<div class="tl-purpose">${esc(purpose)}</div>` : ''}`;
+  }
+  const e = rec;
+  return `<div><strong>Event: ${esc(e.name)}</strong></div><div>${esc(evDate(e) || '')}${e.place ? ' · ' + esc(e.place) : ''}${e.event_status && e.event_status !== 'occurred' ? ' · ' + esc((EV_STATUS[e.event_status] || {}).badge || e.event_status) : ''}</div>`;
+}
+function showTlTip(html, ev) {
+  const tip = $('#tl-tip'); if (!tip) return;
+  tip.innerHTML = html; tip.hidden = false;
+  const x = (ev.clientX ?? ev.touches?.[0]?.clientX ?? 0) + 12;
+  const y = (ev.clientY ?? ev.touches?.[0]?.clientY ?? 0) + 12;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  tip.style.left = Math.min(vw - tip.offsetWidth - 8, Math.max(8, x)) + 'px';
+  tip.style.top = Math.min(vh - tip.offsetHeight - 8, Math.max(8, y)) + 'px';
+}
+function hideTlTip() { const tip = $('#tl-tip'); if (tip) { tip.hidden = true; tip.innerHTML = ''; } }
 function renderTimeline() {
   const basis = S.basis; const ls = F.links.filter(l => l._iv[basis]).sort((a, b) => a._iv[basis][0] - b._iv[basis][0]);
-  // Events lane: event nodes with their own date (date or date_start–date_end), after the type and date filters
   const evs = D.entities.filter(e => e.type === 'event' && F.ents.has(e.id) && e._iv && Math.abs(e._iv[0]) < 1e8 && Math.abs(e._iv[1]) < 1e8).sort((a, b) => a._iv[0] - b._iv[0]);
   $('#t-group').value = S.tlgroup; $('#t-summary').textContent = `${ls.length} dated claims${evs.length ? ` · ${evs.length} event${evs.length === 1 ? '' : 's'}` : ''}${F.links.length - ls.length ? ` · ${F.links.length - ls.length} undated not shown` : ''}`;
   const any = ls.length + evs.length > 0; $('#empty-tl').hidden = any; $('#tl-wrap').hidden = !any;
@@ -1313,36 +1519,174 @@ function renderTimeline() {
     if (!tlWin || tlWin.d0 !== d0 || tlWin.d1 !== d1) tlWin = { d0, d1, a: d0 - 15, b: d1 + 15 };
     const lanesKey = S.tlgroup === 'status' ? l => l.status : l => catOf(l);
     const lanes = (S.tlgroup === 'status' ? STATUS_KEYS : CAT_KEYS).filter(k => ls.some(l => lanesKey(l) === k)); if (evs.length) lanes.unshift('__events');
-    const EVC = TYPE.event ? TYPE.event.color : '#00C2C7'; const W = Math.max(600, svg.parentElement.clientWidth - 10), L = 120, laneH = 46, H = lanes.length * laneH + 40;
-    const x = d => L + ((d - tlWin.a) / (tlWin.b - tlWin.a)) * (W - L - 20);
+    const EVC = TYPE.event ? TYPE.event.color : '#00C2C7'; const W = Math.max(600, svg.parentElement.clientWidth - 10), L = 120, laneH = 56, H = lanes.length * laneH + 40;
+    const xOf = d => L + ((d - tlWin.a) / (tlWin.b - tlWin.a)) * (W - L - 20);
     const span = tlWin.b - tlWin.a; const yrs = []; const y0 = new Date(tlWin.a * DAY).getUTCFullYear(), y1 = new Date(tlWin.b * DAY).getUTCFullYear();
     const step = span > 365 * 25 ? 5 : span > 365 * 10 ? 2 : 1;
     for (let y = y0; y <= y1; y++) if (y % step === 0) yrs.push(y);
     const ticks = span < 365 * 2 ? (() => { const t = []; for (let y = y0; y <= y1; y++) for (let m = 0; m < 12; m++) { const d = Date.UTC(y, m, 1) / DAY; if (d >= tlWin.a && d <= tlWin.b) t.push([d, m === 0 ? String(y) : new Date(d * DAY).toLocaleString('en-CA', { month: 'short', timeZone: 'UTC' })]); } return t; })() : yrs.map(y => [Date.UTC(y, 0, 1) / DAY, String(y)]);
-    const stack = {};
-    const marks = ls.map(l => { const iv = l._iv[basis]; const li = lanes.indexOf(lanesKey(l)); const xa = x(iv[0]), xb = Math.max(xa + 3, x(iv[1] + 1)); if (xb < L || xa > W) return ''; const k = li + ':' + Math.round(xa / 6); const off = (stack[k] = (stack[k] || 0) + 1) - 1; const yy = 30 + li * laneH + 6 + (off % 5) * 7; const st = STATUS[l.status];
+
+    // Spread marks that share a lane so close/same dates stay at least TL_GAP px apart.
+    const linkMarks = ls.map(l => {
+      const iv = l._iv[basis]; const li = lanes.indexOf(lanesKey(l));
+      return { kind: 'link', rec: l, li, xa0: xOf(iv[0]), xb0: Math.max(xOf(iv[0]) + 3, xOf(iv[1] + 1)), iv, day: iv[2] === 'day' };
+    }).filter(m => m.xb0 >= L && m.xa0 <= W);
+    const evMarks0 = evs.map(e => {
+      const iv = e._iv; return { kind: 'ev', rec: e, li: 0, xa0: xOf(iv[0]), xb0: Math.max(xOf(iv[0]) + 3, xOf(iv[1] + 1)), iv };
+    }).filter(m => m.xb0 >= L && m.xa0 <= W);
+    const spreadLane = (arr) => {
+      const by = new Map();
+      arr.forEach((m, i) => { (by.get(m.li) || by.set(m.li, []).get(m.li)).push(i); });
+      for (const idxs of by.values()) {
+        const xs = idxs.map(i => arr[i].xa0);
+        const spread = (typeof spreadXs === 'function') ? spreadXs(xs, TL_GAP, L, W - 8) : xs;
+        const lanesOff = (typeof laneOffsets === 'function') ? laneOffsets(spread, TL_GAP) : spread.map(() => 0);
+        idxs.forEach((i, j) => { const dx = spread[j] - arr[i].xa0; arr[i].xa = arr[i].xa0 + dx; arr[i].xb = arr[i].xb0 + dx; arr[i].sub = lanesOff[j]; });
+      }
+      return arr;
+    };
+    spreadLane(linkMarks); spreadLane(evMarks0);
+
+    const marks = linkMarks.map(m => {
+      const l = m.rec; const st = STATUS[l.status];
       const col = S.tlgroup === 'status' ? LINK_CATS[catOf(l)].color : st.color;
-      return iv[2] === 'day' ? `<circle cx="${xa}" cy="${yy + 3}" r="4" fill="${col}" class="tm${S.link === l.id ? ' sel' : ''}" data-link="${esc(l.id)}"><title>${esc(`${l.date || l.reported} · ${name(l.from)} → ${LT(l.type).label} → ${name(l.to)}${l.amount_cad ? ' · ' + fmtCAD(l.amount_cad) : ''}`)}</title></circle>` : `<rect x="${xa}" y="${yy}" width="${xb - xa}" height="6" rx="2" fill="${col}" opacity="0.55" class="tm${S.link === l.id ? ' sel' : ''}" data-link="${esc(l.id)}"><title>${esc(`${iv[2]} precision: ${l.date || l.reported} · ${name(l.from)} → ${LT(l.type).label} → ${name(l.to)}`)}</title></rect>`; }).join('');
-    const evStack = {}; const evMarks = evs.map(e => { const iv = e._iv; const xa = x(iv[0]), xb = Math.max(xa + 3, x(iv[1] + 1)); if (xb < L || xa > W) return ''; const k = Math.round(xa / 8); const off = (evStack[k] = (evStack[k] || 0) + 1) - 1; const yy = 30 + 6 + (off % 5) * 7; const t = `<title>${esc(`${evDate(e)} · Event: ${e.name}${e.place ? ' · ' + e.place : ''}`)}</title>`;
-      return xb - xa > 8 ? `<rect x="${xa}" y="${yy}" width="${xb - xa}" height="6" rx="3" ${isStoppedEv(e) ? `fill="${EVC}" fill-opacity="0.12" stroke="${EVC}" stroke-width="1.3" stroke-dasharray="2 1.5"` : `fill="${EVC}"`} class="tm ev${isStoppedEv(e) ? ' ev-stopped' : ''}${S.node === e.id ? ' sel' : ''}" data-node="${esc(e.id)}">${t}</rect>` : `<path d="M${xa} ${yy - 2} l2.4 4.6 5 .7 -3.6 3.5 .9 5 -4.7 -2.4 -4.7 2.4 .9 -5 -3.6 -3.5 5 -.7z" ${isStoppedEv(e) ? `fill="${EVC}" fill-opacity="0.12" stroke="${EVC}" stroke-width="1.3" stroke-dasharray="2 1.5"` : `fill="${EVC}"`} class="tm ev${isStoppedEv(e) ? ' ev-stopped' : ''}${S.node === e.id ? ' sel' : ''}" data-node="${esc(e.id)}">${t}</path>`; }).join('');
-    // v1.8: dashed marker at the expected date, joined by a dashed line to the reported (actual / blocked) date
-    const expMarks = xs.map(e => { const xe = x(e._xiv[0]); const same = e._iv === e._xiv; const xa = x(e._iv[0]); const yy = 30 + laneH - 12; const t = `<title>${esc(`Expected ${xDate(e.expected)} · ${e.name}${isStoppedEv(e) ? ' · ' + ((EV_STATUS[e.event_status] || {}).badge || '') : ''}`)}</title>`;
-      return `<g class="tm-exp" data-node="${esc(e.id)}" data-expected-mark>${same ? '' : `<line x1="${xe}" x2="${xa}" y1="${yy}" y2="${yy}" stroke="${EVC}" stroke-width="1.5" stroke-dasharray="3 3"/>`}<circle cx="${xe}" cy="${yy}" r="4.5" fill="none" stroke="${EVC}" stroke-width="1.5" stroke-dasharray="2 2">${t}</circle>${same ? '' : `<circle cx="${xa}" cy="${yy}" r="2.5" fill="${EVC}"/>`}</g>`; }).join('');
+      const yy = 30 + m.li * laneH + 8 + (m.sub || 0) * 9;
+      const label = name(l.to) || LT(l.type).short || '';
+      const cls = `tm${S.link === l.id ? ' sel' : ''}`;
+      const shape = m.day
+        ? `<circle cx="${m.xa}" cy="${yy + 3}" r="4" fill="${col}" class="${cls}" data-link="${esc(l.id)}" data-kind="link"></circle>`
+        : `<rect x="${m.xa}" y="${yy}" width="${Math.max(3, m.xb - m.xa)}" height="6" rx="2" fill="${col}" opacity="0.55" class="${cls}" data-link="${esc(l.id)}" data-kind="link"></rect>`;
+      return { html: shape, x: m.xa + 6, y: yy - 10, textY: yy - 2, text: label, w: Math.min(120, 7.2 * String(label).length), h: 12, lane: m.li };
+    });
+    const evMarkHtml = evMarks0.map(m => {
+      const e = m.rec; const xa = m.xa, xb = m.xb;
+      const yy = 30 + 8 + (m.sub || 0) * 9;
+      const cls = `tm ev${isStoppedEv(e) ? ' ev-stopped' : ''}${S.node === e.id ? ' sel' : ''}`;
+      const shape = xb - xa > 8
+        ? `<rect x="${xa}" y="${yy}" width="${xb - xa}" height="6" rx="3" ${isStoppedEv(e) ? `fill="${EVC}" fill-opacity="0.12" stroke="${EVC}" stroke-width="1.3" stroke-dasharray="2 1.5"` : `fill="${EVC}"`} class="${cls}" data-node="${esc(e.id)}" data-kind="ev"></rect>`
+        : `<path d="M${xa} ${yy - 2} l2.4 4.6 5 .7 -3.6 3.5 .9 5 -4.7 -2.4 -4.7 2.4 .9 -5 -3.6 -3.5 5 -.7z" ${isStoppedEv(e) ? `fill="${EVC}" fill-opacity="0.12" stroke="${EVC}" stroke-width="1.3" stroke-dasharray="2 1.5"` : `fill="${EVC}"`} class="${cls}" data-node="${esc(e.id)}" data-kind="ev"></path>`;
+      return { html: shape, x: xa + 8, y: yy - 10, textY: yy - 2, text: e.name, w: Math.min(140, 7.2 * String(e.name || '').length), h: 12, lane: 0 };
+    });
+    const expMarks = xs.map(e => { const xe = xOf(e._xiv[0]); const same = e._iv === e._xiv; const xa = xOf(e._iv[0]); const yy = 30 + laneH - 12;
+      return `<g class="tm-exp" data-node="${esc(e.id)}" data-expected-mark data-kind="ev">${same ? '' : `<line x1="${xe}" x2="${xa}" y1="${yy}" y2="${yy}" stroke="${EVC}" stroke-width="1.5" stroke-dasharray="3 3"/>`}<circle cx="${xe}" cy="${yy}" r="4.5" fill="none" stroke="${EVC}" stroke-width="1.5" stroke-dasharray="2 2"></circle>${same ? '' : `<circle cx="${xa}" cy="${yy}" r="2.5" fill="${EVC}"/>`}</g>`; }).join('');
+
+    const labelSrc = [...evMarkHtml, ...marks];
+    const placed = (typeof placeLabels === 'function') ? placeLabels(labelSrc, 4) : labelSrc.map(it => ({ ...it, show: true, lx: it.x, ly: it.y }));
+    const labels = placed.filter(it => it.show && it.text).map(it => `<text class="tl-lab" x="${it.lx}" y="${it.textY ?? it.ly}" data-nolabel="1">${esc(it.text)}</text>`).join('');
+
     svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('tabindex', '0');
     svg.innerHTML = lanes.map((k, i) => `<g><rect x="0" y="${30 + i * laneH}" width="${W}" height="${laneH - 4}" class="lane"/><text x="8" y="${30 + i * laneH + 26}" class="lane-l">${esc(k === '__events' ? 'Events' : S.tlgroup === 'status' ? STATUS[k].short : LINK_CATS[k].label)}</text></g>`).join('') +
-      ticks.map(([d, t]) => `<g><line x1="${x(d)}" x2="${x(d)}" y1="20" y2="${H}" class="tick"/><text x="${x(d) + 3}" y="14" class="tick-l">${esc(t)}</text></g>`).join('') + marks + evMarks + expMarks;
+      ticks.map(([d, t]) => `<g><line x1="${xOf(d)}" x2="${xOf(d)}" y1="20" y2="${H}" class="tick"/><text x="${xOf(d) + 3}" y="14" class="tick-l">${esc(t)}</text></g>`).join('') +
+      marks.map(m => m.html).join('') + evMarkHtml.map(m => m.html).join('') + expMarks + labels;
+    // placeLabels uses estimated boxes, and SVG y is the baseline, so some
+    // painted labels can still overlap. Drop later ones whose real getBBox
+    // collides so the words on the timeline stay clear.
+    const painted = [...svg.querySelectorAll('text.tl-lab')];
+    const boxes = painted.map(el => el.getBBox());
+    if (boxes.some(b => b.width > 0 && b.height > 0)) {
+      const drop = new Set();
+      for (let i = 0; i < boxes.length; i++) {
+        if (drop.has(i)) continue;
+        const a = boxes[i];
+        for (let j = i + 1; j < boxes.length; j++) {
+          if (drop.has(j)) continue;
+          const b = boxes[j];
+          if (a.x < b.x + b.width + 1 && a.x + a.width + 1 > b.x && a.y < b.y + b.height + 1 && a.y + a.height + 1 > b.y) drop.add(j);
+        }
+      }
+      for (const i of drop) painted[i].remove();
+    }
+    svg.dataset.noOverlap = '1';
   }
   const list = [...ls].reverse();
-  $('#tl-list').innerHTML = [...evs].reverse().slice(0, tlShown).map(e => `<li class="tl-ev"><button type="button" class="linkish" data-node="${esc(e.id)}"><span class="tl-d">${esc(evDate(e) || (e.expected && xDate(e.expected) ? 'exp. ' + xDate(e.expected) : ''))}</span> <span class="kindtag">Event</span> ${evStatusBadge(e)} ${esc(e.name)}${e._xiv && e._xiv !== e._iv ? ` <span class="muted small">· expected ${esc(xDate(e.expected))}</span>` : ''}${e.place ? ` <span class="muted">· ${esc(e.place)}</span>` : ''}</button></li>`).join('') + list.slice(0, tlShown).map(l => `<li><button type="button" class="linkish" data-link="${esc(l.id)}"><span class="tl-d">${esc(basis === 'reported' ? l.reported : l.date)}</span> ${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''}</button> ${estTag(l)} ${lbadge(l)}</li>`).join('');
-  $('#tl-more').hidden = list.length <= tlShown && evs.length <= tlShown; // v1.9: events paged with links
+  const purposeBit = l => (typeof isLobbyingLink === 'function' && isLobbyingLink(l) && typeof purposeInline === 'function') ? ` <span class="tl-purpose">${esc(purposeInline(l))}</span>` : '';
+  $('#tl-list').innerHTML = [...evs].reverse().slice(0, tlShown).map(e => `<li class="tl-ev"><button type="button" class="linkish" data-node="${esc(e.id)}"><span class="tl-d">${esc(evDate(e) || (e.expected && xDate(e.expected) ? 'exp. ' + xDate(e.expected) : ''))}</span> <span class="kindtag">Event</span> ${evStatusBadge(e)} ${esc(e.name)}${e._xiv && e._xiv !== e._iv ? ` <span class="muted small">· expected ${esc(xDate(e.expected))}</span>` : ''}${e.place ? ` <span class="muted">· ${esc(e.place)}</span>` : ''}</button></li>`).join('') + list.slice(0, tlShown).map(l => `<li><button type="button" class="linkish" data-link="${esc(l.id)}"><span class="tl-d">${esc(basis === 'reported' ? l.reported : l.date)}</span> ${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''}${purposeBit(l)}</button> ${estTag(l)} ${lbadge(l)}</li>`).join('');
+  $('#tl-more').hidden = list.length <= tlShown && evs.length <= tlShown;
 }
-const tlZoom = f => { if (!tlWin) return; const c = (tlWin.a + tlWin.b) / 2, h = ((tlWin.b - tlWin.a) / 2) * f; tlWin.a = c - Math.max(15, h); tlWin.b = c + Math.max(15, h); renderTimeline(); };
+const tlZoom = (f, center) => {
+  if (!tlWin) return;
+  const c = center == null ? (tlWin.a + tlWin.b) / 2 : center;
+  const h = Math.max(15, ((tlWin.b - tlWin.a) / 2) * f);
+  tlWin.a = c - h; tlWin.b = c + h; renderTimeline();
+};
+const tlPanDays = d => { if (!tlWin) return; tlWin.a += d; tlWin.b += d; renderTimeline(); };
 $('#t-zin').addEventListener('click', () => tlZoom(0.6)); $('#t-zout').addEventListener('click', () => tlZoom(1.6));
 $('#t-zfit').addEventListener('click', () => { tlWin = null; renderTimeline(); });
 $('#t-group').addEventListener('change', e => { S.tlgroup = e.target.value; update(); });
 $('#tl-more').addEventListener('click', () => { tlShown += 200; renderTimeline(); });
 $('#view-timeline').addEventListener('click', e => { const t = e.target.closest('[data-link]'); if (t) return select({ link: t.dataset.link }); const n = e.target.closest('[data-node]'); if (n) select({ node: n.dataset.node }); });
-$('#tl').addEventListener('wheel', e => { if (!e.ctrlKey && !e.metaKey) return; e.preventDefault(); tlZoom(e.deltaY < 0 ? 0.8 : 1.25); }, { passive: false });
+
+// Zoom on wheel (no modifier required over the svg); pan on drag or Shift+wheel.
+$('#tl').addEventListener('wheel', e => {
+  e.preventDefault();
+  if (!tlWin) return;
+  const rec = $('#tl').getBoundingClientRect();
+  const L = 120, W = rec.width;
+  const frac = W > L ? Math.min(1, Math.max(0, (e.clientX - rec.left - L) / (W - L))) : 0.5;
+  const center = tlWin.a + frac * (tlWin.b - tlWin.a);
+  if (e.shiftKey) tlPanDays((e.deltaY > 0 ? 1 : -1) * (tlWin.b - tlWin.a) * 0.08);
+  else tlZoom(e.deltaY < 0 ? 0.8 : 1.25, center);
+}, { passive: false });
+
+$('#tl').addEventListener('pointerdown', e => {
+  if (e.button != null && e.button !== 0) return;
+  tlPan = { x: e.clientX, a: tlWin && tlWin.a, b: tlWin && tlWin.b, id: e.pointerId };
+  try { $('#tl').setPointerCapture(e.pointerId); } catch { }
+});
+$('#tl').addEventListener('pointermove', e => {
+  const mark = e.target.closest('[data-link],[data-node]');
+  if (mark && !tlPan) {
+    const link = mark.dataset.link, node = mark.dataset.node;
+    showTlTip(link ? tlTooltipHtml('link', LNK.get(link)) : tlTooltipHtml('ev', ENT.get(node)), e);
+  } else if (!tlPan) hideTlTip();
+  if (!tlPan || !tlWin) return;
+  const rec = $('#tl').getBoundingClientRect();
+  const span = tlPan.b - tlPan.a;
+  const dx = e.clientX - tlPan.x;
+  const days = rec.width ? -dx / rec.width * span : 0;
+  tlWin.a = tlPan.a + days; tlWin.b = tlPan.b + days;
+  renderTimeline();
+});
+const endPan = () => { tlPan = null; };
+$('#tl').addEventListener('pointerup', endPan);
+$('#tl').addEventListener('pointercancel', endPan);
+$('#tl').addEventListener('pointerleave', hideTlTip);
+
+// Pinch zoom
+let tlPinch = null;
+$('#tl').addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    tlPinch = { d, span: tlWin ? tlWin.b - tlWin.a : 0, c: tlWin ? (tlWin.a + tlWin.b) / 2 : 0 };
+  } else if (e.touches.length === 1) {
+    const mark = e.target.closest('[data-link],[data-node]');
+    if (mark) {
+      const link = mark.dataset.link, node = mark.dataset.node;
+      showTlTip(link ? tlTooltipHtml('link', LNK.get(link)) : tlTooltipHtml('ev', ENT.get(node)), e.touches[0]);
+    }
+  }
+}, { passive: true });
+$('#tl').addEventListener('touchmove', e => {
+  if (!tlPinch || e.touches.length !== 2 || !tlWin) return;
+  const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  if (tlPinch.d < 1) return;
+  const f = tlPinch.d / d;
+  const h = Math.max(15, (tlPinch.span / 2) * f);
+  tlWin.a = tlPinch.c - h; tlWin.b = tlPinch.c + h;
+  renderTimeline();
+}, { passive: true });
+$('#tl').addEventListener('touchend', () => { tlPinch = null; });
+
+$('#tl').addEventListener('keydown', e => {
+  if (!tlWin) return;
+  const span = tlWin.b - tlWin.a;
+  if (e.key === '+' || e.key === '=') { e.preventDefault(); tlZoom(0.6); }
+  else if (e.key === '-' || e.key === '_') { e.preventDefault(); tlZoom(1.6); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); tlPanDays(-span * 0.15); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); tlPanDays(span * 0.15); }
+  else if (e.key === 'Home') { e.preventDefault(); tlWin = null; renderTimeline(); }
+});
 
 // ---- 45-overlaps.js
 /* overlaps: derived connections (NOT claims), overlaps view, profile section, graph overlay, path finder */
@@ -1709,7 +2053,7 @@ function claimRow(l, fromId, opts = {}) {
   const amt = l.amount_cad > 0 ? `<span class="amt${isEst(l) ? ' estv' : ''}">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : '';
   const hid = F && !F.linkSet.has(l.id) ? ' <span class="hid" title="Hidden by current filters">hidden by filters</span>' : '';
   return `<li class="claim" data-cat="${esc(t.cat)}"><div class="c-main">${fromId ? '' : entBtn(l.from) + ' '}<span class="verb">${esc(verb)}</span> ${entBtn(fromId ? other : l.to)} ${amt}</div>
-    <div class="c-meta">${lbadge(l)} ${layerChips(l)}${l.date ? ` <span class="muted">${esc(l.date)}</span>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim details</button>${hid}</div>
+    <div class="c-meta">${lbadge(l)} ${layerChips(l)}${l.date ? ` <span class="muted">${esc(l.date)}</span>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim details</button> ${reportCorrectionHtml('claim', l, { compact: true, fromName: name(l.from), toName: name(l.to), verb })}${hid}</div>
     ${opts.sources ? srcList(l.sources) : `<details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details>`}</li>`;
 }
 function netCard(n) {
@@ -1736,7 +2080,7 @@ function renderEntity(e) {
   const intro = GUIDE.entity_intros && GUIDE.entity_intros[e.id] && GUIDE.entity_intros[e.id].intro;
   const myLeads = LEADS.filter(L => L.entities.includes(e.id) || L.link_ids.some(id => { const l = LNK.get(id); return l && (l.from === e.id || l.to === e.id); }));
   return `<div class="p-head"><div class="p-type">${typeChip(e.type)}${e.type === 'event' ? ' ' + evStatusBadge(e) : ''}${e.province ? ` <span class="muted" title="${esc(provName(e.province))}">${esc(e.province)}</span>` : ''} ${layerChips(e)} ${seenBadge(e)}${e.status ? ' ' + lbadge(e) : ''}</div>
-    <h1 class="p-name">${esc(e.name)}</h1>${namedFromRecords(e) ? `<div>${roleBadge(e)}</div>` : e.role ? `<div class="muted">${esc(e.role)}</div>` : ''}${namedIn(e)}${e.aliases.length ? `<div class="small muted">Also: ${esc(e.aliases.join(' · '))}</div>` : ''}${legalChips(e)}${typeof theorySwitchHtml === 'function' ? theorySwitchHtml(e) : ''}${typeof personChecksHtml === 'function' ? personChecksHtml(e) : ''}${e.unlinked && !links.length ? `<p class="unlinked-note" data-unlinked role="note"><span class="kindtag">Unlinked</span> ${esc(e.unlinked_note || 'No sourced relationship found yet; entity kept from its cited source.')}</p>` : ''}<div class="p-corr">${correctionLink('entity', e.id, e.name)}</div></div>
+    <h1 class="p-name">${esc(e.name)}</h1>${namedFromRecords(e) ? `<div>${roleBadge(e)}</div>` : e.role ? `<div class="muted">${esc(e.role)}</div>` : ''}${namedIn(e)}${e.aliases.length ? `<div class="small muted">Also: ${esc(e.aliases.join(' · '))}</div>` : ''}${legalChips(e)}${typeof theorySwitchHtml === 'function' ? theorySwitchHtml(e) : ''}${typeof personChecksHtml === 'function' ? personChecksHtml(e) : ''}${e.unlinked && !links.length ? `<p class="unlinked-note" data-unlinked role="note"><span class="kindtag">Unlinked</span> ${esc(e.unlinked_note || 'No sourced relationship found yet; entity kept from its cited source.')}</p>` : ''}<div class="p-corr">${reportCorrectionHtml('entity', e)}</div></div>
     ${sourceLabels(e)}
     ${typeof sourceFramingHtml === 'function' ? sourceFramingHtml(e) : ''}
     ${tagLabels(e)}
@@ -1764,10 +2108,10 @@ function renderLink(l) {
   if (thy) return `<div class="p-head"><div class="p-type"><span class="kindtag">Named in theory</span> ${layerChips(l)} <span class="badge thy-badge">Unverified</span></div>
     <h1 class="p-name small-h">${entBtn(l.from)} <span class="verb">${esc(t.label)}</span> ${entBtn(l.to)}</h1>
     <p class="thy-warn" role="note">${esc((D.meta.vocab && D.meta.vocab.THEORY_WARNING) || 'Unverified theory - reported claims only, educational, no wrongdoing alleged.')}</p>
-    <div class="p-corr">${correctionLink('claim', l.id, claimLabel(l))}</div></div>
+    <div class="p-corr">${reportCorrectionHtml('claim', l)}</div></div>
     ${l.description ? `<p>${esc(l.description)}</p>` : ''}
     ${panelSection('Sources', srcList(l.sources), false, l.sources.length)}`;
-  return `<div class="p-head"><div class="p-type"><span class="kindtag">${esc(LINK_CATS[t.cat].label)}</span> ${layerChips(l)} ${seenBadge(l)}</div><h1 class="p-name small-h">${entBtn(l.from)} <span class="verb">${esc(t.label)}</span> ${entBtn(l.to)}</h1><div class="p-corr">${correctionLink('claim', l.id, claimLabel(l))}</div></div>
+  return `<div class="p-head"><div class="p-type"><span class="kindtag">${esc(LINK_CATS[t.cat].label)}</span> ${layerChips(l)} ${seenBadge(l)}</div><h1 class="p-name small-h">${entBtn(l.from)} <span class="verb">${esc(t.label)}</span> ${entBtn(l.to)}</h1><div class="p-corr">${reportCorrectionHtml('claim', l)}</div></div>
     <div class="claim-box">${lbadge(l)}${l.amount_cad > 0 ? `<div><b class="amt">${fmtCADfull(l.amount_cad)}</b> ${estTag(l)} <span class="muted">${esc(AMOUNT_KINDS[l.amount_kind]?.label || '')}</span></div>` : ''}${l.date ? `<div class="muted">Date: ${esc(l.date)}</div>` : '<div class="muted">Undated</div>'}${l.reported ? `<div class="muted">First reported: ${esc(l.reported)}</div>` : ''}</div>
     ${adminNote(l)}
     ${l.upstream_counted ? `<p class="upstream-note small" data-upstream-note>Part of upstream award ${LNK.has(l.parent_link_id) ? `<button type="button" class="linkish" data-link="${esc(l.parent_link_id)}">${esc(name(LNK.get(l.parent_link_id).from))} → ${esc(name(LNK.get(l.parent_link_id).to))}${LNK.get(l.parent_link_id).amount_cad > 0 ? ' ' + fmtCAD(LNK.get(l.parent_link_id).amount_cad) : ''}</button>` : esc(l.parent_link_id)}; not counted again.</p>` : ''}
@@ -1985,14 +2329,16 @@ function commsList(cm) {
 }
 // link panel block (full) or compact (Explain this link)
 function lobbyBlock(l, compact) {
-  const x = lob(l); if (!x) return '';
+  const x = lob(l); if (!x && !(l && LOBBY_LT.has(l.type))) return '';
   const parts = [];
-  if (x.subjects) parts.push(subjDisclosure(`<span class="subjs">${x.subjects.map(s => subjChip(s)).join('')}</span>`, x.subjects.length, 'lob-row'));
-  if (x.targets) parts.push(`<div class="lob-row"><span class="lbl">Lobbied on</span> <ul class="lob-targets">${x.targets.map(t => `<li>${partyHtml(t)}${t.entity_id && ENT.has(t.entity_id) ? ` <span class="muted small">${esc(TYPE[ENT.get(t.entity_id).type]?.label || '')}</span>` : ''}</li>`).join('')}</ul></div>`);
-  if (x.communications) parts.push(compact ? `<div class="lob-row small muted">${x.communications.length} communication${x.communications.length === 1 ? '' : 's'} recorded${commRange(x.communications)}</div>` : `<div class="lob-row"><span class="lbl">Communications <span class="muted">${x.communications.length}</span></span>${commsList(x.communications)}</div>`);
-  const reg = [['Client', partyHtml(x.client)], ['Firm', partyHtml(x.firm)], ['Registrant', x.registrant ? esc(x.registrant) : ''], ['Registrant type', x.registrant_type ? esc(REG_TYPES[x.registrant_type] || x.registrant_type) : ''], ['Registration start', x.registration_start ? esc(x.registration_start) : ''], ['Registration end', x.registration_end ? esc(x.registration_end) : '']].filter(r => r[1]);
+  const purpose = typeof purposeInline === 'function' ? purposeInline(l) : 'subject not stated in registry record';
+  parts.push(`<div class="lob-purpose">${esc(purpose)}</div>`);
+  if (x && x.subjects) parts.push(subjDisclosure(`<span class="subjs">${x.subjects.map(s => subjChip(s)).join('')}</span>`, x.subjects.length, 'lob-row'));
+  if (x && x.targets) parts.push(`<div class="lob-row"><span class="lbl">Lobbied on</span> <ul class="lob-targets">${x.targets.map(t => `<li>${partyHtml(t)}${t.entity_id && ENT.has(t.entity_id) ? ` <span class="muted small">${esc(TYPE[ENT.get(t.entity_id).type]?.label || '')}</span>` : ''}</li>`).join('')}</ul></div>`);
+  if (x && x.communications) parts.push(compact ? `<div class="lob-row small muted">${x.communications.length} communication${x.communications.length === 1 ? '' : 's'} recorded${commRange(x.communications)}</div>` : `<div class="lob-row"><span class="lbl">Communications <span class="muted">${x.communications.length}</span></span>${commsList(x.communications)}</div>`);
+  const reg = x ? [['Client', partyHtml(x.client)], ['Firm', partyHtml(x.firm)], ['Registrant', x.registrant ? esc(x.registrant) : ''], ['Registrant type', x.registrant_type ? esc(REG_TYPES[x.registrant_type] || x.registrant_type) : ''], ['Registration start', x.registration_start ? esc(x.registration_start) : ''], ['Registration end', x.registration_end ? esc(x.registration_end) : '']].filter(r => r[1]) : [];
   if (reg.length && !compact) parts.push(`<div class="lob-reg"><h4 class="lbl">Registration</h4><dl class="kv">${reg.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></div>`);
-  if (x.registry_url) parts.push(`<div class="lob-row">${regLink(x.registry_url)}</div>`);
+  if (x && x.registry_url) parts.push(`<div class="lob-row">${regLink(x.registry_url)}</div>`);
   if (!parts.length) return '';
   return compact ? `<div class="lobbying compact">${parts.join('')}</div>` : `<section class="lobbying" data-guide="lobbying"><h3 class="lbl">Lobbying detail</h3>${parts.join('')}<p class="small muted">From the lobbying registry entry as the source gives it; the claim's badge above is unchanged.</p></section>`;
 }
@@ -2820,16 +3166,22 @@ function orderTours(tours) {
   return (tours || []).map((tour, i) => ({ tour, i, k: tourPriorityIndex(tour && tour.id, tour && tour.title) })).sort((a, b) => a.k - b.k || a.i - b.i).map(x => x.tour);
 }
 function renderTours() {
-  if (!EXTRA.loaded.guide) { $('#tr-list').innerHTML = loadingNote('tours'); loadExtra('guide'); return; }
+  const lists = [$('#tr-list'), $('#tr-list-main')].filter(Boolean);
+  const sums = [$('#tr-summary'), $('#tr-summary-main')].filter(Boolean);
+  if (!lists.length) return;
+  if (!EXTRA.loaded.guide) { lists.forEach(list => { list.innerHTML = loadingNote('tours'); }); loadExtra('guide'); return; }
   const ts = orderTours((GUIDE.tours || []).filter(t => t.steps && t.steps.length));
-  $('#tr-summary').textContent = ts.length ? `${ts.length} tours` : '';
-  $('#tr-list').innerHTML = ts.length ? ts.map(t => `<article class="net-card tour-item"><div class="nc-head"><span class="ic" aria-hidden="true">▶</span><b>${esc(t.title)}</b></div><p class="small">${esc(t.summary || '')}</p><div class="nc-meta"><span class="muted">${t.steps.length} steps</span></div><div class="nc-act"><button type="button" class="btn sm accent" data-tour-go="${esc(t.id)}">Start tour</button> <a class="linkish small" href="#tour=${encodeURIComponent(t.id)}&step=0">link</a></div></article>`).join('')
+  const html = ts.length ? ts.map(t => `<article class="net-card tour-item"><div class="nc-head"><span class="ic" aria-hidden="true">▶</span><b>${esc(t.title)}</b></div><p class="small">${esc(t.summary || '')}</p><div class="nc-meta"><span class="muted">${t.steps.length} steps</span></div><div class="nc-act"><button type="button" class="btn sm accent" data-tour-go="${esc(t.id)}">Start tour</button> <a class="linkish small" href="#tour=${encodeURIComponent(t.id)}&step=0">link</a></div></article>`).join('')
     : '<p class="muted pad">No guided tours in this build. The map works the same without them.</p>';
+  sums.forEach(sum => { sum.textContent = ts.length ? `${ts.length} tours` : ''; });
+  lists.forEach(list => { list.innerHTML = html; });
 }
-$('#view-tours').addEventListener('click', e => { const b = e.target.closest('[data-tour-go]'); if (b) startTour(b.dataset.tourGo, 0); });
+function onTourGo(e) { const b = e.target.closest('[data-tour-go]'); if (b) startTour(b.dataset.tourGo, 0); }
+$('#view-tours')?.addEventListener('click', onTourGo);
+$('#f-tours')?.addEventListener('click', onTourGo);
 
 // ---- spotlight a [data-guide] element (used by tours with `target` and by the walkthrough)
-const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types', rings: '[data-layout="rings"]', clusters: '[data-layout="clusters"]', hubs: '#g-maxdeg' }; // events: the Events type chip (map), else the Type filter
+const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types', rings: '[data-layout="rings"]', clusters: '[data-layout="clusters"]', hubs: '#g-maxdeg', 'search-help': '#sidebar', tours: '#f-tours', help: '#btn-howto', filters: '#sidebar' }; // events: the Events type chip (map), else the Type filter
 function guideEl(target) {
   if (!target) return null;
   const cands = [...document.querySelectorAll(`[data-guide="${CSS.escape(target)}"]`)].filter(el => el.offsetParent !== null || el === document.body);
@@ -2841,8 +3193,30 @@ function spotlightTarget(target) { clearSpot(); const el = guideEl(target); if (
 
 // ---- first-visit walkthrough (prefers the 'first-visit' tour; falls back to walkthrough.json, then a built-in one)
 const WALK_KEY = 'wiretap-map:walkthrough-done';
+const SEARCH_HELP_TEXT = "Search everything looks up names, aliases, bills, claims, networks and source titles. Press / to jump to it.\n\nType keeps entities of any type chip you leave on. The first click on a full row keeps only that chip.\n\nProvince / jurisdiction keeps entities in any province or jurisdiction you leave on, the same way.\n\nClaim status keeps claims with any status chip you leave on.\n\nRelationship keeps claims in any relationship group you leave on.\n\nLobbying can limit the map to lobbied or lobbied-on claims, and to subjects you pick in Lobby subjects.\n\nTopics focuses the map on Immigration or Carney. Click the same topic again to show the whole map.\n\nSource layers choose which kinds of sources are shown. At least one stays on. An item stays visible if it appears in any layer you leave on.\n\nDate range keeps claims whose date overlaps the range. Undated claims stay in unless you untick include undated.\n\nOutside the norm, under People, keeps items compared with a sourced benchmark. It is a comparison, not a finding of wrongdoing.\n\nFilters stack: an item must pass every group you change (AND). Inside one group, any selected chip is enough (OR).\n\nExample: the default map shows 11,060 of 11,206 entities and 15,118 of 15,297 claims (Theories stay off). In Source layers, turn off every layer except Public records: 4,238 entities and 6,260 claims, including items that also appear in another layer. Then set Date range From and To to 2023: 932 entities and 933 claims.\n\nTo widen back out, turn a chip back on, or click the one chip you isolated so the row restores all chips. Press Reset filters to clear the chips, Topics, dates, checkboxes and the search box.\n\nThe search box finds matches across the data; it does not itself narrow the map. Click a result to open it. If a hit is hidden by the current filters, it stays in the list marked \"hidden by filters.\" When you turn Source layers off, hits that are not in a layer you left on (and are not still on the map) drop out of the list.\n\nTip: a claim stays only if both ends pass Type and Province, and the claim itself passes Claim status, Relationship, Lobbying, Date range and Source layers.\n\nTip: the first click on a full Type, Province, Claim status or Relationship row keeps only that chip; later clicks add or remove chips.";
+const SEARCH_HELP_MORE_TEXT = "Seen in at least hides items that appear in fewer source layers than you pick.\n\nMoney limits the map to money links. Estimates and budgets stay out unless you tick include estimates.\n\nTheories (unverified), under People, stay off unless you tick that box.\n\nBlocked / didn't happen and Event kind, under People, keep those events and what links to them.";
+const SEARCH_HELP_MORE_TITLE = "More filters";
+const SEARCH_HELP_VIDEO_READY = false;
+const SEARCH_HELP_STEP = { target: 'search-help', title: 'Search filters', text: SEARCH_HELP_TEXT, moreTitle: SEARCH_HELP_MORE_TITLE, moreText: SEARCH_HELP_MORE_TEXT };
+function isSearchHelpStep(st) { if (!st) return false; const t = String(st.target || '').toLowerCase(), title = String(st.title || ''); return t === 'search-help' || t === 'filters' || /^Search filters$/i.test(title) || /^Filters$/i.test(title); }
+function ensureFirstVisitSearchHelp(steps) {
+  const wanted = { ...SEARCH_HELP_STEP };
+  if (!SEARCH_HELP_VIDEO_READY) { delete wanted.video; delete wanted.captions; }
+  const out = (steps || []).map(s => {
+    if (!isSearchHelpStep(s)) return s;
+    const merged = { ...s, ...wanted, text: wanted.text, title: wanted.title, target: wanted.target, moreText: wanted.moreText, moreTitle: wanted.moreTitle };
+    if (!SEARCH_HELP_VIDEO_READY) { delete merged.video; delete merged.captions; }
+    return merged;
+  });
+  if (!out.some(isSearchHelpStep)) {
+    const afterSearch = out.findIndex(s => String(s.target || '').toLowerCase() === 'search' || /^Search\b/i.test(s.title || ''));
+    out.splice(afterSearch >= 0 ? afterSearch + 1 : 0, 0, wanted);
+  }
+  return out;
+}
 const BUILTIN_WALK = { title: 'Welcome', steps: [
   { target: 'search', title: 'Search everything', text: 'Type a person, organization, bill or registry number. Press / from anywhere.' },
+  { target: 'search-help', title: 'Search filters', text: SEARCH_HELP_TEXT, moreTitle: SEARCH_HELP_MORE_TITLE, moreText: SEARCH_HELP_MORE_TEXT },
   { target: 'layers', title: 'Source layers', text: 'Turn FringeViews (mostly unverified commentary) on or off, or show only items seen in several layers.' },
   { target: 'profile', title: 'Profiles', text: 'Click a node for its profile: badges, sources, money in and out, and suggested next steps.' },
   { target: 'pathfinder', title: 'How are these connected?', text: 'Pick two entities to see up to three shortest chains of sourced links.' },
@@ -2850,7 +3224,7 @@ const BUILTIN_WALK = { title: 'Welcome', steps: [
   { target: 'rings', title: 'Rings', text: 'Rings arranges the map in concentric rings by type (people, organizations, events and so on). Choose it from the layout buttons above the map.' },
   { target: 'clusters', title: 'Clusters', text: 'Clusters arranges the map by auto-detected clusters (labelled auto_*), computed from the link structure. The same groupings appear under Auto-detected clusters in the sidebar.' },
   { target: 'hubs', title: 'Hide hubs', text: 'Hide hubs temporarily hides nodes with more links than the number you pick. Selected and expanded nodes always stay. The control starts at off, so every node in the current filters stays visible until you set a limit.', collapsed: true, summary: 'How Hide hubs works' },
-  { target: 'help', title: 'Help', text: 'Replay this walkthrough at any time.' }] };
+  { target: 'help', title: 'How to use', text: 'Press How to use, under the wordmark, to replay this walkthrough.' }] };
 let WALK = null, walkI = 0;
 function normalizeWalkStep(st) {
   if (!st) return st;
@@ -2908,17 +3282,26 @@ function ensureFirstVisitLayoutSteps(steps) {
   const block = wanted.map(w => out.find(st => layoutWalkKey(st) === w.target) || w);
   return [...rest.slice(0, at), ...block, ...rest.slice(at)];
 }
-function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitLayoutSteps(w.steps) }; }
+
+function searchHelpWalkStep(s) {
+  const out = { ...s, ...SEARCH_HELP_STEP, text: SEARCH_HELP_TEXT, moreText: SEARCH_HELP_MORE_TEXT, moreTitle: SEARCH_HELP_MORE_TITLE, title: SEARCH_HELP_STEP.title, target: SEARCH_HELP_STEP.target };
+  if (!SEARCH_HELP_VIDEO_READY) { delete out.video; delete out.captions; }
+  return out;
+}
+function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitLayoutSteps(ensureFirstVisitSearchHelp(w.steps.map(s => isSearchHelpStep(s) ? searchHelpWalkStep(s) : s))) }; }
 function walkSteps() { const raw = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return normalizeWalkthrough(raw); }
 function openWalk(i = 0) { if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
-function closeWalk(silent) { if ($('#wt').hidden) return; $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) $('#btn-help').focus(); }
+function closeWalk(silent) { if ($('#wt').hidden) return; $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) ($('#btn-howto') || $('#btn-help'))?.focus(); }
 function renderWalk() {
   const st = WALK.steps[walkI]; const n = WALK.steps.length;
   if (st.view && VIEWS.includes(st.view) && st.view !== S.view) setView(st.view);
   const el = spotlightTarget(st.target); const spot = $('#wt-spot'), card = $('#wt-card');
   if (el) { const r = el.getBoundingClientRect(); Object.assign(spot.style, { display: 'block', left: r.left - 6 + 'px', top: r.top - 6 + 'px', width: r.width + 12 + 'px', height: r.height + 12 + 'px' }); }
   else spot.style.display = 'none';
-  const body = st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`;
+  const paras = String(st.text || '').split(/\n\s*\n/).map(s => `<p>${esc(s)}</p>`).join('');
+  const media = st.video ? `<figure class="wt-media" data-wt-video><video controls playsinline preload="metadata" aria-label="${esc(st.title || '')}"><source src="${esc(st.video)}" type="video/webm">${st.captions ? `<track kind="captions" srclang="en" src="${esc(st.captions)}" default>` : ''}</video></figure>` : '';
+  const more = st.moreText ? `<details class="wt-details"><summary>${esc(st.moreTitle || 'More')}</summary>${String(st.moreText).split(/\n\s*\n/).map(s => `<p>${esc(s)}</p>`).join('')}</details>` : '';
+  const body = (st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary>${paras}</details>` : paras) + more + media;
   card.innerHTML = `<div class="tc-top"><span class="kindtag">${esc(WALK.title || 'Welcome')}</span><span class="muted small">${walkI + 1} / ${n}</span></div><h2 id="wt-title">${esc(st.title || '')}</h2>${body}
     <div class="tc-nav"><button type="button" class="linkish" data-wt-skip>Skip</button><span></span><button type="button" class="btn sm" data-wt-prev ${walkI === 0 ? 'disabled' : ''}>← Back</button>${walkI < n - 1 ? '<button type="button" class="btn sm accent" data-wt-next>Next →</button>' : '<button type="button" class="btn sm accent" data-wt-skip>Done</button>'}</div>`;
   // place the card near the target, inside the viewport
@@ -2934,7 +3317,9 @@ $('#wt').addEventListener('click', e => {
   if (e.target.closest('[data-wt-skip]')) return closeWalk();
 });
 $('#wt').addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); closeWalk(); } else if (e.key === 'ArrowRight') { e.preventDefault(); $('#wt [data-wt-next]')?.click(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); $('#wt [data-wt-prev]')?.click(); } });
-$('#btn-help').addEventListener('click', () => { if (!EXTRA.loaded.guide) loadExtra('guide').then(() => openWalk(0)); else openWalk(0); });
+function replayWalk() { if (!EXTRA.loaded.guide) loadExtra('guide').then(() => openWalk(0)); else openWalk(0); }
+$('#btn-help')?.addEventListener('click', replayWalk);
+$('#btn-howto')?.addEventListener('click', replayWalk);
 window.addEventListener('resize', debounce(() => { if (!$('#wt').hidden) renderWalk(); }, 120));
 function maybeFirstVisit() {
   if (!$('#disc').hidden) { discAfter = maybeFirstVisit; return; } // the disclaimer comes first
@@ -2988,6 +3373,247 @@ document.addEventListener('click', e => {
   const b = e.target.closest('.badge[data-gloss], .layer[data-layer-chip], .seen'); if (!b || e.target.closest('button,a')) return;
   if (!matchMedia('(hover: none)').matches) return;
   toast(b.getAttribute('title') || '');
+});
+
+// ---- 76-corrections.js
+/* Report a correction: Email + GitHub issue menu. lib/corrections.mjs is the source of the URL builders. */
+
+const CORRECTIONS_EMAIL = 'jt6zk38k+noticermap@mail.grokbot.com';
+const CORRECTIONS_GITHUB_NEW = 'https://github.com/noticermap/noticermap.github.io/issues/new';
+const CORRECTIONS_LABEL = 'correction';
+const CORRECTIONS_GITHUB_NOTE = 'Needs a free GitHub account. Issues are public.';
+const CORRECTIONS_LINK_TEXT = 'Report a correction';
+const NAME_MAX = 80;
+const ID_MAX = 64;
+const HREF_MAX = 1800;
+const GENERAL_SUBJECT = 'Correction: <short description>';
+const ELLIPSIS = '\u2026';
+
+function fileSafeId(id) {
+  return String(id == null ? '' : id).replace(/[^A-Za-z0-9._-]/g, c => '_' + c.charCodeAt(0).toString(16));
+}
+
+function shortText(s, max) {
+  if (max == null) max = NAME_MAX;
+  const t = String(s == null ? '' : s).trim().replace(/\s+/g, ' ');
+  if (t.length <= max) return t;
+  if (max <= 1) return ELLIPSIS;
+  return t.slice(0, max - 1) + ELLIPSIS;
+}
+
+function entityPageUrl(siteUrl, id) {
+  if (!id) return siteUrl || '';
+  const base = siteUrl || '';
+  const slash = base && !base.endsWith('/') ? base + '/' : base;
+  return slash + 'e/' + fileSafeId(id) + '.html';
+}
+
+function claimPageUrl(siteUrl, rec) {
+  rec = rec || {};
+  const base = siteUrl || '';
+  if (rec.from) {
+    const u = entityPageUrl(base, rec.from);
+    return rec.id ? u + '#link=' + encodeURIComponent(rec.id) : u;
+  }
+  if (!rec.id) return base;
+  const slash = base && !base.endsWith('/') ? base + '/' : base;
+  return slash + '#link=' + encodeURIComponent(rec.id);
+}
+
+function correctionSubject(opts) {
+  opts = opts || {};
+  const name = opts.name, id = opts.id, kind = opts.kind;
+  if (!name && !id) return GENERAL_SUBJECT;
+  const label = shortText(name || kind || 'entry', NAME_MAX);
+  const ident = id ? shortText(id, ID_MAX) : '';
+  return ident ? 'Correction: ' + label + ' (' + ident + ')' : 'Correction: ' + label;
+}
+
+function correctionBody(opts) {
+  opts = opts || {};
+  const lines = [];
+  if (opts.kind === 'claim') {
+    lines.push('Claim id: ' + (opts.id || ''));
+    const a = opts.fromName ? (opts.fromName + (opts.from ? ' (' + opts.from + ')' : '')) : (opts.from || '');
+    const b = opts.toName ? (opts.toName + (opts.to ? ' (' + opts.to + ')' : '')) : (opts.to || '');
+    lines.push('From: ' + a);
+    lines.push('To: ' + b);
+    if (opts.name) lines.push('Claim: ' + opts.name);
+    lines.push('');
+  } else if (opts.id || opts.name) {
+    lines.push('Entry: ' + (opts.name || '') + ' (' + (opts.id || '') + ')');
+    lines.push('');
+  }
+  lines.push("What's wrong:");
+  lines.push('');
+  lines.push('Correct information:');
+  lines.push('');
+  lines.push('Source link:');
+  lines.push('');
+  lines.push('Page: ' + (opts.pageUrl || ''));
+  return lines.join('\n');
+}
+
+function mailtoHref(opts) {
+  const subject = correctionSubject(opts);
+  const body = correctionBody(opts);
+  return 'mailto:' + CORRECTIONS_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+function githubIssueHref(opts) {
+  const title = correctionSubject(opts);
+  let body = correctionBody(opts) + '\n\n' + CORRECTIONS_GITHUB_NOTE;
+  function build(t, b) {
+    const u = new URL(CORRECTIONS_GITHUB_NEW);
+    u.searchParams.set('title', t);
+    u.searchParams.set('body', b);
+    u.searchParams.set('labels', CORRECTIONS_LABEL);
+    return u.toString();
+  }
+  let href = build(title, body);
+  if (href.length <= HREF_MAX) return href;
+  const budget = Math.max(80, HREF_MAX - build(title, '').length - 16);
+  body = shortText(body, Math.max(40, Math.floor(budget / 3)));
+  href = build(title, body);
+  if (href.length <= HREF_MAX) return href;
+  const shortTitle = shortText(title, 60);
+  body = shortText(body, 80);
+  href = build(shortTitle, body);
+  if (href.length <= HREF_MAX) return href;
+  return CORRECTIONS_GITHUB_NEW + '?title=' + encodeURIComponent(shortTitle) + '&labels=' + encodeURIComponent(CORRECTIONS_LABEL);
+}
+
+function correctionMenuHtml(opts, escFn) {
+  opts = opts || {};
+  const escape = escFn || (typeof esc === 'function' ? esc : function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  });
+  const aria = opts.ariaLabel || (opts.name
+    ? CORRECTIONS_LINK_TEXT + ' to ' + (opts.kind === 'claim' ? 'claim ' : '') + opts.name + (opts.id ? ' (id ' + opts.id + ')' : '')
+    : CORRECTIONS_LINK_TEXT);
+  const mail = mailtoHref(opts);
+  const gh = githubIssueHref(opts);
+  const cls = opts.compact ? 'corr-menu corr-menu-row' : 'corr-menu';
+  return '<details class="' + cls + '"><summary class="corr-link" aria-haspopup="menu" aria-label="' + escape(aria) + '"><span class="ic" aria-hidden="true">\u270e</span>' + CORRECTIONS_LINK_TEXT + '</summary><div class="corr-choices" role="menu"><a class="corr-choice" role="menuitem" href="' + escape(mail) + '">Email</a><a class="corr-choice" role="menuitem" href="' + escape(gh) + '" target="_blank" rel="noopener">GitHub issue</a><p class="small muted">' + escape(CORRECTIONS_GITHUB_NOTE) + '</p></div></details>';
+}
+
+function currentSiteUrl() {
+  const fromMeta = typeof D !== 'undefined' && D.meta && D.meta.site_url;
+  if (fromMeta) return fromMeta.endsWith('/') ? fromMeta : fromMeta + '/';
+  try {
+    const p = location.pathname.replace(/index\.html$/i, '');
+    const base = location.origin + (p.endsWith('/') ? p : p.replace(/[^/]+$/, ''));
+    return base.endsWith('/') ? base : base + '/';
+  } catch (e) {
+    return '';
+  }
+}
+
+function currentPageUrl() {
+  try { return location.href; } catch (e) { return currentSiteUrl(); }
+}
+
+function selectedCorrectionOpts() {
+  const site = currentSiteUrl();
+  if (typeof S !== 'undefined' && S.link && typeof LNK !== 'undefined' && LNK.get(S.link)) {
+    const l = LNK.get(S.link);
+    const fromName = typeof name === 'function' ? name(l.from) : ((typeof ENT !== 'undefined' && ENT.get(l.from) && ENT.get(l.from).name) || l.from);
+    const toName = typeof name === 'function' ? name(l.to) : ((typeof ENT !== 'undefined' && ENT.get(l.to) && ENT.get(l.to).name) || l.to);
+    const verb = ((typeof LT === 'function' ? LT(l.type) : {}) || {}).label || l.type;
+    return {
+      kind: 'claim',
+      id: l.id,
+      name: fromName + ' ' + verb + ' ' + toName,
+      from: l.from,
+      to: l.to,
+      fromName,
+      toName,
+      pageUrl: claimPageUrl(site, { id: l.id, from: l.from })
+    };
+  }
+  if (typeof S !== 'undefined' && S.node && typeof ENT !== 'undefined' && ENT.get(S.node)) {
+    const e = ENT.get(S.node);
+    return { kind: 'entity', id: e.id, name: e.name, pageUrl: entityPageUrl(site, e.id) };
+  }
+  return { kind: 'general', pageUrl: currentPageUrl() };
+}
+
+function reportCorrectionHtml(kind, rec, extra) {
+  extra = extra || {};
+  const site = currentSiteUrl();
+  if (kind === 'claim' && rec) {
+    const fromName = extra.fromName || (typeof name === 'function' ? name(rec.from) : rec.from);
+    const toName = extra.toName || (typeof name === 'function' ? name(rec.to) : rec.to);
+    const verb = extra.verb || ((typeof LT === 'function' ? LT(rec.type) : {}) || {}).label || rec.type;
+    return correctionMenuHtml({
+      kind: 'claim',
+      id: rec.id,
+      name: fromName + ' ' + verb + ' ' + toName,
+      from: rec.from,
+      to: rec.to,
+      fromName,
+      toName,
+      pageUrl: claimPageUrl(site, { id: rec.id, from: rec.from }),
+      compact: !!extra.compact
+    });
+  }
+  if (rec) {
+    return correctionMenuHtml({
+      kind: 'entity',
+      id: rec.id,
+      name: rec.name,
+      pageUrl: entityPageUrl(site, rec.id),
+      compact: !!extra.compact
+    });
+  }
+  return correctionMenuHtml({ kind: 'general', pageUrl: currentPageUrl() });
+}
+
+function fillCorrNavMenu() {
+  const menu = document.getElementById('corr-nav-menu');
+  if (!menu) return;
+  const opts = selectedCorrectionOpts();
+  const escape = typeof esc === 'function' ? esc : function (s) { return String(s); };
+  const mail = mailtoHref(opts);
+  const gh = githubIssueHref(opts);
+  menu.innerHTML = '<a class="corr-choice" role="menuitem" href="' + escape(mail) + '">Email</a><a class="corr-choice" role="menuitem" href="' + escape(gh) + '" target="_blank" rel="noopener">GitHub issue</a><p class="small muted">' + escape(CORRECTIONS_GITHUB_NOTE) + '</p>';
+}
+
+function closeCorrNavMenu() {
+  const btn = document.getElementById('btn-corr-nav');
+  const menu = document.getElementById('corr-nav-menu');
+  if (menu) menu.hidden = true;
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleCorrNavMenu(force) {
+  const btn = document.getElementById('btn-corr-nav');
+  const menu = document.getElementById('corr-nav-menu');
+  if (!btn || !menu) return;
+  const open = force != null ? force : menu.hidden;
+  if (open) {
+    fillCorrNavMenu();
+    menu.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  } else {
+    closeCorrNavMenu();
+  }
+}
+
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest && e.target.closest('#btn-corr-nav');
+  if (btn) {
+    e.preventDefault();
+    toggleCorrNavMenu();
+    return;
+  }
+  if (e.target.closest && e.target.closest('#corr-nav-menu')) return;
+  closeCorrNavMenu();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeCorrNavMenu();
 });
 
 // ---- 77-disclaimer.js
@@ -3046,6 +3672,379 @@ function openCorrection(kind, id) {
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-correct]'); if (b) openCorrection(b.dataset.correct, b.dataset.correctId); });
 
+// ---- 84-notes-core.js
+/* floating notes: pure helpers (no DOM, no network). Unit-tested by test/notes-unit.mjs, which loads this file on its own.
+   Notes live only in this browser's localStorage under NOTES_CORE.KEY. Nothing here reads or sends anything else. */
+const NOTES_CORE = (() => {
+  const KEY = 'noticermap:notes:v1';
+  const FORMAT = 'noticermap-notes';
+  const VERSION = 1;
+  const LIMITS = { notes: 50, title: 120, body: 200000, importBytes: 5e6 };
+  const DEFAULT_TITLE = 'Note';
+  const WALK_STEP = {
+    target: 'notes', title: 'Floating notes',
+    text: "Press Notes at the top right to open a note. Drag a map point, search result or profile title into it, or use 'Copy to note' in a profile (that is how it works on phones). You can type your own text too. Drag the title bar to move a note, pull its corner to resize it, and keep as many notes as you like. Notes are saved only in this browser: nothing is sent anywhere, and clearing your browser data erases them. Use Export to back them up and Import to bring them back."
+  };
+  // control characters except tab and newline are dropped; line endings become \n
+  const clean = (s, max) => { let t = String(s == null ? '' : s).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ''); return max && t.length > max ? t.slice(0, max) : t; };
+  const oneLine = (s, max) => clean(s).replace(/\s+/g, ' ').trim().slice(0, max || 1000);
+  const num = (v, d, lo, hi) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n))) : d; };
+  let seq = 0;
+  const uid = () => 'n' + Date.now().toString(36) + (++seq).toString(36) + Math.random().toString(36).slice(2, 6);
+  const nowIso = () => new Date().toISOString();
+  function newNote(o = {}, existing = []) {
+    const n = existing.length;
+    return normalizeNote({ id: uid(), title: o.title || `${DEFAULT_TITLE} ${n + 1}`, body: o.body || '', x: 40 + (n % 6) * 28, y: 90 + (n % 6) * 28, w: 340, h: 300, min: false, created: nowIso(), updated: nowIso(), ...o });
+  }
+  function normalizeNote(n, i = 0) {
+    if (!n || typeof n !== 'object') return null;
+    const id = /^[A-Za-z0-9_-]{1,40}$/.test(String(n.id || '')) ? String(n.id) : uid();
+    const iso = v => (typeof v === 'string' && !isNaN(Date.parse(v)) ? new Date(v).toISOString() : nowIso());
+    return { id, title: oneLine(n.title, LIMITS.title) || `${DEFAULT_TITLE} ${i + 1}`, body: clean(n.body, LIMITS.body),
+      x: num(n.x, 40, 0, 10000), y: num(n.y, 90, 0, 10000), w: num(n.w, 340, 220, 2000), h: num(n.h, 300, 160, 2000), min: !!n.min,
+      created: iso(n.created), updated: iso(n.updated) };
+  }
+  function normalizeState(s) {
+    const list = Array.isArray(s) ? s : s && Array.isArray(s.notes) ? s.notes : [];
+    const seen = new Set(), notes = [];
+    for (const [i, x] of list.entries()) { const n = normalizeNote(x, i); if (!n) continue; if (seen.has(n.id)) n.id = uid(); seen.add(n.id); notes.push(n); if (notes.length >= LIMITS.notes) break; }
+    return { notes };
+  }
+  const serializeState = st => JSON.stringify({ format: FORMAT, version: VERSION, notes: normalizeState(st).notes });
+  function parseState(text) { if (!text) return { notes: [] }; try { return normalizeState(JSON.parse(text)); } catch (_) { return { notes: [] }; } }
+  // ---- export
+  const fileSafe = s => oneLine(s, 60).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'note';
+  const day = d => (d || new Date()).toISOString().slice(0, 10);
+  const bundle = notes => ({ format: FORMAT, version: VERSION, app: 'NoticerMap', exported_at: nowIso(), note: 'Personal notes exported from NoticerMap. Stored only in the browser they came from.', notes: notes.map(n => ({ id: n.id, title: n.title, body: n.body, created: n.created, updated: n.updated })) });
+  function exportNotes(notes, fmt = 'md', date) {
+    notes = normalizeState(notes).notes; const single = notes.length === 1;
+    const base = single ? `noticermap-note-${fileSafe(notes[0].title)}-${day(date)}` : `noticermap-notes-${day(date)}`;
+    if (fmt === 'json') return { name: base + '.json', mime: 'application/json', text: JSON.stringify(bundle(notes), null, 2) + '\n' };
+    if (fmt === 'txt') return { name: base + '.txt', mime: 'text/plain;charset=utf-8', text: notes.map(n => `${n.title}\n${'='.repeat(Math.min(60, Math.max(3, n.title.length)))}\n\n${n.body.trim()}\n`).join('\n\n') };
+    return { name: base + '.md', mime: 'text/markdown;charset=utf-8', text: notes.map(n => `# ${n.title}\n\n${n.body.trim()}\n`).join('\n---\n\n') };
+  }
+  // ---- import (.json from exportNotes, a bare array of notes, or one note object). Imported notes get fresh ids when they collide.
+  function importNotes(text, existing = []) {
+    if (String(text || '').length > LIMITS.importBytes) throw new Error('That file is too large to import (over 5 MB).');
+    let data; try { data = JSON.parse(text); } catch (_) { throw new Error('That file is not a NoticerMap notes export (.json).'); }
+    const list = Array.isArray(data) ? data : data && Array.isArray(data.notes) ? data.notes : data && typeof data === 'object' && ('body' in data || 'title' in data) ? [data] : null;
+    if (!list) throw new Error('That file is not a NoticerMap notes export (.json).');
+    const have = new Set(existing.map(n => n.id)); const room = Math.max(0, LIMITS.notes - existing.length);
+    const added = []; let skipped = 0;
+    for (const [i, x] of list.entries()) {
+      const n = normalizeNote(x, existing.length + i); if (!n) { skipped++; continue; }
+      if (added.length >= room) { skipped++; continue; }
+      if (have.has(n.id)) n.id = uid(); have.add(n.id); n.min = true; added.push(n);
+    }
+    return { notes: [...existing, ...added], added, skipped };
+  }
+  // ---- text for an inserted item. item = { kind, name, typeLabel, role, province, status, caveat, summary, amount, date, links:[{verb, other, status, date, amount}], sources:[{title, publisher, url, own, paywalled}], moreSources, url }
+  const safeHttp = u => (/^https?:\/\/[^\s]+$/i.test(String(u || '')) ? String(u) : '');
+  function formatItem(item, fmt = 'md') {
+    if (!item || !item.name) return '';
+    const md = fmt === 'md', L = [], li = md ? '- ' : '', sub = md ? '  - ' : '    ';
+    L.push(md ? `### ${oneLine(item.name, 300)}` : oneLine(item.name, 300));
+    const meta = [item.typeLabel && `Type: ${oneLine(item.typeLabel, 80)}`, item.province && `Province: ${oneLine(item.province, 80)}`].filter(Boolean).join(' · ');
+    if (meta) L.push(li + meta);
+    if (item.role) L.push(li + 'Role: ' + oneLine(item.role, 300));
+    L.push(li + 'Claim status: ' + (item.status ? oneLine(item.status, 120) : 'no status on the item itself; each link below has its own'));
+    if (item.caveat) L.push(li + oneLine(item.caveat, 300));
+    if (item.amount) L.push(li + 'Amount: ' + oneLine(item.amount, 120));
+    if (item.date) L.push(li + 'Date: ' + oneLine(item.date, 40));
+    if (item.summary) { const s = oneLine(item.summary, 600); L.push(li + 'Summary: ' + s + (oneLine(item.summary, 100000).length > 600 ? '…' : '')); }
+    const links = (item.links || []).filter(x => x && x.other);
+    if (links.length) { L.push(li + 'Key links:'); for (const x of links) L.push(sub + [`${oneLine(x.verb, 80)} → ${oneLine(x.other, 200)}`, x.status && oneLine(x.status, 80), x.date && oneLine(x.date, 20), x.amount && oneLine(x.amount, 60)].filter(Boolean).join(' · ')); }
+    const srcs = (item.sources || []).filter(Boolean);
+    if (srcs.length) { L.push(li + 'Sources:'); for (const s of srcs) { const u = safeHttp(s.url); const t = oneLine(s.title || s.publisher || 'source', 200); const pub = s.publisher && s.publisher !== s.title ? ` (${oneLine(s.publisher, 80)})` : ''; L.push(sub + t + pub + (s.own ? " [organization's own claim]" : '') + (s.paywalled ? ' [paywalled: headline/preview only]' : '') + (u ? (md ? ` <${u}>` : ` ${u}`) : '')); } if (item.moreSources > 0) L.push(sub + `+${item.moreSources} more source(s) on the site`); }
+    else L.push(li + 'Sources: none listed');
+    if (safeHttp(item.url)) L.push(li + 'On NoticerMap: ' + (md ? `<${item.url}>` : item.url));
+    return L.join('\n');
+  }
+  // insert text at pos with a blank line on each side; returns the new body and caret
+  function insertText(body, text, pos) {
+    body = String(body || ''); text = clean(text).trim(); if (!text) return { body, caret: pos == null ? body.length : pos };
+    const p = pos == null || pos < 0 || pos > body.length ? body.length : pos;
+    const before = body.slice(0, p), after = body.slice(p);
+    const pre = !before ? '' : before.endsWith('\n\n') ? '' : before.endsWith('\n') ? '\n' : '\n\n';
+    const post = !after ? '\n' : after.startsWith('\n\n') ? '' : after.startsWith('\n') ? '\n' : '\n\n';
+    const ins = pre + text + post; const out = (before + ins + after).slice(0, LIMITS.body);
+    return { body: out, caret: Math.min(out.length, before.length + ins.length) };
+  }
+  // first-visit window: one 'Floating notes' step, before a closing Help step if there is one, else last
+  function ensureWalkStep(w) {
+    if (!w || !Array.isArray(w.steps)) return w;
+    const steps = w.steps.filter(s => !(s && String(s.target || '').toLowerCase() === 'notes'));
+    const had = w.steps.find(s => s && String(s.target || '').toLowerCase() === 'notes');
+    const step = { ...(had || {}), ...WALK_STEP };
+    const h = steps.findIndex(s => s && (String(s.target || '').toLowerCase() === 'help' || /^Help$/i.test(s.title || '')));
+    const at = h >= 0 && h === steps.length - 1 ? h : steps.length;
+    return { ...w, steps: [...steps.slice(0, at), step, ...steps.slice(at)] };
+  }
+  return { KEY, FORMAT, VERSION, LIMITS, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe };
+})();
+
+// ---- 85-notes.js
+/* floating notes: visitor notepad windows. localStorage only: no accounts, no cookies, no network calls.
+   Drag sources: search results, any [data-node]/[data-link]/[data-net] button, the profile title (#panel-body .p-name),
+   and map nodes on the graph canvas (via cytoscape's own node hit-test: press on a node, drag onto a note, release).
+   Keyboard / phone alternative: 'Copy to note' in the details panel header. Pure helpers: 84-notes-core.js. */
+const NOTES = (() => {
+  const C = NOTES_CORE, MIME = 'application/x-noticermap-item';
+  let st = { notes: [] }, storage = 'ok', saveT = null, menu = null;
+  const wins = new Map(), caret = new Map();
+  const mobile = () => window.matchMedia('(max-width: 900px)').matches;
+  const el = (tag, attrs = {}, text) => { const x = document.createElement(tag); for (const k in attrs) x.setAttribute(k, attrs[k]); if (text != null) x.textContent = text; return x; };
+  const byId = id => st.notes.find(n => n.id === id);
+  const say = m => { try { announce(m); } catch (_) {} };
+  const tell = m => { try { toast(m); } catch (_) {} say(m); };
+
+  // ---- storage (quota and private-mode errors are reported, never thrown)
+  const isQuota = e => e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014);
+  function load() { try { st = C.parseState(window.localStorage.getItem(C.KEY)); } catch (_) { storage = 'off'; st = { notes: [] }; } }
+  function save() {
+    clearTimeout(saveT); saveT = null;
+    if (storage === 'off') return setState('Not saved: this browser blocks storage. Export to keep a copy.');
+    try { window.localStorage.setItem(C.KEY, C.serializeState(st)); if (storage !== 'ok') { storage = 'ok'; setState(''); } }
+    catch (e) { storage = isQuota(e) ? 'full' : 'off'; setState(storage === 'full' ? 'Not saved: browser storage is full. Export your notes, then delete some.' : 'Not saved: this browser blocks storage. Export to keep a copy.'); tell(storage === 'full' ? 'Notes storage is full. Export your notes to keep them.' : 'Notes cannot be saved in this browser.'); }
+  }
+  const saveSoon = () => { clearTimeout(saveT); saveT = setTimeout(save, 400); };
+  function setState(msg) { for (const w of wins.values()) { const s = w.querySelector('.note-state'); s.textContent = msg ? 'Not saved' : ''; s.title = msg; w.classList.toggle('unsaved', !!msg); } }
+
+  // ---- layer, dock, launcher, panel button, stylesheet
+  const css = el('link', { rel: 'stylesheet', href: 'notes.css' + (typeof chunkV === 'function' ? chunkV() : '') }); document.head.appendChild(css);
+  const layer = el('div', { id: 'notes-layer', class: 'notes-layer' }); document.body.appendChild(layer);
+  const dock = el('div', { id: 'notes-dock', class: 'notes-dock', role: 'toolbar', 'aria-label': 'Minimized notes' }); dock.hidden = true; document.body.appendChild(dock);
+  const ghost = el('div', { class: 'notes-ghost', 'aria-hidden': 'true' }); ghost.hidden = true; document.body.appendChild(ghost);
+  const file = el('input', { type: 'file', accept: '.json,application/json', hidden: '', 'aria-hidden': 'true', tabindex: '-1' }); document.body.appendChild(file);
+  const launcher = el('button', { type: 'button', class: 'btn sm notes-launch', id: 'btn-notes', 'data-guide': 'notes', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Floating notes: saved only in this browser' });
+  const ta = $('.top-actions'); if (ta) ta.appendChild(launcher); else $('.topbar')?.appendChild(launcher);
+  const toNote = el('button', { type: 'button', class: 'icon-btn wide', id: 'btn-to-note', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Copy this item into a note' }, 'Copy to note'); toNote.hidden = true;
+  { const pa = $('#panel .panel-actions'); const cp = $('#btn-copy'); if (pa) pa.insertBefore(toNote, cp && cp.parentNode === pa ? cp : pa.firstChild); }
+  const refreshLauncher = () => { launcher.textContent = st.notes.length ? `Notes (${st.notes.length})` : 'Notes'; launcher.setAttribute('aria-label', `Notes: ${st.notes.length} saved in this browser`); };
+
+  // ---- menus (role=menu, arrow keys, Esc returns focus)
+  function closeMenu(focusBack = true) { if (!menu) return; const { box, anchor } = menu; menu = null; box.remove(); anchor.setAttribute('aria-expanded', 'false'); if (focusBack) anchor.focus(); }
+  function openMenu(anchor, items, label) {
+    if (menu && menu.anchor === anchor) return closeMenu();
+    closeMenu(false);
+    const box = el('div', { class: 'notes-menu', role: 'menu', 'aria-label': label });
+    for (const it of items) {
+      if (it.sep) { box.appendChild(el('div', { class: 'notes-menu-sep', role: 'separator' })); continue; }
+      const b = el('button', { type: 'button', role: 'menuitem', tabindex: '-1' }, it.label); if (it.disabled) b.disabled = true;
+      b.addEventListener('click', () => { closeMenu(false); it.fn(); }); box.appendChild(b);
+    }
+    document.body.appendChild(box);
+    const r = anchor.getBoundingClientRect(); const w = Math.min(300, window.innerWidth - 16);
+    box.style.left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)) + 'px'; box.style.top = Math.min(r.bottom + 4, window.innerHeight - 60) + 'px'; box.style.width = w + 'px';
+    box.addEventListener('keydown', e => {
+      const bs = [...box.querySelectorAll('[role=menuitem]:not([disabled])')]; const i = bs.indexOf(document.activeElement);
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); bs[(i + 1) % bs.length]?.focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); bs[(i - 1 + bs.length) % bs.length]?.focus(); }
+      else if (e.key === 'Home') { e.preventDefault(); bs[0]?.focus(); } else if (e.key === 'End') { e.preventDefault(); bs[bs.length - 1]?.focus(); }
+      else if (e.key === 'Tab') closeMenu(false);
+    });
+    menu = { box, anchor }; anchor.setAttribute('aria-expanded', 'true');
+    box.querySelector('[role=menuitem]:not([disabled])')?.focus();
+  }
+  document.addEventListener('pointerdown', e => { if (menu && !menu.box.contains(e.target) && !menu.anchor.contains(e.target)) closeMenu(false); }, true);
+
+  // ---- windows
+  function geom(w, n) {
+    if (mobile()) { w.style.left = w.style.top = w.style.width = w.style.height = ''; return; }
+    const vw = window.innerWidth, vh = window.innerHeight;
+    n.w = Math.min(n.w, vw - 16); n.h = Math.min(n.h, vh - 16);
+    n.x = Math.max(0, Math.min(n.x, vw - 80)); n.y = Math.max(0, Math.min(n.y, vh - 40));
+    Object.assign(w.style, { left: n.x + 'px', top: n.y + 'px', width: n.w + 'px', height: n.h + 'px' });
+  }
+  let zTop = 1; const front = w => { w.style.zIndex = ++zTop; };
+  function build(n) {
+    const w = el('section', { class: 'note-win', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'note-t-' + n.id, 'data-note-id': n.id });
+    const bar = el('div', { class: 'note-bar', tabindex: '0', 'aria-label': 'Move note with arrow keys; Shift plus arrows resizes it' });
+    const h = el('h2', { class: 'note-title', id: 'note-t-' + n.id }, n.title);
+    const stt = el('span', { class: 'note-state', 'aria-live': 'polite' });
+    const btns = el('div', { class: 'note-btns' });
+    const B = (act, txt, lab, extra = {}) => { const b = el('button', { type: 'button', class: 'note-btn', 'data-act': act, 'aria-label': lab, title: lab, ...extra }, txt); btns.appendChild(b); return b; };
+    B('rename', '✎', 'Rename note'); B('export', '⤓', 'Export note', { 'aria-haspopup': 'menu', 'aria-expanded': 'false' }); B('min', '–', 'Minimize note'); B('close', '✕', 'Close and delete note');
+    bar.append(h, stt, btns);
+    const lab = el('label', { class: 'sr-only', for: 'note-b-' + n.id }, 'Note text');
+    const body = el('textarea', { class: 'note-body', id: 'note-b-' + n.id, spellcheck: 'true', placeholder: mobile() ? "Type here, or use 'Copy to note' in a profile." : 'Type here, or drag a map point, search result or profile title in.' });
+    body.value = n.body;
+    const foot = el('div', { class: 'note-foot muted' }, 'Saved in this browser only');
+    w.append(bar, lab, body, foot);
+    body.addEventListener('input', () => { n.body = C.clean(body.value, C.LIMITS.body); n.updated = new Date().toISOString(); caret.set(n.id, body.selectionEnd); saveSoon(); });
+    const keep = () => caret.set(n.id, body.selectionEnd); body.addEventListener('keyup', keep); body.addEventListener('click', keep); body.addEventListener('blur', keep);
+    btns.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act;
+      if (a === 'rename') rename(n.id); else if (a === 'min') minimize(n.id, true); else if (a === 'close') remove(n.id);
+      else if (a === 'export') openMenu(b, ['md', 'txt', 'json'].map(f => ({ label: `Export this note (.${f})`, fn: () => download([n], f) })), 'Export note'); });
+    // move: drag the title bar (pointer capture), or arrow keys on the focused bar
+    bar.addEventListener('pointerdown', e => {
+      if (e.button !== 0 || e.target.closest('button,input') || mobile()) return;
+      e.preventDefault(); bar.setPointerCapture(e.pointerId); front(w); const sx = e.clientX - n.x, sy = e.clientY - n.y;
+      const mv = ev => { n.x = ev.clientX - sx; n.y = ev.clientY - sy; geom(w, n); };
+      const up = () => { bar.removeEventListener('pointermove', mv); bar.removeEventListener('pointerup', up); bar.removeEventListener('pointercancel', up); save(); };
+      bar.addEventListener('pointermove', mv); bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
+    });
+    bar.addEventListener('keydown', e => {
+      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!d || e.target !== bar || mobile()) return;
+      e.preventDefault(); const s = 16; if (e.shiftKey) { n.w = Math.max(220, n.w + d[0] * s); n.h = Math.max(160, n.h + d[1] * s); } else { n.x += d[0] * s; n.y += d[1] * s; } geom(w, n); saveSoon();
+    });
+    // resize: CSS resize handle; the size is read back and stored
+    if (typeof ResizeObserver === 'function') new ResizeObserver(() => { if (mobile() || w.hidden || !w.isConnected) return; const W = Math.round(w.offsetWidth), H = Math.round(w.offsetHeight); if (W && H && (Math.abs(W - n.w) > 1 || Math.abs(H - n.h) > 1)) { n.w = W; n.h = H; saveSoon(); } }).observe(w);
+    w.addEventListener('pointerdown', () => front(w));
+    w.addEventListener('focusin', () => front(w));
+    w.addEventListener('keydown', e => { if (e.key !== 'Escape' || e.defaultPrevented) return; e.preventDefault(); e.stopPropagation(); if (menu) return closeMenu(); minimize(n.id, true); });
+    // drop target
+    w.addEventListener('dragover', e => { const t = [...(e.dataTransfer?.types || [])]; if (!t.includes(MIME) && !t.includes('text/plain')) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; w.classList.add('drop-on'); });
+    w.addEventListener('dragleave', e => { if (!w.contains(e.relatedTarget)) w.classList.remove('drop-on'); });
+    w.addEventListener('drop', e => { w.classList.remove('drop-on'); const raw = e.dataTransfer.getData(MIME); const txt = e.dataTransfer.getData('text/plain'); if (!raw && !txt) return; e.preventDefault();
+      if (raw) { let ref = null; try { ref = JSON.parse(raw); } catch (_) {} if (ref) return insertRef(n.id, ref); } insertText(n.id, txt, 'text'); });
+    wins.set(n.id, w); layer.appendChild(w); geom(w, n); front(w);
+    if (storage !== 'ok') setState('x');
+    return w;
+  }
+  function renderDock() {
+    dock.textContent = ''; const mins = st.notes.filter(n => n.min); dock.hidden = !mins.length;
+    for (const n of mins) { const b = el('button', { type: 'button', class: 'btn sm', 'data-restore': n.id, title: 'Restore note' }, '▢ ' + n.title); b.addEventListener('click', () => open(n.id)); dock.appendChild(b); }
+  }
+  function sync() { for (const n of st.notes) { let w = wins.get(n.id); if (!w) w = build(n); w.hidden = n.min; } for (const [id, w] of wins) if (!byId(id)) { w.remove(); wins.delete(id); } renderDock(); refreshLauncher(); document.body.classList.toggle('notes-on', st.notes.some(n => !n.min)); }
+  function create(o = {}) {
+    if (st.notes.length >= C.LIMITS.notes) { tell(`You have ${C.LIMITS.notes} notes, the most this map keeps. Export and delete some first.`); return null; }
+    const k = st.notes.length % 6, sb = $('#sidebar')?.getBoundingClientRect(), top = $('.topbar')?.getBoundingClientRect();
+    // start over the map, clear of the search panel and the header
+    const n = C.newNote({ x: Math.round((sb && sb.right > 0 ? sb.right : 0) + 24 + k * 28), y: Math.round((top ? top.bottom : 52) + 56 + k * 28), ...o }, st.notes); st.notes.push(n); save(); sync(); const w = wins.get(n.id); w.querySelector('.note-body').focus(); say(`Opened ${n.title}`); return n;
+  }
+  function open(id) { const n = byId(id); if (!n) return; n.min = false; save(); sync(); const w = wins.get(id); front(w); geom(w, n); w.querySelector('.note-body').focus(); say(`Opened ${n.title}`); }
+  function minimize(id, focusBack) { const n = byId(id); if (!n) return; n.min = true; save(); sync(); say(`${n.title} minimized`); if (focusBack) (dock.querySelector(`[data-restore="${CSS.escape(id)}"]`) || launcher).focus(); }
+  function remove(id) {
+    const n = byId(id); if (!n) return;
+    if (n.body.trim() && !window.confirm(`Close and delete “${n.title}”? Its text is removed from this browser. Export it first if you want a copy.`)) return;
+    st.notes = st.notes.filter(x => x.id !== id); caret.delete(id); save(); sync(); say(`${n.title} deleted`); launcher.focus();
+  }
+  function rename(id) {
+    const n = byId(id), w = wins.get(id); if (!n || !w) return; const h = w.querySelector('.note-title');
+    const inp = el('input', { type: 'text', class: 'note-rename', 'aria-label': 'Note name', maxlength: String(C.LIMITS.title) }); inp.value = n.title; h.hidden = true; h.after(inp); inp.focus(); inp.select();
+    let done = false; const fin = ok => { if (done) return; done = true; if (ok) { n.title = C.oneLine(inp.value, C.LIMITS.title) || n.title; h.textContent = n.title; save(); renderDock(); } inp.remove(); h.hidden = false; w.querySelector('[data-act=rename]').focus(); };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); fin(true); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); fin(false); } });
+    inp.addEventListener('blur', () => fin(true));
+  }
+  function insertText(id, text, what) {
+    const n = byId(id); if (!n) return false; const w = wins.get(id);
+    const r = C.insertText(n.body, text, caret.get(id)); n.body = r.body; n.updated = new Date().toISOString(); caret.set(id, r.caret);
+    if (n.min) n.min = false; save(); sync();
+    const ta = wins.get(id).querySelector('.note-body'); ta.value = n.body; try { ta.setSelectionRange(r.caret, r.caret); } catch (_) {}
+    front(w); w.classList.add('flash'); setTimeout(() => w.classList.remove('flash'), 600);
+    say(`Added ${what || 'text'} to ${n.title}`); return true;
+  }
+
+  // ---- item text from what the site already shows (no new fields; never addresses or contact details)
+  const firstLayer = x => { const ls = itemLayers(x); return ls.find(k => k !== 'records') || ls[0]; };
+  const stat = x => x && x.status ? statusLabel(x.status, firstLayer(x)) : '';
+  const amt = l => l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' (estimate, not counted in totals)' : '') : '';
+  const srcItems = (srcs, max = 6) => (srcs || []).slice(0, max).map(s => ({ title: s.title || s.registry || s.publisher || 'source', publisher: s.publisher || '', url: safeUrl(s.url) || '', own: s.kind === 'official_website', paywalled: typeof isPaywalled === 'function' && isPaywalled(s) }));
+  const here = () => location.origin + location.pathname;
+  const STRENGTH = { verified: 4, partial: 3, reported: 2, contradicted: 1 };
+  async function itemFor(ref) {
+    const hyd = xs => (typeof hydrateAll === 'function' ? hydrateAll(xs.filter(Boolean)).catch(() => {}) : Promise.resolve());
+    if (ref.k === 'e' && ENT.has(ref.id)) {
+      const e = ENT.get(ref.id); const ls = (byNode.get(e.id) || []).slice().sort((a, b) => (b.amount_cad || 0) - (a.amount_cad || 0) || (STRENGTH[b.status] || 0) - (STRENGTH[a.status] || 0) || String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 5);
+      await hyd([e, ...ls]);
+      const thy = typeof isTheoryEnt === 'function' && isTheoryEnt(e);
+      const summary = e.summary || (e.summaries && Object.values(e.summaries)[0]) || '';
+      return { kind: 'entity', name: e.name, typeLabel: (TYPE[e.type] || {}).label || e.type, province: e.province ? provName(e.province) : '', role: e.role || '', status: stat(e), caveat: thy ? (e.warning || 'Unverified theory - reported claims only, educational, no wrongdoing alleged.') : '', summary,
+        links: ls.map(l => { const out = l.from === e.id; return { verb: out ? LT(l.type).label : LT(l.type).inverse, other: name(out ? l.to : l.from), status: stat(l), date: l.date || '', amount: amt(l) }; }),
+        sources: srcItems(e.sources), moreSources: Math.max(0, (e.sources || []).length - 6), url: here() + '#node=' + encodeURIComponent(e.id) };
+    }
+    if (ref.k === 'l' && LNK.has(ref.id)) {
+      const l = LNK.get(ref.id); await hyd([l]);
+      return { kind: 'claim', name: `${name(l.from)} → ${LT(l.type).label} → ${name(l.to)}`, typeLabel: 'Claim (' + ((LINK_CATS[catOf(l)] || {}).label || catOf(l)) + ')', status: stat(l), amount: amt(l), date: l.date || '', summary: l.description || '',
+        sources: srcItems(l.sources), moreSources: Math.max(0, (l.sources || []).length - 6), url: here() + '#link=' + encodeURIComponent(l.id) };
+    }
+    if (ref.k === 'n' && NET.has(ref.id)) {
+      const n = NET.get(ref.id);
+      return { kind: 'network', name: n.name, typeLabel: netLabel(n) + ` · ${n.members.length} members`, status: n.auto ? 'computed from link structure, not reporting' : stat(n), summary: n.description || '',
+        links: n.members.slice(0, 5).map(id => ({ verb: 'member', other: name(id) })), sources: srcItems(n.sources), moreSources: Math.max(0, (n.sources || []).length - 6), url: here() + '#net=' + encodeURIComponent(n.id) };
+    }
+    return null;
+  }
+  async function insertRef(id, ref) { const it = await itemFor(ref); if (!it) { tell('That item could not be added.'); return false; } return insertText(id, C.formatItem(it, 'md'), it.name); }
+  const quickName = ref => ref.k === 'e' ? name(ref.id) : ref.k === 'l' && LNK.has(ref.id) ? `${name(LNK.get(ref.id).from)} → ${LT(LNK.get(ref.id).type).label} → ${name(LNK.get(ref.id).to)}` : ref.k === 'n' && NET.has(ref.id) ? NET.get(ref.id).name : '';
+
+  // ---- HTML drag sources
+  const SRC_SEL = '#results .result, [data-node], [data-link], [data-net], #panel-body .p-name';
+  function refOf(x) {
+    if (!x || x.closest('.note-win,.notes-menu,#cy')) return null;
+    if (x.matches('#results .result')) { const r = typeof lastResults !== 'undefined' && lastResults[+x.dataset.i]; return r && ['e', 'l', 'n'].includes(r.kind) ? { k: r.kind, id: r.ref } : null; }
+    if (x.matches('#panel-body .p-name')) return S.node ? { k: 'e', id: S.node } : S.link ? { k: 'l', id: S.link } : S.net ? { k: 'n', id: S.net } : null;
+    if (x.dataset.node && ENT.has(x.dataset.node)) return { k: 'e', id: x.dataset.node };
+    if (x.dataset.link && LNK.has(x.dataset.link)) return { k: 'l', id: x.dataset.link };
+    if (x.dataset.net && NET.has(x.dataset.net)) return { k: 'n', id: x.dataset.net };
+    return null;
+  }
+  const anyOpen = () => st.notes.some(n => !n.min);
+  document.addEventListener('mouseover', e => { if (!anyOpen()) return; const x = e.target.closest?.(SRC_SEL); if (x && !x.hasAttribute('draggable') && !(x instanceof SVGElement) && refOf(x)) { x.setAttribute('draggable', 'true'); x.dataset.notesDrag = ''; } }, true);
+  document.addEventListener('dragstart', e => {
+    const x = e.target.closest?.('[data-notes-drag]'); if (!x || !anyOpen()) return; const ref = refOf(x); if (!ref) return;
+    e.dataTransfer.setData(MIME, JSON.stringify(ref)); e.dataTransfer.setData('text/plain', quickName(ref)); e.dataTransfer.effectAllowed = 'copy'; document.body.classList.add('notes-dragging');
+  });
+  document.addEventListener('dragend', () => { document.body.classList.remove('notes-dragging'); for (const w of wins.values()) w.classList.remove('drop-on'); });
+
+  // ---- graph canvas drag: cytoscape draws nodes on a canvas, so HTML drag-and-drop cannot start there.
+  // Uses cytoscape's own hit-test ('tapstart' on a node). If the pointer is released over a note window, the node is
+  // added and the map's pan (and the node's position, if nodes are grabbable) are put back. Mouse/pen only; phones use 'Copy to note'.
+  let G = null;
+  const noteAt = (x, y) => { const t = document.elementFromPoint(x, y); const w = t && t.closest && t.closest('.note-win'); return w && !w.hidden ? w.dataset.noteId : null; };
+  function bindCanvas(tries = 0) {
+    if (typeof cy === 'undefined' || !cy) { if (tries < 100) setTimeout(() => bindCanvas(tries + 1), 100); return; }
+    if (cy.__notesBound) return; cy.__notesBound = true;
+    cy.on('tapstart', 'node', ev => { const oe = ev.originalEvent; if (!anyOpen() || !oe || /^touch/.test(oe.type) || oe.pointerType === 'touch' || oe.button > 0) return; const id = ev.target.id(); if (!ENT.has(id)) return; G = { id, x: oe.clientX, y: oe.clientY, pan: { ...cy.pan() }, node: ev.target, pos: { ...ev.target.position() }, on: false }; });
+    const move = e => { if (!G) return; if (!G.on && Math.hypot(e.clientX - G.x, e.clientY - G.y) > 8) { G.on = true; ghost.textContent = '＋ ' + name(G.id); ghost.hidden = false; document.body.classList.add('notes-dragging'); }
+      if (G.on) { ghost.style.left = e.clientX + 12 + 'px'; ghost.style.top = e.clientY + 12 + 'px'; const t = noteAt(e.clientX, e.clientY); for (const [id, w] of wins) w.classList.toggle('drop-on', id === t); } };
+    const up = e => { if (!G) return; const g = G; G = null; ghost.hidden = true; document.body.classList.remove('notes-dragging'); for (const w of wins.values()) w.classList.remove('drop-on');
+      const t = g.on && noteAt(e.clientX, e.clientY); if (!t) return; try { cy.pan(g.pan); if (g.node && g.node.grabbable && g.node.grabbable()) g.node.position(g.pos); } catch (_) {} insertRef(t, { k: 'e', id: g.id }); };
+    window.addEventListener('mousemove', move, true); window.addEventListener('mouseup', up, true);
+  }
+  setTimeout(bindCanvas, 0);
+
+  // ---- 'Copy to note' (panel header): keyboard and phone alternative to dragging
+  const selRef = () => S.node && ENT.has(S.node) ? { k: 'e', id: S.node } : S.link && LNK.has(S.link) ? { k: 'l', id: S.link } : S.net && NET.has(S.net) ? { k: 'n', id: S.net } : null;
+  const syncToNote = () => { toNote.hidden = !selRef(); };
+  if ($('#panel-body')) new MutationObserver(syncToNote).observe($('#panel-body'), { childList: true });
+  toNote.addEventListener('click', () => { const ref = selRef(); if (!ref) return;
+    openMenu(toNote, [{ label: '＋ New note', fn: () => { const n = create({ title: quickName(ref).slice(0, 60) || undefined }); if (n) insertRef(n.id, ref); } }, ...(st.notes.length ? [{ sep: true }] : []), ...st.notes.map(n => ({ label: 'Add to: ' + n.title, fn: () => insertRef(n.id, ref) }))], 'Copy to note'); });
+
+  // ---- launcher menu, export / import
+  function download(notes, fmt) {
+    if (!notes.length) return tell('No notes to export.');
+    const f = C.exportNotes(notes, fmt); const url = URL.createObjectURL(new Blob([f.text], { type: f.mime }));
+    const a = el('a', { href: url, download: f.name }); a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000); say(`Exported ${f.name}`);
+  }
+  file.addEventListener('change', async () => {
+    const f = file.files && file.files[0]; file.value = ''; if (!f) return;
+    try { const r = C.importNotes(await f.text(), st.notes); st.notes = r.notes; save(); sync(); tell(`Imported ${r.added.length} note${r.added.length === 1 ? '' : 's'}${r.skipped ? ` (${r.skipped} skipped: limit ${C.LIMITS.notes})` : ''}. Find them in the Notes menu.`); }
+    catch (e) { tell(e.message || 'That file could not be imported.'); }
+    launcher.focus();
+  });
+  launcher.addEventListener('click', () => openMenu(launcher, [
+    { label: '＋ New note', fn: () => create() },
+    ...st.notes.map(n => ({ label: (n.min ? 'Open: ' : 'Show: ') + n.title, fn: () => open(n.id) })),
+    { sep: true },
+    ...['md', 'txt', 'json'].map(f => ({ label: `Export all notes (.${f})`, disabled: !st.notes.length, fn: () => download(st.notes, f) })),
+    { label: 'Import notes (.json)…', fn: () => file.click() },
+    { sep: true },
+    { label: storage === 'ok' ? 'Saved only in this browser. Nothing is sent anywhere.' : 'Not saved: export to keep a copy.', disabled: true, fn: () => {} }
+  ], 'Notes'));
+  window.addEventListener('resize', debounce(() => { for (const n of st.notes) { const w = wins.get(n.id); if (w && !n.min) geom(w, n); } }, 150));
+  window.addEventListener('pagehide', () => { if (saveT) save(); });
+
+  // ---- first-visit window: adds the 'Floating notes' step to whichever walkthrough is used (guide or built-in)
+  if (typeof normalizeWalkthrough === 'function') { const base = normalizeWalkthrough; normalizeWalkthrough = w => C.ensureWalkStep(base(w)); }
+
+  load(); sync();
+  return { state: () => JSON.parse(C.serializeState(st)), create, open, insertRef, format: ref => itemFor(ref).then(it => it && C.formatItem(it, 'md')), storage: () => storage };
+})();
+window.__wiretapNotes = NOTES; // test / debugging hook
+
 // ---- 90-main.js
 const TIMING = {};
 let AUTO_EXTRAS = [];
@@ -3053,7 +4052,21 @@ let AUTO_EXTRAS = [];
 function setView(v, push = true) {
   if (!VIEWS.includes(v)) v = 'map';
   S.view = v;
-  for (const x of VIEWS) { const on = x === v; $('#view-' + x).hidden = !on; const t = $('#tab-' + x); t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; t.classList.toggle('on', on); }
+  if (v === 'tours') {
+    setTimeout(() => {
+      const el = $('#f-tours');
+      if (el) el.scrollIntoView({ block: 'nearest' });
+      if (window.innerWidth <= 900 && typeof openSidebarMobile === 'function') openSidebarMobile();
+      else if (window.innerWidth <= 900) document.body.classList.add('sb-open');
+    }, 0);
+  }
+  for (const x of VIEWS) {
+    const on = x === v;
+    const panel = $('#view-' + x);
+    if (panel) panel.hidden = !on;
+    const tab = $('#tab-' + x);
+    if (tab) { tab.setAttribute('aria-selected', on); tab.tabIndex = on ? 0 : -1; tab.classList.toggle('on', on); }
+  }
   if (v === 'map' && cy) { cy.resize(); if (curLayout !== S.layout) { prevVisibleKey = ''; } }
   update(push);
 }
@@ -3079,7 +4092,7 @@ function update(push) {
     if (S.view === 'timeline') renderTimeline();
     if (S.view === 'networks') renderNetworks();
     if (S.view === 'leads') renderLeads();
-    if (S.view === 'tours') renderTours();
+    renderTours();
     if (S.view === 'overlaps') renderOverlapsView(); else if (S.pa && S.pb) { PATHS = S.mvia ? moneyPaths(S.pa, S.pb, F.links, 5) : shortestPaths(S.pa, S.pb, F.links); highlightSelection(); }
     if (S.view === 'index') renderIndex();
     if (S.view === 'sources') renderSources();
