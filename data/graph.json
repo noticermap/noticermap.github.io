@@ -1,6 +1,6 @@
 {
  "meta": {
-  "built_at": "2026-11-24T23:11:59.676Z",
+  "built_at": "2026-11-24T23:22:08.382Z",
   "last_updated": "2026-11-24T14:37:04.837Z",
   "latest_source": "2026-11-24",
   "is_sample": false,
@@ -185,7 +185,7 @@
      "kept": 3160
     }
    },
-   "ms": 237,
+   "ms": 270,
    "corroborated": 899
   },
   "intermediaries": {
@@ -210,7 +210,7 @@
    "breach"
   ],
   "layout": {
-   "ms": 22,
+   "ms": 23,
    "cached": 11060,
    "iters": 0
   },
@@ -220,7 +220,7 @@
    "leads": 418469,
    "search": 24678344,
    "sources": 10500436,
-   "guide": 1029981,
+   "guide": 1029895,
    "explain": 25279125
   },
   "chunks": {
