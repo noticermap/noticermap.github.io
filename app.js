@@ -1,10 +1,10 @@
-/* NoticerMap — built 2026-11-24T10:07:37.797Z */
+/* NoticerMap — built 2026-11-24T13:16:53.142Z */
 (function () {
 'use strict';
 // ---- 00-core.js
 /* core: data, vocabulary, helpers, state, URL hash, filtering, dates */
 const D = window.__WIRETAP_DATA__;
-if (!D) { document.getElementById('loading').textContent = 'Data failed to load (data/data.js).'; throw new Error('no data'); }
+if (!D) { document.getElementById('loading').textContent = 'Data failed to load (data/core.js).'; throw new Error('no data'); }
 const V = D.meta.vocab;
 const TYPE = V.TYPES, TYPE_ORDER = V.TYPE_ORDER, STATUS = V.STATUS, LINK_TYPES = V.LINK_TYPES, LINK_CATS = V.LINK_CATS, AMOUNT_KINDS = V.AMOUNT_KINDS, NON_FLOW = new Set(V.NON_FLOW_KINDS), NETKIND = V.NETWORK_KINDS || {};
 const LAYERS = V.LAYERS || {};
@@ -275,11 +275,139 @@ function filtered() {
 }
 let F = null;
 
+// ---- 02-chunks.js
+/* progressive loading: the core (data/core.js) has every entity and link with the fields the map, filters, views and
+   path finder need. Heavy fields (sources, summaries, lobbying detail, descriptions, guide intros and next steps, link
+   explanations, per-entity overlaps) live in detail buckets data/d/<n>.js grouped by map region and are fetched when an
+   item is opened. Search uses a prefix-sharded index (data/s/<n>.js). Script tags keep it working over file:// too. */
+const CH = D.meta.chunks || null;
+// LITE: phones, tablets and low-memory devices use a tight draw budget and defer overlaps/sources (?lite=1 / ?lite=0 force it)
+const LITE = BIG && !/[?&]lite=0/.test(location.search) && (/[?&]lite=1/.test(location.search) || (() => { try { return matchMedia('(max-width: 900px)').matches || matchMedia('(pointer: coarse)').matches || (navigator.deviceMemory != null && navigator.deviceMemory <= 4); } catch (_) { return false; } })());
+// Layered drawing for every large graph (phones and desktop). ?lite=0 keeps the old full-graph path for debugging.
+const LOD_ON = BIG && !/[?&]lite=0/.test(location.search);
+const CHUNK_V = (() => { const s = document.querySelector('script[src*="data/core.js"]'); const m = s && s.getAttribute('src').match(/\?v=([^&]+)/); return m ? m[1] : ''; })();
+const chunkV = () => (CHUNK_V ? '?v=' + CHUNK_V : '');
+let OV_FULL = false; // data/overlaps.js loaded
+const DET = { have: new Map(), pending: new Map(), res: new Map(), failed: new Set(), lru: [], pin: {} };
+const DET_BUDGET = LITE ? 60 : 1e9; // detail buckets kept in memory on LITE devices (least recently used are dropped)
+const ENT_DF = (CH && CH.entity_fields) || [], LNK_DF = (CH && CH.link_fields) || [];
+let OV_PART = new Map(); // overlaps known from opened profiles before data/overlaps.js is loaded
+const ovAt = i => OVS[i] || OV_PART.get(+i);
+const isHyd = x => !x || x._b == null || x._h === true;
+function ovIngest(id, rows) {
+  if (OV_FULL) return;
+  const list = rows.map(([i, type, a, b, via, links, total, strength, kinds, sources, hops]) => OV_PART.get(i) || OV_PART.set(i, { i, type, a, b, via, links, total, strength, kinds, sources, hops }).get(i));
+  OV_BY.set(id, list);
+}
+function ingestDetail(b, p) {
+  if (DET.have.has(b)) return;
+  for (const id in p.e) { const e = ENT.get(id); if (!e) continue; const d = p.e[id];
+    for (const k in d) { if (k === '_intro') (GUIDE.entity_intros = GUIDE.entity_intros || {})[id] = d[k]; else if (k === '_next') (GUIDE.next_steps = GUIDE.next_steps || {})[id] = d[k]; else if (k === '_ov') ovIngest(id, d[k]); else e[k] = d[k]; }
+    e._h = true; }
+  for (const id in p.l) { const l = LNK.get(id); if (!l) continue; const d = p.l[id];
+    for (const k in d) { if (k === '_x') (EXPLAIN = EXPLAIN || {})[id] = d[k]; else l[k] = d[k]; }
+    l._h = true; }
+  DET.have.set(b, { e: Object.keys(p.e), l: Object.keys(p.l) }); touchBucket(b); evictBuckets();
+}
+function touchBucket(b) { const i = DET.lru.indexOf(b); if (i >= 0) DET.lru.splice(i, 1); DET.lru.push(b); }
+function evictBuckets() {
+  if (DET.hold || DET.have.size <= DET_BUDGET) return;
+  const pinned = new Set(Object.values(DET.pin).flatMap(s => [...s]));
+  for (let i = 0; i < DET.lru.length && DET.have.size > DET_BUDGET; ) {
+    const b = DET.lru[i]; if (pinned.has(b)) { i++; continue; }
+    DET.lru.splice(i, 1); const ids = DET.have.get(b); DET.have.delete(b);
+    for (const id of ids.e) { const e = ENT.get(id); if (!e) continue; for (const k of ENT_DF) delete e[k]; e._h = false; if (GUIDE.entity_intros) delete GUIDE.entity_intros[id]; if (GUIDE.next_steps) delete GUIDE.next_steps[id]; if (!OV_FULL) OV_BY.delete(id); }
+    for (const id of ids.l) { const l = LNK.get(id); if (!l) continue; const lb = l.lobbying; for (const k of LNK_DF) delete l[k]; if (lb) l.lobbying = lb.subjects ? { subjects: lb.subjects } : {}; l._h = false; if (EXPLAIN) delete EXPLAIN[id]; }
+  }
+}
+window.__wiretapDetail = (b, p) => { try { ingestDetail(b, p); } catch (err) { console.error('detail ' + b, err); } };
+function loadBucket(b) {
+  if (DET.have.has(b)) { touchBucket(b); return Promise.resolve(); }
+  if (DET.pending.has(b)) return DET.pending.get(b);
+  const pr = new Promise(res => {
+    const sc = document.createElement('script'); sc.src = `data/d/${b}.js${chunkV()}`; sc.async = true;
+    sc.onload = () => { sc.remove(); res(); };
+    sc.onerror = () => { sc.remove(); DET.failed.add(b); res(); };
+    document.head.appendChild(sc);
+  });
+  DET.pending.set(b, pr); pr.then(() => DET.pending.delete(b)); return pr;
+}
+// ready(items, slot, rerender): true when every item is hydrated; otherwise fetches the missing buckets and calls rerender once.
+// slot pins the buckets of what is on screen (e.g. the open profile) so they are not dropped.
+const WAIT = {};
+function ready(xs, slot, rerender) {
+  xs = xs.filter(Boolean); if (slot) DET.pin[slot] = new Set(xs.map(x => x._b).filter(b => b != null));
+  const miss = new Set(); for (const x of xs) if (!isHyd(x) && !DET.failed.has(x._b)) miss.add(x._b);
+  if (!miss.size) return xs.every(isHyd) ? true : 'error';
+  const tok = WAIT[slot || '_'] = {};
+  Promise.all([...miss].map(loadBucket)).then(() => { if (WAIT[slot || '_'] === tok) { delete WAIT[slot || '_']; rerender(); } });
+  return false;
+}
+const detailErr = () => `<p class="empty-inline" role="status">The details for this item could not be loaded. Check the connection and <button type="button" class="linkish" data-detail-retry>try again</button>.</p>`;
+document.addEventListener('click', e => { if (e.target.closest('[data-detail-retry]')) { DET.failed.clear(); update(false); } });
+// export / tools: hydrate a list of items (any size), a few buckets at a time
+async function hydrateAll(xs) { DET.hold = true; clearTimeout(DET.holdT); const bs = [...new Set(xs.filter(x => !isHyd(x)).map(x => x._b))]; for (let i = 0; i < bs.length; i += 8) await Promise.all(bs.slice(i, i + 8).map(loadBucket)); DET.holdT = setTimeout(() => { DET.hold = false; evictBuckets(); }, 3000); }
+
+// ---- search: inverted index sharded by term prefix (same tokenizer and BM25+ scoring as the MiniSearch index it replaces)
+const SI = D.meta.search_index || null;
+const SH = { data: new Map(), pending: new Map(), src: new Map() };
+const SPACE_OR_PUNCT = /[\n\r\p{Z}\p{P}]+/u;
+const tokenize = s => String(s || '').split(SPACE_OR_PUNCT).map(t => t.toLowerCase()).filter(Boolean);
+window.__wiretapShard = (k, d) => {
+  if (typeof k === 'string' && k.startsWith('src-')) { const off = +k.slice(4) * SI.src_piece; d.forEach((r, j) => SH.src.set(off + j, { sid: r[0], title: r[1], url: r[2], key: r[3], kind: r[4], date: r[5], nc: r[6], layers: r[7] })); return; }
+  SH.data.set(k, d);
+};
+function shardsFor(t) {
+  const out = []; if (!SI) return out; const pre = [...t].length >= 2;
+  SI.shards.forEach(([key, exact], i) => { if (exact ? (key === t || (pre && key.startsWith(t))) : (t.startsWith(key) || (pre && key.startsWith(t)))) out.push(i); });
+  return out;
+}
+const loadScriptOnce = (map, k, src) => map.get(k) || map.set(k, new Promise(res => { const sc = document.createElement('script'); sc.src = src + chunkV(); sc.async = true; sc.onload = sc.onerror = () => { sc.remove(); res(); }; document.head.appendChild(sc); })).get(k);
+function searchMissing(q) { const need = new Set(); for (const t of new Set(tokenize(q))) for (const i of shardsFor(t)) if (!SH.data.has(i)) need.add(i); return need; }
+function searchLoad(q) { return Promise.all([...searchMissing(q)].map(i => loadScriptOnce(SH.pending, i, `data/s/${i}.js`))); }
+function srcStubLoad(sis) { return Promise.all([...new Set(sis.map(si => Math.floor(si / SI.src_piece)))].map(k => loadScriptOnce(SH.pending, 'src-' + k, `data/s/src-${k}.js`))); }
+function editWithin(a, b, max) { // bounded Levenshtein
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) { const cur = [i]; let rowMin = i; for (let j = 1; j <= b.length; j++) { cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); if (cur[j] < rowMin) rowMin = cur[j]; } if (rowMin > max) return max + 1; prev = cur; }
+  return prev[b.length];
+}
+function matchTerm(t) {
+  const res = new Map(), N = SI.n, pre = [...t].length >= 2, maxD = Math.round(t.length * 0.2);
+  for (const i of shardsFor(t)) { const sh = SH.data.get(i); if (!sh) continue;
+    for (const term in sh) {
+      let w = 0;
+      if (term === t) w = 1;
+      else if (pre && term.startsWith(t)) w = 0.375 * t.length / (t.length + 0.3 * (term.length - t.length));
+      else if (maxD > 0) { const d = editWithin(t, term, maxD); if (d <= maxD) w = 0.45 * t.length / (t.length + d); }
+      if (!w) continue;
+      const p = sh[term], df = p.length / 2, idf = Math.log(1 + (N - df + 0.5) / (df + 0.5));
+      for (let j = 0; j < p.length; j += 2) { const di = p[j]; const r = res.get(di) || res.set(di, { s: 0, terms: [] }).get(di); r.s += idf * p[j + 1] / 100 * w; if (!r.terms.includes(term)) r.terms.push(term); }
+    } }
+  return res;
+}
+function docRef(di) {
+  for (const [kind, start, n] of SI.runs) { if (di < start || di >= start + n) continue; const j = di - start;
+    return kind === 'e' ? { kind, ref: D.entities[j].id } : kind === 'l' ? { kind, ref: D.links[j].id } : kind === 's' ? { kind, ref: 's' + j, si: j } : { kind, ref: SI.refs[kind][j] }; }
+  return { kind: 'x', ref: '' };
+}
+const KIND_BOOST = { e: 2.5, n: 2, s: 0.6, l: 1 };
+function shardSearch(q, limit) {
+  const terms = [...new Set(tokenize(q))]; if (!terms.length) return [];
+  const per = terms.map(matchTerm); const all = new Map();
+  per.forEach(m => { for (const [di, r] of m) { const a = all.get(di) || all.set(di, { s: 0, terms: [], n: 0 }).get(di); a.s += r.s; a.n++; for (const x of r.terms) if (!a.terms.includes(x)) a.terms.push(x); } });
+  const rows = [...all].map(([di, a]) => { const d = docRef(di); return { id: d.kind + ':' + d.ref, kind: d.kind, ref: d.ref, si: d.si, terms: a.terms, score: a.s * (KIND_BOOST[d.kind] || 1), all: a.n === terms.length }; });
+  const by = (a, b) => b.score - a.score;
+  return rows.filter(r => r.all).sort(by).concat(rows.filter(r => !r.all).sort(by)).slice(0, limit);
+}
+// small builds carry every bucket and shard inside core.js: hydrate now (synchronous, as before chunking)
+if (D.inline) { (D.inline.details || []).forEach((p, i) => ingestDetail(i, p)); (D.inline.shards || []).forEach((x, i) => SH.data.set(i, x)); (D.inline.src || []).forEach((rows, k) => window.__wiretapShard('src-' + k, rows)); delete D.inline; }
+
 // ---- 05-extras.js
 /* lazy data: overlaps, leads, search index, sources, guide, explanations. Each data/<name>.js registers itself
    (window.__WIRETAP_EXTRA__[name]) and calls window.__wiretapExtra(name). Script tags work over file:// too. */
 const EXTRA = { loaded: {}, pending: {}, waiters: {} };
-const BUILD_V = (() => { const s = document.querySelector('script[src*="data/data.js"]'); const m = s && s.getAttribute('src').match(/\?v=([^&]+)/); return m ? m[1] : ''; })();
+const BUILD_V = (() => { const s = document.querySelector('script[src*="data/core.js"]'); const m = s && s.getAttribute('src').match(/\?v=([^&]+)/); return m ? m[1] : ''; })();
 const EXTRA_NAMES = ['search', 'sources', 'overlaps', 'leads', 'guide', 'explain'];
 function ingestExtra(name) {
   const x = (window.__WIRETAP_EXTRA__ || {})[name]; if (!x || EXTRA.loaded[name]) return;
@@ -289,17 +417,20 @@ function ingestExtra(name) {
       OVS = (x.overlaps || []).map(([type, a, b, via, links, total, strength, kinds, sources, hops], i) => ({ i, type, a, b, via, links, total, strength, kinds, sources, hops }));
       OV_BY = new Map(D.entities.map(e => [e.id, []])); for (const o of OVS) { OV_BY.get(o.a)?.push(o); OV_BY.get(o.b)?.push(o); }
       CORR = new Map((x.corroborated || []).map(c => [c.kind + ':' + c.id, c.layers]));
-      D.corroborated = x.corroborated || [];
+      D.corroborated = x.corroborated || []; OV_FULL = true; OV_PART = new Map();
     } else if (name === 'leads') { LEADS = x.leads || []; LEAD = new Map(LEADS.map(l => [l.id, l])); for (const l of LEADS) l._ivs = [dateInterval(l.window?.start), dateInterval(l.window?.end)]; }
     else if (name === 'search') initSearch(x);
     else if (name === 'sources') { D.sources = x.sources || []; SRC = new Map(D.sources.map(s => [s.sid, s])); }
-    else if (name === 'guide') { FITS = null; GUIDE = Object.assign({ tours: [], walkthrough: null, next_steps: {}, glossary: {} }, x); delete GUIDE.explanations; GLOSS = GUIDE.glossary || {}; EXPLAIN = EXPLAIN || null; if (x.explanations) EXPLAIN = x.explanations; }
+    else if (name === 'guide') { FITS = null; const keep = { next_steps: Object.assign(GUIDE.next_steps || {}, x.next_steps || {}), entity_intros: Object.assign(GUIDE.entity_intros || {}, x.entity_intros || {}) }; GUIDE = Object.assign({ tours: [], walkthrough: null, next_steps: {}, glossary: {} }, x, keep); delete GUIDE.explanations; GLOSS = GUIDE.glossary || {}; EXPLAIN = EXPLAIN || null; if (x.explanations) EXPLAIN = x.explanations; }
     else if (name === 'explain') EXPLAIN = x.explanations || x;
   } catch (err) { console.error('extra ' + name, err); }
   (EXTRA.waiters[name] || []).forEach(f => f()); EXTRA.waiters[name] = [];
   if (typeof onExtraLoaded === 'function') onExtraLoaded(name);
 }
 window.__wiretapExtra = ingestExtra;
+// chunked builds: the search index is sharded (data/s/) and link explanations travel with their detail bucket
+if (SI) EXTRA.loaded.search = true;
+if (CH) EXTRA.loaded.explain = true;
 function loadExtra(name) {
   if (EXTRA.loaded[name]) return Promise.resolve();
   return new Promise(res => {
@@ -465,6 +596,7 @@ function hl(text, terms) {
 }
 function runSearch(q, limit = 40) {
   if (!q.trim()) return [];
+  if (SI) return shardSearch(q, limit);
   if (MS) {
     const opts = { prefix: true, fuzzy: 0.2, boost: { name: 3, aliases: 2.5 }, boostDocument: (id, term, f) => (f && f.kind === 'e' ? 2.5 : f && f.kind === 'n' ? 2 : f && f.kind === 's' ? 0.6 : 1) };
     const and = MS.search(q, Object.assign({ combineWith: 'AND' }, opts)), or = MS.search(q, Object.assign({ combineWith: 'OR' }, opts));
@@ -478,11 +610,19 @@ function resultVisible(r) {
   if (r.kind === 'e') return F.ents.has(r.ref);
   if (r.kind === 'l') return F.linkSet.has(r.ref);
   if (r.kind === 'n') return NET.get(r.ref).auto || inLayer(NET.get(r.ref));
-  if (r.kind === 's') return layerAll() || ((SRC.get(r.ref) || {}).layers || []).some(k => S.layers.has(k));
+  if (r.kind === 's') return layerAll() || ((srcOf(r) || {}).layers || []).some(k => S.layers.has(k));
   return true;
 }
+// sharded search: fetch the shards a query needs (and the source titles of source hits), then render again
+function searchPending(q) {
+  if (!SI || !q.trim()) return false;
+  if (searchMissing(q).size) { searchLoad(q).then(() => { if (S.q === q) { renderResults(); if (S.view === 'index') renderIndex(); highlightSearch(); } }); return true; }
+  return false;
+}
+const srcOf = r => SRC.get(r.ref) || SH.src.get(r.si);
 function renderResults() {
-  const q = S.q; lastResults = runSearch(q, 80).filter(r => layerAll() || (r.kind === 'e' ? inLayer(ENT.get(r.ref)) || (F && F.ents.has(r.ref)) : r.kind === 'l' ? inLayer(LNK.get(r.ref)) : resultVisible(r))).slice(0, 40); lastResults._q = q; activeIdx = -1;
+  const q = S.q;
+  if (searchPending(q)) { lastResults = []; lastResults._q = null; $('#q').setAttribute('aria-expanded', 'true'); $('#results').innerHTML = `<div class="no-results" role="status">${loadingNote('search')}</div>`; return; } lastResults = runSearch(q, 80).filter(r => layerAll() || (r.kind === 'e' ? inLayer(ENT.get(r.ref)) || (F && F.ents.has(r.ref)) : r.kind === 'l' ? inLayer(LNK.get(r.ref)) : resultVisible(r))).slice(0, 40); lastResults._q = q; activeIdx = -1;
   const box = $('#results');
   $('#q').setAttribute('aria-expanded', q.trim() ? 'true' : 'false');
   if (!q.trim()) { box.innerHTML = ''; return; }
@@ -490,13 +630,14 @@ function renderResults() {
     box.innerHTML = `<div class="no-results" role="status"><b>No matches for “${esc(q)}”.</b><br>Try a shorter name, an alias or a record id, or check the spelling. Search covers entities, claims, networks and source titles.${S.types.size !== usedTypes.length || S.statuses.size !== STATUS_KEYS.length || dateFilterActive() ? ' <button class="linkish" data-reset>Reset filters</button>' : ''}</div>`;
     announce(`No matches for ${q}`); return;
   }
+  { const need = lastResults.filter(r => r.kind === 's' && !srcOf(r) && r.si != null).map(r => r.si); if (need.length) { srcStubLoad(need).then(() => { if (S.q === q) renderResults(); }); } }
   const hidden = lastResults.filter(r => !resultVisible(r)).length;
   box.innerHTML = lastResults.map((r, i) => {
     const terms = r.terms || []; const hid = resultVisible(r) ? '' : '<span class="hid" title="Hidden by current filters">hidden by filters</span>';
     if (r.kind === 'e') { const e = ENT.get(r.ref); const T = TYPE[e.type]; const thy = typeof isTheoryEnt === 'function' && isTheoryEnt(e); return `<button type="button" class="result" role="option" id="res-${i}" data-i="${i}"><span class="r-name">${hl(e.name, terms)}</span><span class="r-meta"><span style="color:${T.color}" aria-hidden="true">■</span> ${e.layers.map(x => layerChip(x, true)).join('')} ${esc(T.label)}${thy ? ' · <span class="thy-badge">unverified</span>' : ''}${e.province ? ' · ' + esc(e.province) : ''}${e.aliases.length ? ' · ' + hl(e.aliases.slice(0, 3).join(', '), terms) : ''}${hasTheorySwitch && hasTheorySwitch(e) ? ' · theories' : ''} ${hid}</span></button>`; }
     if (r.kind === 'l') { const l = LNK.get(r.ref); return `<button type="button" class="result" role="option" id="res-${i}" data-i="${i}"><span class="r-name">${hl(name(l.from), terms)} <span class="muted">→ ${esc(LT(l.type).label)} →</span> ${hl(name(l.to), terms)}</span><span class="r-meta">claim · ${itemLayers(l).map(x => layerChip(x, true)).join('')} ${STATUS[l.status].icon} ${esc(STATUS[l.status].short)}${l.amount_cad ? ' · ' + fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : ''}${l.date ? ' · ' + esc(l.date) : ''} ${hid}</span></button>`; }
     if (r.kind === 'n') { const n = NET.get(r.ref); return `<button type="button" class="result" role="option" id="res-${i}" data-i="${i}"><span class="r-name">${hl(n.name, terms)}</span><span class="r-meta">network · ${esc(netLabel(n))} · ${n.members.length} members</span></button>`; }
-    const s = SRC.get(r.ref) || { title: r.ref, cites: [], kind: 'other' }; return `<button type="button" class="result" role="option" id="res-${i}" data-i="${i}"><span class="r-name">${hl(s.title || s.url || s.key, terms)}</span><span class="r-meta">source · ${esc(s.kind === 'public_record' ? 'public record' : s.kind === 'other' ? 'other' : srcKindLabel(s.kind))}${s.date ? ' · ' + esc(s.date) : ''} · cited ${s.cites.length}×</span></button>`;
+    const s = srcOf(r) || { title: r.ref, cites: [], kind: 'other' }; return `<button type="button" class="result" role="option" id="res-${i}" data-i="${i}"><span class="r-name">${hl(s.title || s.url || s.key, terms)}</span><span class="r-meta">source · ${esc(s.kind === 'public_record' ? 'public record' : s.kind === 'other' ? 'other' : srcKindLabel(s.kind))}${s.date ? ' · ' + esc(s.date) : ''} · cited ${s.cites ? s.cites.length : s.nc}×</span></button>`;
   }).join('') + (hidden ? `<div class="r-foot muted">${hidden} result(s) hidden by current filters; opening one shows it anyway.</div>` : '');
   announce(`${lastResults.length} results`);
 }
@@ -505,7 +646,7 @@ function pickResult(i) {
   if (r.kind === 'e') select({ node: r.ref });
   else if (r.kind === 'l') select({ link: r.ref });
   else if (r.kind === 'n') selectNet(r.ref);
-  else { S.view = 'sources'; S.sq = ((SRC.get(r.ref) || {}).title || '').slice(0, 60); update(true); }
+  else { S.view = 'sources'; S.sq = ((srcOf(r) || {}).title || '').slice(0, 60); update(true); }
   if (S.view === 'about') setView('map');
   closeSidebarMobile();
 }
@@ -513,7 +654,7 @@ $('#q').addEventListener('input', debounce(e => { S.q = e.target.value; renderRe
 $('#q').addEventListener('keydown', e => {
   const items = $$('#results .result[data-i]');
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(0, Math.min(items.length - 1, activeIdx + (e.key === 'ArrowDown' ? 1 : -1))); items.forEach((x, i) => x.classList.toggle('active', i === activeIdx)); if (items[activeIdx]) { items[activeIdx].scrollIntoView({ block: 'nearest' }); $('#q').setAttribute('aria-activedescendant', items[activeIdx].id); } }
-  else if (e.key === 'Enter') { e.preventDefault(); S.q = e.target.value; if (!lastResults.length || lastResults._q !== S.q) renderResults(); pickResult(activeIdx >= 0 ? activeIdx : 0); }
+  else if (e.key === 'Enter') { e.preventDefault(); S.q = e.target.value; const q = S.q; if (SI && searchMissing(q).size) { searchLoad(q).then(() => { if (S.q === q) { renderResults(); pickResult(0); } }); return; } if (!lastResults.length || lastResults._q !== S.q) renderResults(); pickResult(activeIdx >= 0 ? activeIdx : 0); }
   else if (e.key === 'Escape') { S.q = ''; e.target.value = ''; renderResults(); highlightSearch(); commit(false); }
 });
 $('#results').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) pickResult(+b.dataset.i); });
@@ -544,7 +685,73 @@ function fitFast(ids, pad = 30) {
 }
 // big graphs draw the nodes first and add the claim lines right after the first frame (see addDeferredEdges)
 let DEFER_EDGES = false;
-const edgeElements = () => D.links.filter(l => !(typeof isTheoryLnk === 'function' ? isTheoryLnk(l) : l.type === 'named_in_theory')).map(l => { const t = LT(l.type), st = STATUS[l.status] || STATUS.reported; return { group: 'edges', classes: [isEst(l) ? 'est' : '', l.status === 'contradicted' ? 'contra' : '', 'seen' + Math.min(4, seenOf(l).length), st.dash ? 'dashed' : '', t.directed === false ? 'undirected' : ''].filter(Boolean).join(' '), data: { id: 'L:' + l.id, lid: l.id, source: l.from, target: l.to, color: STATUS[l.status].color, dash: st.dash || [1, 0], width: edgeWidth(l), arrow: BIG ? 'none' : (t.arrow || 'triangle'), arrow0: t.directed === false ? 'none' : (t.arrow || 'triangle'), label: l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '' } }; });
+const isThyL = l => (typeof isTheoryLnk === 'function' ? isTheoryLnk(l) : l.type === 'named_in_theory');
+const isThyE = e => (typeof isTheoryEnt === 'function' ? isTheoryEnt(e) : (e.theory || e.type === 'theory'));
+const edgeEl = l => { const t = LT(l.type), st = STATUS[l.status] || STATUS.reported; const a0 = t.directed === false ? 'none' : (t.arrow || 'triangle'); return { group: 'edges', classes: [isEst(l) ? 'est' : '', l.status === 'contradicted' ? 'contra' : '', 'seen' + Math.min(4, seenOf(l).length), st.dash ? 'dashed' : '', t.directed === false ? 'undirected' : '', LITE && renderGraph._hl ? 'hl' : ''].filter(Boolean).join(' '), data: { id: 'L:' + l.id, lid: l.id, source: l.from, target: l.to, color: LITE ? edgeColor(l) : STATUS[l.status].color, dash: st.dash || [1, 0], width: edgeWidth(l), arrow: BIG ? (initGraph._near ? a0 : 'none') : (t.arrow || 'triangle'), arrow0: a0, label: l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '' } }; };
+const edgeElements = () => D.links.filter(l => !isThyL(l)).map(edgeEl);
+const nodeEl = e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) && !initGraph._near ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : '') + (LITE && renderGraph._hl ? ' hl' : '') + (LOD.nolabel ? ' nolabel' : ''), data: { id: e.id, label: e.name, color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), type: e.type, province: e.province || '—' }, position: e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 } });
+// ---- Level of detail (phones and desktop on a large graph): the graph holds an overview (the best-connected nodes),
+// what is in view once zoomed in (a spatial grid over the build-time layout, best-connected first, up to NODE_MAX),
+// and everything the selection, expanded nodes, a network, lead, tour, path or overlap needs. Nodes that leave the
+// view are dropped again. Phones use a tight cap; desktop uses a larger one so mid-zoom stays dense. ?lite=0 disables it.
+const LOD = { grid: null, cell: 300, res: new Set(), overview: [], NODE_MAX: 1400, OVERVIEW_N: 350, ZOOM_FILL: 0.1, nolabel: false, adds: 0, removes: 0, deferFill: true };
+function lodInit() {
+  if (LITE) { LOD.NODE_MAX = 1400; LOD.OVERVIEW_N = 350; }
+  else { LOD.NODE_MAX = 5000; LOD.OVERVIEW_N = 800; }
+  const g = new Map(), c = LOD.cell;
+  for (const e of D.entities) { if (isThyE(e) || !e.pos) continue; const k = Math.floor(e.pos[0] / c) + ',' + Math.floor(e.pos[1] / c); (g.get(k) || g.set(k, []).get(k)).push(e); }
+  for (const a of g.values()) a.sort((x, y) => y.degree - x.degree);
+  LOD.grid = g; LOD.overview = D.entities.filter(e => !isThyE(e)).sort((a, b) => b.degree - a.degree).slice(0, LOD.OVERVIEW_N).map(e => e.id);
+}
+function lodPins() {
+  const p = new Set(); const add = id => { if (id && ENT.has(id) && !isThyE(ENT.get(id))) p.add(id); };
+  const addL = id => { const l = LNK.get(id); if (l) { add(l.from); add(l.to); } };
+  const hood = id => { add(id); for (const l of byNode.get(id) || []) { add(l.from); add(l.to); } };
+  if (S.node) hood(S.node);
+  if (S.link) addL(S.link);
+  for (const id of S.expand) hood(id);
+  if (S.net && NET.has(S.net)) NET.get(S.net).members.forEach(add);
+  if (S.lead && LEAD.has(S.lead)) { const L = LEAD.get(S.lead); L.entities.forEach(add); L.link_ids.forEach(addL); }
+  const ts = typeof tourHighlight === 'function' ? tourHighlight() : null; if (ts) { (ts.entities || []).forEach(add); (ts.links || []).forEach(addL); }
+  for (const pa of PATHS || []) { pa.nodes.forEach(add); (pa.links || []).forEach(addL); }
+  add(S.pa); add(S.pb); add(kbd);
+  if (S.ov != null && ovAt(S.ov)) { add(ovAt(S.ov).a); add(ovAt(S.ov).b); }
+  for (const id of S.thyOn || []) add(id);
+  return p;
+}
+function lodWanted() {
+  const want = lodPins(); const ok = id => !F || F.ents.has(id);
+  if (LOD.deferFill) { for (const id of LOD.overview) if (ok(id)) want.add(id); return want; }
+  if (F && F.ents.size <= LOD.NODE_MAX) { for (const id of F.ents) if (!isThyE(ENT.get(id))) want.add(id); return want; }
+  for (const id of LOD.overview) if (ok(id)) want.add(id);
+  if (!cy || S.layout !== 'network') { if (cy && S.layout !== 'network') for (const id of LOD.res) want.add(id); return want; }
+  if (cy.zoom() < LOD.ZOOM_FILL) return want;
+  const ext = cy.extent(), c = LOD.cell, w = ext.x2 - ext.x1, h = ext.y2 - ext.y1;
+  const x1 = Math.floor((ext.x1 - w * 0.2) / c), x2 = Math.floor((ext.x2 + w * 0.2) / c), y1 = Math.floor((ext.y1 - h * 0.2) / c), y2 = Math.floor((ext.y2 + h * 0.2) / c);
+  const cand = [];
+  for (let gx = x1; gx <= x2; gx++) for (let gy = y1; gy <= y2; gy++) { const a = LOD.grid.get(gx + ',' + gy); if (a) for (const e of a) if (ok(e.id)) cand.push(e); }
+  cand.sort((a, b) => b.degree - a.degree);
+  for (const e of cand) { if (want.size >= LOD.NODE_MAX) break; want.add(e.id); }
+  return want;
+}
+function lodSync() {
+  if (!LOD_ON || !cy) return false;
+  const want = lodWanted(), res = LOD.res, V = renderGraph._vis || (renderGraph._vis = new Map());
+  const rm = [], add = []; for (const id of res) if (!want.has(id)) rm.push(id); for (const id of want) if (!res.has(id)) add.push(id);
+  if (!rm.length && !add.length) return false;
+  cy.batch(() => {
+    if (rm.length) { const els = rm.map(id => cy.getElementById(id)).filter(n => n.length); const col = cy.collection(els); col.connectedEdges().forEach(ed => V.delete(ed.id())); col.remove(); for (const id of rm) { res.delete(id); V.delete(id); } }
+    if (add.length) {
+      cy.add(add.map(id => nodeEl(ENT.get(id)))); for (const id of add) res.add(id);
+      const seen = new Set(), eds = [];
+      for (const id of add) for (const l of byNode.get(id) || []) { if (seen.has(l.id) || isThyL(l)) continue; const o = l.from === id ? l.to : l.from; if (!res.has(o)) continue; seen.add(l.id); if (!cy.hasElementWithId('L:' + l.id)) eds.push(edgeEl(l)); }
+      if (eds.length) cy.add(eds);
+    }
+  });
+  LOD.adds += add.length; LOD.removes += rm.length;
+  return true;
+}
+
 function addDeferredEdges() {
   if (!cy || !DEFER_EDGES) return; DEFER_EDGES = false;
   const t = performance.now(); cy.one('render', () => { TIMING.full_paint_ms = Math.round(performance.now()); }); cy.batch(() => cy.add(edgeElements()));
@@ -557,8 +764,8 @@ function initGraph() {
     container: $('#cy'), layout: { name: 'preset', fit: false }, ...(USE_WEBGL ? { renderer: { name: 'canvas', webgl: true } } : {}), minZoom: 0.03, maxZoom: 5, boxSelectionEnabled: false, autoungrabify: BIG,
     hideEdgesOnViewport: BIG, textureOnViewport: BIG, pixelRatio: BIG ? 1 : 'auto', motionBlur: false,
     elements: [
-      ...D.entities.filter(e => !(typeof isTheoryEnt === 'function' ? isTheoryEnt(e) : (e.theory || e.type === 'theory'))).map(e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : ''), data: { id: e.id, label: e.name, color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), type: e.type, province: e.province || '—' }, position: e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 } })),
-      ...(DEFER_EDGES ? [] : edgeElements()),
+      ...(LOD_ON ? [] : D.entities.filter(e => !isThyE(e)).map(nodeEl)),
+      ...(DEFER_EDGES || LOD_ON ? [] : edgeElements()),
     ],
     style: [
       { selector: 'node', style: { 'background-color': 'data(color)', shape: 'data(shape)', width: 'data(size)', height: 'data(size)', label: 'data(label)', color: '#e2e2de', 'font-family': 'ui-monospace, Menlo, Consolas, monospace', 'font-size': 'data(fs)', 'min-zoomed-font-size': BIG ? 12 : 8, 'text-valign': 'bottom', 'text-margin-y': 4, 'text-wrap': 'ellipsis', 'text-max-width': 150, 'text-outline-color': '#07080a', 'text-outline-width': 2.5, 'border-width': 1.5, 'border-color': '#07080a' } },
@@ -600,6 +807,7 @@ function initGraph() {
       { selector: 'edge.thy-edge', style: { 'line-style': 'dashed', 'line-dash-pattern': [6, 4], 'line-color': 'data(color)', 'target-arrow-shape': 'none', opacity: 0.85, width: 1.4, label: 'data(label)', 'font-size': 8, color: '#b0b0b0' } },
     ],
   });
+  if (LOD_ON) { lodInit(); lodSync(); cy.on('viewport', debounce(() => { if (S.view === 'map' && lodSync()) renderGraph(); }, 180)); }
   cy.on('tap', 'node', ev => { kbd = ev.target.id(); select({ node: ev.target.id() }); });
   cy.on('dbltap', 'node', ev => toggleExpand(ev.target.id()));
   cy.on('tap', 'edge', ev => ev.target.hasClass('ovl') ? select({ ov: ev.target.data('ov') }) : select({ link: ev.target.data('lid') }));
@@ -608,7 +816,7 @@ function initGraph() {
   cy.on('mouseover', 'node, edge', ev => {
     const t = ev.target; let html;
     if (t.isNode()) { const e = ENT.get(t.id()); html = `<b>${esc(e.name)}</b><br><span class="muted">${esc(TYPE[e.type].label)}${e.province ? ' · ' + esc(e.province) : ''} · ${e.degree} links</span>${e.money_in || e.money_out ? `<br><span class="gold">in ${fmtCAD(e.money_in) || '$0'} · out ${fmtCAD(e.money_out) || '$0'}</span>` : ''}`; }
-    else if (t.hasClass('ovl')) { const o = OVS[t.data('ov')]; html = `<b>${esc(name(o.a))} ↔ ${esc(name(o.b))}</b><br>${esc(OV_TYPES[o.type]?.label || o.type)}${o.kinds && o.kinds.length ? ' (' + esc(o.kinds.join(', ')) + ')' : ''}<br><span class="muted">${esc(OV_NOTE)}</span>`; }
+    else if (t.hasClass('ovl')) { const o = ovAt(t.data('ov')); html = `<b>${esc(name(o.a))} ↔ ${esc(name(o.b))}</b><br>${esc(OV_TYPES[o.type]?.label || o.type)}${o.kinds && o.kinds.length ? ' (' + esc(o.kinds.join(', ')) + ')' : ''}<br><span class="muted">${esc(OV_NOTE)}</span>`; }
     if (t.isNode()) { const e = ENT.get(t.id()); html += `<br>${seenBadge(e)}${legalChips(e, true)}`; }
     if (t.hasClass('ovl')) {} else if (t.isNode()) {} else { const l = LNK.get(t.data('lid')); html = `${esc(name(l.from))} → <i>${esc(LT(l.type).label)}</i> → ${esc(name(l.to))}${l.amount_cad ? `<br><span class="gold">${fmtCADfull(l.amount_cad)}</span> ${estTag(l)}` : ''}<br>${lbadge(l)} ${itemLayers(l).map(k => layerChip(k)).join('')} ${seenBadge(l, true)}`; }
     tip.innerHTML = html; tip.hidden = false;
@@ -645,6 +853,7 @@ function runLayout() {
 }
 function renderGraph() {
   if (!cy) return;
+  if (LOD_ON) lodSync();
   cy.batch(() => {
     // visibility is tracked here so unchanged elements are not touched (reading style() on every element is slow)
     const V = renderGraph._vis || (renderGraph._vis = new Map());
@@ -666,6 +875,7 @@ function renderGraph() {
 }
 function highlightSelection() {
   if (!cy) return;
+  if (LOD_ON && !LOD.inHl) { LOD.inHl = true; try { if (lodSync()) { renderGraph(); return; } } finally { LOD.inHl = false; } }
   cy.batch(() => {
     cy.elements().removeClass('faded sel nb netm netl lead tour');
     const tourSel = typeof tourHighlight === 'function' ? tourHighlight() : null;
@@ -693,8 +903,8 @@ function highlightSelection() {
       cy.elements(':visible').addClass('faded');
       cy.nodes().filter(x => mem.has(x.id())).removeClass('faded').addClass('lead');
       cy.edges().filter(x => ev.has(x.data('lid'))).removeClass('faded').addClass('lead');
-    } else if (S.ov != null && OVS[S.ov]) {
-      const o = OVS[S.ov]; const ev = new Set(o.links); const mem = new Set([o.a, o.b]);
+    } else if (S.ov != null && ovAt(S.ov)) {
+      const o = ovAt(S.ov); const ev = new Set(o.links); const mem = new Set([o.a, o.b]);
       for (const id of o.links) { const l = LNK.get(id); if (l) { mem.add(l.from); mem.add(l.to); } }
       cy.elements(':visible').addClass('faded');
       cy.nodes().filter(x => mem.has(x.id())).removeClass('faded').addClass('nb');
@@ -743,7 +953,7 @@ function focusSelection() {
   if (!cy || S.view !== 'map') return;
   if (S.node) revealOnMap(cy.$id(S.node));
   else if (S.link) revealOnMap(cy.$id('L:' + S.link).connectedNodes());
-  else if (S.ov != null && OVS[S.ov]) revealOnMap(cy.$id(OVS[S.ov].a).union(cy.$id(OVS[S.ov].b)));
+  else if (S.ov != null && ovAt(S.ov)) revealOnMap(cy.$id(ovAt(S.ov).a).union(cy.$id(ovAt(S.ov).b)));
   else if (S.lead && LEAD.has(S.lead)) { const els = cy.elements('.lead:visible'); if (els.length) { cy.stop(); cy.animate({ fit: { eles: els, padding: isMobile() ? 40 : 90 } }, { duration: 280 }); } }
   else if (S.net && NET.has(S.net)) { const mem = new Set(NET.get(S.net).members); const els = cy.nodes(':visible').filter(n => mem.has(n.id())); if (els.length) { cy.stop(); cy.animate({ fit: { eles: els, padding: isMobile() ? 30 : 60 } }, { duration: 280 }); } }
 }
@@ -767,7 +977,7 @@ $('#focus-bar').addEventListener('click', e => {
   if (e.target.closest('[data-clear-maxdeg]')) { S.maxdeg = 0; return update(true); }
 });
 $$('[data-layout]').forEach(b => b.addEventListener('click', () => { S.layout = b.dataset.layout; prevVisibleKey = ''; update(); }));
-$('#btn-names').addEventListener('click', e => { const on = !e.currentTarget.classList.contains('on'); e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on); cy.nodes().toggleClass('nolabel', !on); });
+$('#btn-names').addEventListener('click', e => { const on = !e.currentTarget.classList.contains('on'); e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on); LOD.nolabel = !on; cy.nodes().toggleClass('nolabel', !on); });
 $('#btn-ecolor').addEventListener('click', () => { S.ecolor = S.ecolor === 'status' ? 'type' : S.ecolor === 'type' ? 'layer' : 'status'; update(); renderLegend(); });
 $('#g-maxdeg').addEventListener('change', e => { S.maxdeg = +e.target.value; update(); });
 const zoomBy = f => cy.zoom({ level: cy.zoom() * f, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
@@ -1027,7 +1237,7 @@ function syncOverlapEdges() {
     cy.edges('.ovl').remove();
     if (!S.ovl) return;
     const cap = BIG ? 400 : 1500; const seen = new Set(); const add = [];
-    for (const o of visibleOverlaps()) { const k = o.a + '|' + o.b; if (seen.has(k)) continue; seen.add(k); add.push({ group: 'edges', classes: 'ovl', data: { id: 'O:' + o.i, ov: o.i, source: o.a, target: o.b } }); if (add.length >= cap) break; }
+    for (const o of visibleOverlaps()) { if (LOD_ON && !(cy.$id(o.a).length && cy.$id(o.b).length)) continue; const k = o.a + '|' + o.b; if (seen.has(k)) continue; seen.add(k); add.push({ group: 'edges', classes: 'ovl', data: { id: 'O:' + o.i, ov: o.i, source: o.a, target: o.b } }); if (add.length >= cap) break; }
     cy.add(add);
   });
   $('#btn-ovl').setAttribute('aria-pressed', S.ovl); $('#btn-ovl').classList.toggle('on', S.ovl);
@@ -1043,7 +1253,7 @@ $('#btn-ovl').addEventListener('click', () => { S.ovl = !S.ovl; update(); announ
 function crossLayerRows() {
   const rows = [];
   for (const id of F.ents) { const e = ENT.get(id); const n = seenOf(e).length; if (n >= 2) rows.push({ kind: 'e', id, n, w: e.degree }); }
-  for (const l of F.links) { const n = seenOf(l).length; if (n >= 2) rows.push({ kind: 'l', id: l.id, n, w: l.sources.length + (STATUS_KEYS.length - STATUS_KEYS.indexOf(l.status)) }); }
+  for (const l of F.links) { const n = seenOf(l).length; if (n >= 2) rows.push({ kind: 'l', id: l.id, n, w: (l.sources ? l.sources.length : l._ns || 0) + (STATUS_KEYS.length - STATUS_KEYS.indexOf(l.status)) }); }
   return rows.sort((a, b) => b.n - a.n || (a.kind === b.kind ? 0 : a.kind === 'l' ? -1 : 1) || b.w - a.w || a.id.localeCompare(b.id));
 }
 function crossRow(c) {
@@ -1399,12 +1609,25 @@ function renderOverview() {
     ${panelSection('Most connected', `<ul class="mem">${top.map(e => `<li>${entBtn(e.id)} <span class="muted">${e.degree}</span></li>`).join('')}</ul>`)}
     ${ov.length ? panelSection('Strongest overlaps', `<p class="ov-tag">${esc(OV_NOTE)}</p><ul class="ovs">${ov.map(o => ovRow(o)).join('')}</ul><button type="button" class="linkish" data-view-go="overlaps">All overlaps →</button>`) : ''}`;
 }
+// items whose detail fields the open panel shows (progressive loading: fetched before the panel renders)
+function panelNeeds() {
+  if (S.node && ENT.has(S.node)) { const e = ENT.get(S.node); const ls = byNode.get(e.id) || []; const ev = ls.map(l => ENT.get(l.from === e.id ? l.to : l.from)).filter(isEvent); return [e, ...ls, ...moneyTiedTo(e.id), ...ev]; }
+  if (S.link && LNK.has(S.link)) return [LNK.get(S.link)];
+  if (S.net && NET.has(S.net)) { const n = NET.get(S.net); return (n.auto ? D.links.filter(l => n.members.includes(l.from) && n.members.includes(l.to)) : n.link_ids.map(id => LNK.get(id))).slice(0, 200); }
+  if (S.ov != null && ovAt(S.ov)) return ovAt(S.ov).links.map(id => LNK.get(id));
+  if (S.lead && LEAD.has(S.lead)) return LEAD.get(S.lead).link_ids.map(id => LNK.get(id));
+  return [];
+}
 function renderPanel() {
   const body = $('#panel-body'); let kicker = 'Overview', html;
+  const rd = ready(panelNeeds(), 'panel', () => setTimeout(renderPanel, 0));
+  if (rd !== true) { const sel = !!(S.node || S.link || S.net || S.ov != null || S.lead); $('#panel-kicker').textContent = S.node ? 'Profile' : S.link ? 'Claim' : S.net ? 'Network' : S.ov != null ? 'Overlap' : S.lead ? 'Pattern lead' : 'Overview';
+    body.innerHTML = rd === 'error' ? detailErr() : (S.node && ENT.has(S.node) ? `<div class="p-head"><div class="p-type">${typeChip(ENT.get(S.node).type)}</div><h1 class="p-name">${esc(ENT.get(S.node).name)}</h1></div>` : '') + loadingNote('details');
+    document.body.classList.toggle('panel-open', sel); $('#btn-close').hidden = !sel; $('#btn-copy').hidden = !sel; $('#btn-print').hidden = !sel; return; }
   if (S.node && ENT.has(S.node)) { kicker = 'Profile'; html = renderEntity(ENT.get(S.node)); }
   else if (S.link && LNK.has(S.link)) { kicker = 'Claim'; html = renderLink(LNK.get(S.link)); }
   else if (S.net && NET.has(S.net)) { const n = NET.get(S.net); kicker = n.auto ? 'Auto-detected cluster' : 'Network'; html = renderNet(n); }
-  else if (S.ov != null && OVS[S.ov]) { kicker = 'Overlap'; html = renderOverlap(OVS[S.ov]); }
+  else if (S.ov != null && ovAt(S.ov)) { kicker = 'Overlap'; html = renderOverlap(ovAt(S.ov)); }
   else if (S.lead && LEAD.has(S.lead)) { kicker = 'Pattern lead'; html = leadCard(LEAD.get(S.lead), true); }
   else html = renderOverview();
   $('#panel-kicker').textContent = kicker; body.innerHTML = html;
@@ -1630,6 +1853,7 @@ function renderIntermediaryChains() {
   const el = $('#m-mchains'); if (!el) return;
   const vis = MCHAINS.filter(c => c.hops.every(h => F.linkSet.has(h.link)) && (!S.mfocus || !S.node || c.nodes.includes(S.node)));
   el.hidden = !vis.length;
+  { const rd = ready(vis.slice(0, 40).flatMap(c => c.hops.map(h => LNK.get(h.link))), 'money', () => { if (S.view === 'money') setTimeout(renderIntermediaryChains, 0); }); if (rd !== true) { el.innerHTML = rd === 'error' ? detailErr() : loadingNote('money chains'); return; } }
   el.innerHTML = vis.length ? `<h3 class="lbl">Money through intermediaries <span class="muted">${vis.length}</span></h3><p class="small muted">Up to ${esc(MI.max_hops || 4)} hops, strongest first. Each step shows its own amount, date, source and badge. <strong>Amounts are never added up across steps.</strong> Corporate links (subsidiary / owner) are shown as connectors, not payments.</p><ul class="mchain-list">${vis.slice(0, 40).map(mchainRow).join('')}</ul>` : '';
 }
 $('#m-mchains')?.addEventListener('click', e => { const t = e.target.closest('[data-node],[data-link]'); if (!t) return; t.dataset.link ? select({ link: t.dataset.link }) : select({ node: t.dataset.node }); });
@@ -1732,6 +1956,7 @@ function renderLeads() {
   $('#l-layer').value = S.llayer; $('#l-prov').value = S.lprov; $('#l-min').value = String(S.lmin);
   if (document.activeElement !== $('#l-from')) $('#l-from').value = S.lfrom; if (document.activeElement !== $('#l-to')) $('#l-to').value = S.lto;
   const vis = LEADS.filter(leadPass);
+  { const rd = ready(vis.flatMap(L => L.link_ids.map(id => LNK.get(id))), 'view', () => { if (S.view === 'leads') setTimeout(renderLeads, 0); }); if (rd !== true) { $('#l-summary').textContent = `${vis.length} of ${LEADS.length} leads`; $('#l-list').innerHTML = rd === 'error' ? detailErr() : loadingNote('leads'); return; } }
   $('#l-summary').textContent = `${vis.length} of ${LEADS.length} leads`;
   $('#l-list').innerHTML = vis.length ? vis.map(L => leadCard(L)).join('') : `<div class="empty-inline">${LEADS.length ? 'No leads match these filters.' : 'No timing patterns found in the current data.'}</div>`;
 }
@@ -2162,10 +2387,10 @@ const toCSV = (cols, rows) => '\uFEFF' + [cols.map(c => c[0]).join(','), ...rows
 function download(name, text, type) { const b = new Blob([text], { type }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); toast('Downloaded ' + name); }
 const stamp = () => new Date().toISOString().slice(0, 10);
 function filterNote() { const h = toHash(); return h ? 'filters: #' + h : 'no filters'; }
-$('#x-ent-csv').addEventListener('click', () => download(`noticermap-entities-${stamp()}.csv`, toCSV([['id', e => e.id], ['source_layer', e => itemLayers(e)], ['name', e => e.name], ['type', e => e.type], ['province', e => e.province], ['aliases', e => e.aliases], ['summary', e => e.summary], ['connections', e => e.degree], ['money_in_cad', e => e.money_in || ''], ['money_out_cad', e => e.money_out || ''], ['networks', e => e.networks], ['overlap_partners', e => e.overlap_partners || ''], ['source_urls', e => e.sources.map(s => s.url).filter(Boolean)]], [...F.ents].map(id => ENT.get(id))), 'text/csv'));
-$('#x-lnk-csv').addEventListener('click', () => download(`noticermap-links-${stamp()}.csv`, toCSV([['id', l => l.id], ['source_layer', l => itemLayers(l)], ['from_id', l => l.from], ['from', l => name(l.from)], ['type', l => l.type], ['to_id', l => l.to], ['to', l => name(l.to)], ['amount_cad', l => l.amount_cad], ['amount_kind', l => l.amount_cad ? l.amount_kind : ''], ['counts_in_money_totals', l => l.amount_cad ? (isFlow(l) ? 'yes' : 'no') : ''], ['date', l => l.date], ['status', l => l.status], ['status_label', l => statusLabel(l.status, itemLayers(l)[0])], ['description', l => l.description], ['source_urls', l => l.sources.map(s => s.url).filter(Boolean)], ['source_kinds', l => l.sources.map(s => s.kind)]], F.links), 'text/csv'));
-$('#x-ov-csv').addEventListener('click', () => download(`noticermap-overlaps-${stamp()}.csv`, toCSV([['type', o => o.type], ['kind', o => o.kinds], ['a_id', o => o.a], ['a', o => name(o.a)], ['b_id', o => o.b], ['b', o => name(o.b)], ['via', o => o.via.map(v => ENT.has(v) ? name(v) : v)], ['strength', o => o.strength], ['evidence_link_ids', o => o.links], ['evidence_source_urls', o => o.sources], ['note', () => OV_NOTE]], visibleOverlaps()), 'text/csv'));
-$('#x-json').addEventListener('click', () => {
+$('#x-ent-csv').addEventListener('click', async () => { await hydrateAll([...F.ents].map(id => ENT.get(id))); download(`noticermap-entities-${stamp()}.csv`, toCSV([['id', e => e.id], ['source_layer', e => itemLayers(e)], ['name', e => e.name], ['type', e => e.type], ['province', e => e.province], ['aliases', e => e.aliases], ['summary', e => e.summary], ['connections', e => e.degree], ['money_in_cad', e => e.money_in || ''], ['money_out_cad', e => e.money_out || ''], ['networks', e => e.networks], ['overlap_partners', e => e.overlap_partners || ''], ['source_urls', e => e.sources.map(s => s.url).filter(Boolean)]], [...F.ents].map(id => ENT.get(id))), 'text/csv'); });
+$('#x-lnk-csv').addEventListener('click', async () => { await hydrateAll(F.links); download(`noticermap-links-${stamp()}.csv`, toCSV([['id', l => l.id], ['source_layer', l => itemLayers(l)], ['from_id', l => l.from], ['from', l => name(l.from)], ['type', l => l.type], ['to_id', l => l.to], ['to', l => name(l.to)], ['amount_cad', l => l.amount_cad], ['amount_kind', l => l.amount_cad ? l.amount_kind : ''], ['counts_in_money_totals', l => l.amount_cad ? (isFlow(l) ? 'yes' : 'no') : ''], ['date', l => l.date], ['status', l => l.status], ['status_label', l => statusLabel(l.status, itemLayers(l)[0])], ['description', l => l.description], ['source_urls', l => l.sources.map(s => s.url).filter(Boolean)], ['source_kinds', l => l.sources.map(s => s.kind)]], F.links), 'text/csv'); });
+$('#x-ov-csv').addEventListener('click', async () => { await loadExtra('overlaps'); download(`noticermap-overlaps-${stamp()}.csv`, toCSV([['type', o => o.type], ['kind', o => o.kinds], ['a_id', o => o.a], ['a', o => name(o.a)], ['b_id', o => o.b], ['b', o => name(o.b)], ['via', o => o.via.map(v => ENT.has(v) ? name(v) : v)], ['strength', o => o.strength], ['evidence_link_ids', o => o.links], ['evidence_source_urls', o => o.sources], ['note', () => OV_NOTE]], visibleOverlaps()), 'text/csv'); });
+$('#x-json').addEventListener('click', async () => { await hydrateAll([...[...F.ents].map(id => ENT.get(id)), ...F.links]); if (!EXTRA.loaded.overlaps) await loadExtra('overlaps');
   const strip = x => { const o = {}; for (const k in x) if (k[0] !== '_' && k !== 'pos') o[k] = x[k]; return o; };
   const out = { exported_at: new Date().toISOString(), view: location.href, note: `${filterNote()}. Reported claims come from the outlet's own reporting and are not independently verified. Overlaps are found by the map and are not reported claims.`, meta: { built_at: D.meta.built_at, is_sample: D.meta.is_sample }, entities: [...F.ents].map(id => strip(ENT.get(id))), links: F.links.map(strip), networks: F.nets.map(strip), overlaps: visibleOverlaps().map(o => ({ type: o.type, a: o.a, b: o.b, via: o.via, kinds: o.kinds, strength: o.strength, evidence_link_ids: o.links, evidence_source_urls: o.sources, note: OV_NOTE })) };
   download(`noticermap-${stamp()}.json`, JSON.stringify(out, null, 1), 'application/json');
@@ -2505,6 +2730,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-corr
 
 // ---- 90-main.js
 const TIMING = {};
+let AUTO_EXTRAS = [];
 /* main: views, selection, update loop, boot */
 function setView(v, push = true) {
   if (!VIEWS.includes(v)) v = 'map';
@@ -2584,7 +2810,7 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   renderLegend();
   fromHash(); lastHash = toHash();
   $('#q').value = S.q;
-  DEFER_EDGES = BIG && !S.node && !S.link && !S.net && !S.lead && !S.tour && S.ov == null && !/[?&]edges=now/.test(location.search);
+  DEFER_EDGES = BIG && !LOD_ON && !S.node && !S.link && !S.net && !S.lead && !S.tour && S.ov == null && !/[?&]edges=now/.test(location.search);
   P('before_graph'); try { initGraph();
   if (typeof bindTheoryUi === 'function') bindTheoryUi();
   if (typeof syncTheoryGraph === 'function') syncTheoryGraph(); } catch (err) { console.error(err); $('#cy').innerHTML = '<p class="empty">The graph could not be drawn in this browser. The Index view has the same data.</p>'; }
@@ -2596,14 +2822,16 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   maybeDisclaimer();
   // first paint: measured when cytoscape has drawn its first frame
   const t0 = window.__WIRETAP_T0 || 0; TIMING.boot_ms = Math.round(performance.now() - t0);
-  const mark = () => { if (TIMING.first_paint_ms == null) { TIMING.first_paint_ms = Math.round(performance.now() - t0); TIMING.webgl = typeof USE_WEBGL !== 'undefined' && USE_WEBGL; if (!DEFER_EDGES) TIMING.full_paint_ms = TIMING.first_paint_ms; setTimeout(() => { addDeferredEdges(); setTimeout(kick, 0); }, 0); } };
+  const mark = () => { if (TIMING.first_paint_ms == null) { TIMING.first_paint_ms = Math.round(performance.now() - t0); TIMING.webgl = typeof USE_WEBGL !== 'undefined' && USE_WEBGL; const pendingLod = LOD_ON && LOD.deferFill; if (!DEFER_EDGES && !pendingLod) TIMING.full_paint_ms = TIMING.first_paint_ms; setTimeout(() => { addDeferredEdges(); if (pendingLod) { LOD.deferFill = false; const changed = lodSync(); if (changed && typeof renderGraph === 'function') renderGraph(); if (changed && cy) cy.one('render', () => { if (TIMING.full_paint_ms == null) TIMING.full_paint_ms = Math.round(performance.now() - t0); }); else TIMING.full_paint_ms = Math.round(performance.now() - t0); } setTimeout(kick, 0); }, 0); } };
   // lazy extras after first paint (search first: it is the most likely next action)
-  const want = ['search', 'guide', 'leads', 'overlaps', 'sources', 'explain'];
+  // LITE devices fetch overlaps and the source list only when a view needs them (search and explanations are chunked)
+  const want = LITE ? ['guide', 'leads'] : ['search', 'guide', 'leads', 'overlaps', 'sources', 'explain'];
+  AUTO_EXTRAS = want;
   const kick = () => { for (const n of want) loadExtra(n); Promise.all(want.slice(0, 5).map(n => new Promise(r => (EXTRA.loaded[n] ? r() : (EXTRA.waiters[n] = EXTRA.waiters[n] || []).push(r))))).then(() => { TIMING.extras_ms = Math.round(performance.now() - t0); setTimeout(maybeFirstVisit, 50); }); };
   // the extras start loading once the map has drawn its first frame
   if (cy) { cy.one('render', mark); requestAnimationFrame(() => requestAnimationFrame(mark)); } else mark();
 })();
 // test / debugging hook (read-only accessors)
-window.__wiretap = { sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null };
+window.__wiretap = { sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null };
 
 })();

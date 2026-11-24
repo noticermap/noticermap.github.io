@@ -1,0 +1,1 @@
+window.__wiretapShard&&window.__wiretapShard(419,{"coinciden":[33861,430],"coincidence":[27102,680,28237,377],"coincidences":[11000,430,26288,370,26289,377,26290,358,28129,708,35755,514,36581,497],"coincidental":[27147,401],"coins":[30233,481]});

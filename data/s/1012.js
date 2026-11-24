@@ -1,0 +1,1 @@
+window.__wiretapShard&&window.__wiretapShard(1012,{"reward":[32232,410],"rewarded":[32965,419],"rewards":[432,57,20736,61,26775,377],"rewired":[28809,377],"rewiring":[27669,410],"reworded":[24802,125],"rewording":[24793,168],"rewrites":[26971,651],"rewrote":[29881,605]});

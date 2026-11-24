@@ -1,0 +1,1 @@
+window.__wiretapShard&&window.__wiretapShard(799,{"mn":[40776,196],"mna":[7019,207,18669,187,18943,194,18944,194,18945,194],"mnister":[12009,140,12657,148],"mnisters":[11256,58],"mnrf":[1921,187],"mnthlyclntcmmnctns":[31787,190]});

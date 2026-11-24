@@ -1,0 +1,1 @@
+window.__wiretapShard&&window.__wiretapShard(95,{"20services":[39052,201],"20shevut":[38907,199],"20shomron":[39255,201],"20soldier":[39084,198],"20soldiers":[39008,198,39126,200],"20study":[33841,186]});

@@ -1,6 +1,6 @@
 {
  "meta": {
-  "built_at": "2026-11-24T10:07:37.797Z",
+  "built_at": "2026-11-24T13:16:53.142Z",
   "last_updated": "2026-11-24T09:53:03.203Z",
   "latest_source": "2026-11-22",
   "is_sample": false,
@@ -176,7 +176,7 @@
      "kept": 3153
     }
    },
-   "ms": 229,
+   "ms": 292,
    "corroborated": 880
   },
   "intermediaries": {
@@ -200,7 +200,7 @@
    "immigration"
   ],
   "layout": {
-   "ms": 23,
+   "ms": 26,
    "cached": 10974,
    "iters": 0
   },
@@ -210,8 +210,13 @@
    "leads": 396986,
    "search": 24528835,
    "sources": 10428384,
-   "guide": 10782710,
+   "guide": 940263,
    "explain": 25095595
+  },
+  "chunks": {
+   "buckets": 840,
+   "shards": 1372,
+   "inline": false
   }
  },
  "entities": [
