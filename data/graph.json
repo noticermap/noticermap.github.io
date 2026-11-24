@@ -1,6 +1,6 @@
 {
  "meta": {
-  "built_at": "2026-11-24T13:50:22.064Z",
+  "built_at": "2026-11-24T14:25:57.589Z",
   "last_updated": "2026-11-24T13:48:17.243Z",
   "latest_source": "2026-11-22",
   "is_sample": false,
@@ -132,7 +132,7 @@
   },
   "guide": {
    "present": true,
-   "tours": 39,
+   "tours": 40,
    "walkthrough": true,
    "glossary": 26
   },
@@ -176,7 +176,7 @@
      "kept": 3153
     }
    },
-   "ms": 259,
+   "ms": 278,
    "corroborated": 884
   },
   "intermediaries": {
@@ -195,12 +195,12 @@
    "samcooper",
    "events",
    "records",
+   "immigration",
    "theories",
-   "breach",
-   "immigration"
+   "breach"
   ],
   "layout": {
-   "ms": 25,
+   "ms": 27,
    "cached": 10990,
    "iters": 0
   },
@@ -210,8 +210,8 @@
    "leads": 413784,
    "search": 24558766,
    "sources": 10440220,
-   "guide": 939715,
-   "explain": 25095595
+   "guide": 961683,
+   "explain": 25122769
   },
   "chunks": {
    "buckets": 842,

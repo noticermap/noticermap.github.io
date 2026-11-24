@@ -4,20 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NoticerMap · Canadian influence &amp; money, mapped</title>
-<meta name="description" content="A searchable, interactive map of Canadian influence and money networks, built from Wiretap Media reporting and checked against public records.">
+<meta name="description" content="NoticerMap · Canadian influence &amp; money, mapped. A searchable, sourced map of Canadian influence and money networks. Every claim is cited.">
 <meta name="theme-color" content="#07080a">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NoticerMap · Canadian influence & money, mapped">
-<meta property="og:description" content="Who funds influence in Canada? A searchable network map built from Wiretap Media reporting, with every claim badged reported or checked against public records.">
+<meta property="og:description" content="A searchable, sourced map of Canadian influence and money networks. Every claim is cited.">
+<meta property="og:site_name" content="NoticerMap">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NoticerMap · Canadian influence & money, mapped">
+<meta name="twitter:description" content="A searchable, sourced map of Canadian influence and money networks. Every claim is cited.">
 <link rel="canonical" href="https://noticermap.github.io/"><meta property="og:url" content="https://noticermap.github.io/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="app.css?v=e3a298561b">
+<link rel="stylesheet" href="app.css?v=b8b134df47">
 <script>window.__WIRETAP_T0 = performance.now();</script>
-<script defer src="vendor/cytoscape.min.js?v=e3a298561b"></script>
-<script defer src="data/core.js?v=e3a298561b"></script>
-<script defer src="data/sol.js?v=e3a298561b"></script>
-<script defer src="app.js?v=e3a298561b"></script>
+<script defer src="vendor/cytoscape.min.js?v=b8b134df47"></script>
+<script defer src="data/core.js?v=b8b134df47"></script>
+<script defer src="data/sol.js?v=b8b134df47"></script>
+<script defer src="app.js?v=b8b134df47"></script>
 </head>
 <body>
 <a class="skip" href="#stage">Skip to content</a>
@@ -51,7 +54,8 @@
       <input id="q" type="search" placeholder="Names, groups, bills, records…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="results">
       <div id="results" class="results" role="listbox" aria-label="Search results"></div>
     </div>
-    <section class="filter" data-guide="layers"><h2 class="lbl" id="h-layer">Source layers</h2><div id="f-layer" class="seg layer-seg" role="group" aria-labelledby="h-layer"></div><div id="layer-note" class="help"></div>
+    <section class="filter" data-guide="layers"><h2 class="lbl" id="h-topics">Topics</h2><div id="f-topics" class="seg layer-seg topic-seg" role="tablist" aria-labelledby="h-topics"></div><p class="help" id="topic-note"></p>
+      <h2 class="lbl" id="h-layer">Source layers</h2><div id="f-layer" class="seg layer-seg" role="group" aria-labelledby="h-layer"></div><div id="layer-note" class="help"></div>
       <div class="row-ctl"><label class="inline-ctl small" for="f-minl">Seen in at least</label> <select id="f-minl" aria-describedby="minl-help"></select></div>
       <div id="minl-help" class="help">Counts the source layers that report an item themselves (an entity also counts the layers of its links).</div>
       <label class="check"><input id="f-hl" type="checkbox"> highlight by number of layers (thicker ring)</label>
@@ -60,7 +64,7 @@
     <section class="filter"><h2 class="lbl" id="h-provs">Province / jurisdiction</h2><div id="f-provs" class="chips small" role="group" aria-labelledby="h-provs"></div></section>
     <section class="filter"><h2 class="lbl" id="h-status">Claim status</h2><div id="f-status" class="chips" role="group" aria-labelledby="h-status"></div></section>
     <section class="filter"><h2 class="lbl" id="h-cats">Relationship</h2><div id="f-cats" class="chips small" role="group" aria-labelledby="h-cats"></div></section>
-    <section class="filter" id="f-lobby-sec" data-guide="lobbying-filter"><h2 class="lbl" id="h-lobby">Lobbying</h2><div id="f-ltypes" class="chips small" role="group" aria-label="Lobbying link types"></div><h3 class="lbl sub" id="h-subj">Lobbying subject</h3><div id="f-subj" class="chips small" role="group" aria-labelledby="h-subj"></div><p class="help">Subject matter as the lobbying registry entry words it. Pick one or more to show only lobbying claims on those subjects.</p></section>
+    <section class="filter" id="f-lobby-sec" data-guide="lobbying-filter"><h2 class="lbl" id="h-lobby">Lobbying</h2><div id="f-ltypes" class="chips small" role="group" aria-label="Lobbying link types"></div><details class="lob-subjects" id="f-subj-wrap"><summary id="h-subj">Lobby subjects (<span id="f-subj-n">0</span>)</summary><div id="f-subj" class="chips small" role="group" aria-labelledby="h-subj"></div><p class="help">Subject matter as the lobbying registry entry words it. Pick one or more to show only lobbying claims on those subjects.</p></details></section>
     <section class="filter" aria-labelledby="h-dates">
       <h2 class="lbl" id="h-dates">Date range <span id="date-label" class="muted"></span></h2>
       <div id="f-hist" class="hist" aria-hidden="true"></div>
@@ -115,17 +119,18 @@
     <div class="sb-foot muted" id="sb-updated"></div>
     <div class="sb-links"><button type="button" class="linkish" data-disclaimer aria-haspopup="dialog">About this map · disclaimer</button></div>
   </aside>
+  <div id="sidebar-resize" class="col-resizer" role="separator" aria-orientation="vertical" aria-controls="sidebar" aria-label="Resize search panel" aria-valuemin="240" aria-valuenow="290" tabindex="0"></div>
 
   <main class="stage" id="stage" tabindex="-1">
     <section id="view-map" class="view" role="tabpanel" aria-labelledby="tab-map">
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Layout">
-          <button data-layout="network" class="on">Network</button><button data-layout="rings">Rings</button><button data-layout="provinces">Province</button><button data-layout="clusters">Clusters</button>
+          <button data-layout="network" class="on">Network</button><button data-layout="rings" data-guide="rings">Rings</button><button data-layout="provinces">Province</button><button data-layout="clusters" data-guide="clusters">Clusters</button>
         </div>
         <div class="seg" role="group" aria-label="Labels and colours">
           <button id="btn-names" class="on" aria-pressed="true">Names</button><button id="btn-ecolor" aria-pressed="false" title="Cycle line colour: claim status → relationship type → source layer">Line: status</button>
         </div>
-        <label class="inline-ctl" title="Hide hub nodes with more connections than this (selected and expanded nodes always stay)">Hide hubs &gt; <select id="g-maxdeg"></select></label>
+        <label class="inline-ctl" data-guide="hubs" title="Hide hub nodes with more connections than this (selected and expanded nodes always stay)">Hide hubs &gt; <select id="g-maxdeg"></select></label>
         <div class="seg" role="group" aria-label="Zoom">
           <button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-fit" aria-label="Fit to screen">◎</button>
         </div>
@@ -293,6 +298,7 @@
       </article>
     </section>
   </main>
+  <div id="panel-resize" class="col-resizer" role="separator" aria-orientation="vertical" aria-controls="panel" aria-label="Resize details panel" aria-valuemin="240" aria-valuenow="380" tabindex="0"></div>
 
   <aside id="panel" class="panel" aria-label="Details" data-guide="profile">
     <div class="panel-head">

@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-24T13:50:22.064Z */
+/* NoticerMap — built 2026-11-24T14:25:57.589Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -142,7 +142,7 @@ const MAXDEG = Math.max(1, ...D.entities.map(e => e.degree));
 const allProvs = [...new Set(D.entities.map(e => e.province || '—'))].sort((a, b) => (a === 'FED' ? -1 : b === 'FED' ? 1 : a === '—' ? 1 : b === '—' ? -1 : a.localeCompare(b)));
 const usedTypes = TYPE_ORDER.filter(t => t === 'event' || D.entities.some(e => e.type === t)); // Events always listed
 const usedCats = CAT_KEYS.filter(c => D.links.some(l => catOf(l) === c));
-const defaults = () => ({ normf: false, thy: false, thyOn: new Set(), view: 'map', node: null, link: null, net: null, ov: null, layers: new Set(LAYER_KEYS.filter(k => k !== 'theories')), q: '', types: new Set(usedTypes), provs: new Set(allProvs), statuses: new Set(STATUS_KEYS), cats: new Set(usedCats), from: null, to: null, basis: 'event', undated: true, money: false, est: false, minl: 1, legalf: false, ltypes: new Set(['lobbied', 'lobbied_on']), subj: new Set(), hl: false, lead: null, lpat: new Set(Object.keys(LEAD_PAT)), llayer: 'all', lprov: 'all', lfrom: '', lto: '', lmin: 0, tour: null, step: 0, layout: 'network', min: 0, mfocus: false, top: BIG ? 150 : 0, maxdeg: 0, expand: [], ecolor: 'status', sq: '', skind: 'all', ssort: 'date', slayer: 'all', tlgroup: 'cat', ovtypes: new Set(OV_TYPE_KEYS), ovl: false, pa: null, pb: null, ovsort: 'strength' });
+const defaults = () => ({ normf: false, thy: false, thyOn: new Set(), view: 'map', node: null, link: null, net: null, ov: null, layers: new Set(LAYER_KEYS.filter(k => k !== 'theories')), q: '', types: new Set(usedTypes), provs: new Set(allProvs), statuses: new Set(STATUS_KEYS), cats: new Set(usedCats), from: null, to: null, basis: 'event', undated: true, money: false, est: false, minl: 1, legalf: false, ltypes: new Set(['lobbied', 'lobbied_on']), subj: new Set(), hl: false, lead: null, lpat: new Set(Object.keys(LEAD_PAT)), llayer: 'all', lprov: 'all', lfrom: '', lto: '', lmin: 0, tour: null, step: 0, layout: 'network', min: 0, mfocus: false, top: BIG ? 150 : 0, maxdeg: 0, expand: [], ecolor: 'status', sq: '', skind: 'all', ssort: 'date', slayer: 'all', tlgroup: 'cat', ovtypes: new Set(OV_TYPE_KEYS), ovl: false, pa: null, pb: null, ovsort: 'strength', topic: '' });
 let S = defaults();
 const VIEWS = ['map', 'money', 'timeline', 'networks', 'leads', 'overlaps', 'tours', 'index', 'sources', 'about'];
 function toHash() {
@@ -158,6 +158,7 @@ function toHash() {
   if (S.minl > 1) p.set('minl', S.minl); if (S.legalf) p.set('legal', '1'); if (S.normf) p.set('norm', '1'); if (S.thy) p.set('thy', '1'); if (S.thyOn.size) p.set('thyon', [...S.thyOn].join(',')); if (S.evstop) p.set('evstop', '1'); if (S.evkind) p.set('evkind', S.evkind); if (S.hl) p.set('hl', '1');
   if (S.lpat.size !== d.lpat.size) p.set('lpat', [...S.lpat].join(',')); if (S.llayer !== 'all') p.set('llayer', S.llayer); if (S.lprov !== 'all') p.set('lprov', S.lprov); if (S.lfrom) p.set('lfrom', S.lfrom); if (S.lto) p.set('lto', S.lto); if (S.lmin) p.set('lmin', S.lmin);
   if (S.layers.size !== MAP_LAYER_KEYS.length || [...S.layers].some(k => !MAP_LAYER_KEYS.includes(k))) p.set('layers', [...S.layers].join(','));
+  if (S.topic) p.set('topic', S.topic);
   if (S.q) p.set('q', S.q);
   const setIf = (k, set, all) => { if (set.size !== all.size) p.set(k, [...set].join(',')); };
   setIf('types', S.types, d.types); setIf('prov', S.provs, d.provs); setIf('status', S.statuses, d.statuses); setIf('cats', S.cats, d.cats);
@@ -188,7 +189,7 @@ function fromHash() {
     from: okDate(p.get('from')), to: okDate(p.get('to')), basis: p.get('basis') === 'reported' ? 'reported' : 'event',
     undated: p.get('undated') !== '0', money: p.get('money') === '1', est: p.get('est') === '1',
     layout: ['network', 'rings', 'provinces', 'clusters'].includes(p.get('layout')) ? p.get('layout') : 'network',
-    min: +p.get('min') || 0, mfocus: p.get('focus') === '1', top: p.has('top') ? +p.get('top') || 0 : d.top,
+    min: +p.get('min') || 0, mfocus: p.get('focus') === '1', topic: (['immigration', 'carney'].includes(p.get('topic')) ? p.get('topic') : ''), top: p.has('top') ? +p.get('top') || 0 : d.top,
     maxdeg: +p.get('maxdeg') || 0, expand: (p.get('expand') || '').split(',').filter(id => ENT.has(id)),
     ecolor: ['type', 'layer'].includes(p.get('ecolor')) ? p.get('ecolor') : 'status',
     sq: p.get('sq') || '', skind: SRC_KINDS.includes(p.get('skind')) ? p.get('skind') : 'all', ssort: p.get('ssort') === 'cited' ? 'cited' : 'date', slayer: LAYER_KEYS.includes(p.get('slayer')) ? p.get('slayer') : 'all',
@@ -210,7 +211,7 @@ function commit(push) {
 function overlaps(iv, a, b) { return iv[1] >= a && iv[0] <= b; }
 function dateBounds() { return [S.from ? isoToDay(S.from) : -Infinity, S.to ? (dateInterval(S.to) || [0, Infinity])[1] : Infinity]; }
 const layerAll = () => MAP_LAYER_KEYS.every(k => S.layers.has(k));
-const inLayer = x => layerAll() || itemLayers(x).some(k => S.layers.has(k));
+const inLayer = x => layerAll() || itemLayers(x).some(k => S.layers.has(k)) || (S.layers.has('immigration') && typeof topicHas === 'function' && topicHas('immigration', x));
 function linkPass(l, a, b) {
   if (typeof isTheoryLnk === 'function' && isTheoryLnk(l)) {
     const thyShow = typeof theoriesVisible === 'function' ? theoriesVisible() : new Set();
@@ -271,6 +272,7 @@ function filtered() {
     for (const id of [...ents]) if (!focusSet.has(id)) ents.delete(id);
     links = links.filter(l => ents.has(l.from) && ents.has(l.to) && (S.expand.includes(l.from) || S.expand.includes(l.to)));
   }
+  if (typeof applyTopicFilter === 'function') links = applyTopicFilter(ents, links).links;
   return { ents, links, linkSet: new Set(links.map(l => l.id)), nets: NETS.filter(inLayer) };
 }
 let F = null;
@@ -403,6 +405,96 @@ function shardSearch(q, limit) {
 // small builds carry every bucket and shard inside core.js: hydrate now (synchronous, as before chunking)
 if (D.inline) { (D.inline.details || []).forEach((p, i) => ingestDetail(i, p)); (D.inline.shards || []).forEach((x, i) => SH.data.set(i, x)); (D.inline.src || []).forEach((rows, k) => window.__wiretapShard('src-' + k, rows)); delete D.inline; }
 
+// ---- 03-focus.js
+/* Topic tabs (Immigration, Carney): data-driven selections above the source-layer chips.
+   Keep in sync with lib/topic-focus.mjs (unit tests import that module). */
+const TOPIC_KEYS = ['immigration', 'carney'];
+const TOPIC_LABELS = { immigration: 'Immigration', carney: 'Carney' };
+const IRCC_ID = 'ent_organization_immigration_refugees_and_citizenship_canada';
+const IRB_ID = 'ent_organization_immigration_and_refugee_board';
+const MARK_CARNEY_ID = 'ent_person_mark_carney';
+const GOC_ID = 'ent_organization_government_of_canada';
+const topicLayersOf = x => { if (!x) return []; if (Array.isArray(x.layers) && x.layers.length) return x.layers; return x.source_layer ? [x.source_layer] : []; };
+const topicIsTheory = x => !!(x && (x.type === 'theory' || x.theory || String(x.id || '').startsWith('ent_theory_') || String(x.id || '').startsWith('lnk_thy_') || (topicLayersOf(x).includes('theories') && !topicLayersOf(x).some(k => k !== 'theories'))));
+const topicHasImmLayer = x => topicLayersOf(x).includes('immigration');
+const topicIsImmInst = e => { if (!e || topicIsTheory(e)) return false; if (e.id === IRCC_ID || e.id === IRB_ID) return true; const name = `${e.name || ''} ${(e.aliases || []).join(' ')}`; if (/immigration,?\s+refugees and citizenship canada|\bircc\b/i.test(name)) return true; return e.type === 'organization' && /immigration and refugee board|\bIRB\b/.test(name); };
+const topicHasImmTag = e => (e.tags || []).some(t => /^immigration(\s+policy)?$/i.test(String(t).trim()));
+const topicIsImmEvent = e => !!(e && e.type === 'event' && !topicIsTheory(e) && /^ent_event_imm_/.test(e.id || ''));
+const topicIsBrookfield = e => { if (!e || topicIsTheory(e)) return false; return /\bbrookfield\b/i.test(`${e.id || ''} ${e.name || ''} ${(e.aliases || []).join(' ')}`); };
+const topicIsCbfId = id => /^(lnk_cbf_|lead_cbf_|ent_event_carney_)/.test(String(id || ''));
+const topicIsCarneyEvent = e => !!(e && e.type === 'event' && !topicIsTheory(e) && /mark[_\s-]+carney/i.test(`${e.id || ''} ${e.name || ''}`));
+const topicIsHub = (e, deg) => !e || e.id === GOC_ID || e.type === 'province' || (deg.get(e.id) || e.degree || 0) > 200;
+
+function collectImmigrationTopic(entities, links, networks) {
+  const byId = new Map((entities || []).map(e => [e.id, e]));
+  const deg = new Map(); for (const l of links || []) { if (topicIsTheory(l)) continue; deg.set(l.from, (deg.get(l.from) || 0) + 1); deg.set(l.to, (deg.get(l.to) || 0) + 1); }
+  const entityIds = new Set(), linkIds = new Set(), theories = new Set();
+  for (const e of entities || []) { if (topicIsTheory(e)) { if (topicHasImmLayer(e) || topicHasImmTag(e)) theories.add(e.id); continue; } if (topicHasImmLayer(e) || topicIsImmInst(e) || topicHasImmTag(e) || topicIsImmEvent(e)) entityIds.add(e.id); }
+  for (const l of links || []) { if (topicIsTheory(l)) { if (topicHasImmLayer(l)) theories.add(l.id); continue; } if (topicHasImmLayer(l)) { linkIds.add(l.id); entityIds.add(l.from); entityIds.add(l.to); } }
+  const seeds = [...entityIds].filter(id => topicIsImmInst(byId.get(id)));
+  for (const l of links || []) { if (topicIsTheory(l)) continue; if (seeds.includes(l.from) || seeds.includes(l.to)) { linkIds.add(l.id); entityIds.add(l.from); entityIds.add(l.to); } }
+  for (const n of networks || []) {
+    const blob = `${n.id || ''} ${n.name || ''}`; const members = n.members || [];
+    const named = /immigrat|refugee board|\bircc\b/i.test(blob); const hasInst = members.includes(IRCC_ID) || members.includes(IRB_ID);
+    if (named || (hasInst && members.some(id => entityIds.has(id)))) {
+      for (const id of members) { const e = byId.get(id); if (e && !topicIsTheory(e) && (named || !topicIsHub(e, deg) || entityIds.has(id) || topicIsImmInst(e))) entityIds.add(id); }
+    }
+  }
+  for (const l of links || []) {
+    if (topicIsTheory(l)) continue;
+    const a = byId.get(l.from);
+    if (entityIds.has(l.from) && entityIds.has(l.to)) linkIds.add(l.id);
+    else if (entityIds.has(l.from) && topicIsHub(a, deg) && !topicIsImmInst(a)) continue;
+    else if (entityIds.has(l.to) && topicIsHub(byId.get(l.to), deg) && !topicIsImmInst(byId.get(l.to))) continue;
+  }
+  return { entities: entityIds, links: linkIds, theories };
+}
+function collectCarneyTopic(entities, links) {
+  const byId = new Map((entities || []).map(e => [e.id, e]));
+  const deg = new Map(); for (const l of links || []) { if (topicIsTheory(l)) continue; deg.set(l.from, (deg.get(l.from) || 0) + 1); deg.set(l.to, (deg.get(l.to) || 0) + 1); }
+  const entityIds = new Set(), linkIds = new Set(), theories = new Set();
+  for (const e of entities || []) {
+    if (topicIsTheory(e)) { const blob = `${e.id || ''} ${e.name || ''} ${(e.aliases || []).join(' ')}`; if (/mark[_\s-]?carney|\bcarney\b|brookfield/i.test(blob)) theories.add(e.id); continue; }
+    if (e.id === MARK_CARNEY_ID || topicIsBrookfield(e) || topicIsCbfId(e.id) || topicIsCarneyEvent(e)) entityIds.add(e.id);
+  }
+  for (const l of links || []) { if (topicIsTheory(l)) continue; if (topicIsCbfId(l.id)) { linkIds.add(l.id); entityIds.add(l.from); entityIds.add(l.to); } }
+  const expandFrom = [...entityIds].filter(id => { const e = byId.get(id); return e && (e.id === MARK_CARNEY_ID || topicIsBrookfield(e) || topicIsCbfId(e.id)) && !topicIsHub(e, deg); });
+  for (const l of links || []) {
+    if (topicIsTheory(l)) continue;
+    if (expandFrom.includes(l.from) || expandFrom.includes(l.to)) {
+      const o = expandFrom.includes(l.from) ? l.to : l.from; const other = byId.get(o);
+      if (other && topicIsHub(other, deg) && other.id !== MARK_CARNEY_ID && !topicIsBrookfield(other)) { linkIds.add(l.id); entityIds.add(other.id); continue; }
+      linkIds.add(l.id); entityIds.add(l.from); entityIds.add(l.to);
+    }
+  }
+  for (const l of links || []) { if (!topicIsTheory(l) && entityIds.has(l.from) && entityIds.has(l.to)) linkIds.add(l.id); }
+  return { entities: entityIds, links: linkIds, theories };
+}
+
+let TOPIC_MEM = null;
+function topicMembers(topic) {
+  if (!TOPIC_MEM) TOPIC_MEM = { immigration: collectImmigrationTopic(D.entities, D.links, D.networks), carney: collectCarneyTopic(D.entities, D.links) };
+  return TOPIC_MEM[topic] || { entities: new Set(), links: new Set(), theories: new Set() };
+}
+function topicHas(topic, item) {
+  if (!topic || !item) return true;
+  const m = topicMembers(topic);
+  if (item.from != null) return m.links.has(item.id) || (m.entities.has(item.from) && m.entities.has(item.to));
+  return m.entities.has(item.id) || ((typeof S !== 'undefined' && S.thy) && m.theories.has(item.id));
+}
+function applyTopicFilter(ents, links) {
+  if (typeof S === 'undefined' || !S.topic) return { ents, links };
+  const m = topicMembers(S.topic); if (!m) return { ents, links };
+  const keep = new Set(m.entities);
+  if (S.thy || (S.thyOn && S.thyOn.size)) for (const id of m.theories) keep.add(id);
+  if (S.node) keep.add(S.node);
+  if (S.pa) keep.add(S.pa); if (S.pb) keep.add(S.pb);
+  for (const id of S.expand || []) keep.add(id);
+  for (const id of [...ents]) if (!keep.has(id)) ents.delete(id);
+  links = links.filter(l => ents.has(l.from) && ents.has(l.to) && (m.links.has(l.id) || (m.entities.has(l.from) && m.entities.has(l.to)) || keep.has(l.from) && keep.has(l.to) && (l.from === S.node || l.to === S.node)));
+  return { ents, links };
+}
+
 // ---- 05-extras.js
 /* lazy data: overlaps, leads, search index, sources, guide, explanations. Each data/<name>.js registers itself
    (window.__WIRETAP_EXTRA__[name]) and calls window.__wiretapExtra(name). Script tags work over file:// too. */
@@ -472,6 +564,7 @@ function renderFilters() {
     renderNetList();
     const lc = k => D.links.filter(l => itemLayers(l).includes(k)).length + D.entities.filter(e => itemLayers(e).includes(k)).length;
     $('#f-layer').innerHTML = LAYER_KEYS.filter(k => k !== 'theories').map(k => `<button type="button" data-layer="${esc(k)}" aria-pressed="true" title="${esc(layerInfo(k).outlet || layerInfo(k).label)}"${lc(k) ? '' : ' class="nodata"'}><span class="lmark" style="--lc:${layerInfo(k).color}" aria-hidden="true"></span>${esc(layerInfo(k).label)} <span class="n">${lc(k)}</span></button>`).join('');
+    if ($('#f-topics') && typeof topicMembers === 'function') $('#f-topics').innerHTML = TOPIC_KEYS.map(k => `<button type="button" role="tab" id="tab-topic-${esc(k)}" data-topic="${esc(k)}" aria-selected="false">${esc(TOPIC_LABELS[k])} <span class="n">${topicMembers(k).entities.size}</span></button>`).join('');
     const missing = LAYER_KEYS.filter(k => !lc(k));
     $('#layer-note').textContent = (missing.length ? `No ${missing.map(k => layerInfo(k).label).join(' / ')} items yet. ` : '') + 'Pick one or more (at least one stays on). “Public records” = items whose own source layer is official records; a public-record source on a reported item is evidence only.';
     $('#f-minl').innerHTML = Array.from({ length: NLAYERS }, (_, i) => i + 1).map(n => `<option value="${n}">${n === 1 ? 'any (1+)' : n + '+ layers'}</option>`).join('');
@@ -481,6 +574,7 @@ function renderFilters() {
   renderLobbyFilters();
   $('#f-minl').value = String(S.minl); $('#f-legal').checked = S.legalf; if ($('#f-norm')) $('#f-norm').checked = !!S.normf; if ($('#f-thy')) { $('#f-thy').checked = !!S.thy; $('#thy-banner').hidden = !S.thy; } $('#f-evstop').checked = S.evstop; $('#f-evkind').value = S.evkind || ''; $('#f-hl').checked = S.hl;
   $$('#f-layer [data-layer]').forEach(b => { const on = S.layers.has(b.dataset.layer); b.setAttribute('aria-pressed', on); b.classList.toggle('on', on); });
+  if ($('#f-topics')) { $$('#f-topics [data-topic]').forEach(b => { const on = S.topic === b.dataset.topic; b.setAttribute('aria-selected', on); b.classList.toggle('on', on); }); const note = $('#topic-note'); if (note) note.textContent = (S.topic && TOPIC_LABELS[S.topic] && typeof topicMembers === 'function') ? `Showing the ${TOPIC_LABELS[S.topic]} selection (${topicMembers(S.topic).entities.size} entities). Click the tab again to show the whole map. Source layers still apply. Theories stay under the Theories toggle.` : 'Focus the map on one topic. Click again to show the whole map. These selections update as new folds are added.'; }
   // update in place so elements under the pointer are never replaced mid-click
   $$('#f-types [data-type]').forEach(b => b.setAttribute('aria-pressed', S.types.has(b.dataset.type)));
   $$('#f-provs [data-prov]').forEach(b => b.setAttribute('aria-pressed', S.provs.has(b.dataset.prov)));
@@ -530,6 +624,11 @@ $('#btn-dates-clear').addEventListener('click', () => { S.from = S.to = null; up
 $('#f-basis').addEventListener('change', e => { S.basis = e.target.value; update(); });
 $('#t-basis').addEventListener('change', e => { S.basis = e.target.value; update(); });
 $('#f-hist').addEventListener('click', e => { const s = e.target.closest('[data-i]'); if (!s) return; const w = (DOM1 - DOM0) / 60; S.from = dayToISO(Math.round(DOM0 + +s.dataset.i * w)).slice(0, 7); S.to = dayToISO(Math.round(DOM0 + (+s.dataset.i + 1) * w)).slice(0, 7); update(); });
+if ($('#f-topics')) $('#f-topics').addEventListener('click', e => {
+  const b = e.target.closest('[data-topic]'); if (!b) return;
+  S.topic = S.topic === b.dataset.topic ? '' : b.dataset.topic;
+  update(true); announce(S.topic ? `Topic: ${TOPIC_LABELS[S.topic]}` : 'Topic cleared; showing the whole map');
+});
 $('#f-layer').addEventListener('click', e => {
   const b = e.target.closest('[data-layer]'); if (!b) return; const k = b.dataset.layer;
   if (S.layers.has(k)) { if (S.layers.size === 1) { toast('At least one source layer must stay on'); return; } S.layers.delete(k); } else S.layers.add(k);
@@ -663,6 +762,141 @@ function openSidebarMobile() { document.body.classList.add('sb-open'); $('#btn-f
 function closeSidebarMobile() { document.body.classList.remove('sb-open'); $('#btn-filters').setAttribute('aria-expanded', 'false'); }
 $('#btn-filters').addEventListener('click', () => (document.body.classList.contains('sb-open') ? closeSidebarMobile() : openSidebarMobile()));
 $('#stage').addEventListener('click', () => closeSidebarMobile());
+
+// ---- 13-panel-resize.js
+/* Desktop-only resize of the Search everything sidebar and the Overview/details panel. */
+const PANEL_RESIZE_MQ = '(min-width: 901px)';
+const PANEL_MIN = 240;
+const PANEL_MAX_FRAC = 0.5;
+const PANEL_MIN_STAGE = 240;
+const PANEL_DEFAULTS = { sidebar: 290, panel: 380 };
+const PANEL_STORAGE_KEY = 'wiretap-map:panel-widths';
+const PANEL_ARROW_STEP = 16;
+function panelDesktop() { return window.innerWidth >= 901; }
+function clampPanelWidth(px, vw) {
+  const min = PANEL_MIN, max = Math.max(min, Math.floor((vw || 0) * PANEL_MAX_FRAC));
+  const n = Math.round(Number(px));
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min;
+}
+function clampPanelPair(sidebar, panel, vw) {
+  let s = clampPanelWidth(sidebar, vw), p = clampPanelWidth(panel, vw);
+  const budget = Math.max(0, (vw || 0) - PANEL_MIN_STAGE);
+  if (s + p <= budget) return { sidebar: s, panel: p };
+  if (budget < PANEL_MIN * 2) { s = Math.floor(budget / 2); return { sidebar: s, panel: budget - s }; }
+  const extraS = Math.max(0, s - PANEL_MIN), extraP = Math.max(0, p - PANEL_MIN), extra = extraS + extraP, overflow = s + p - budget;
+  if (extra <= 0) { s = Math.floor(budget / 2); return { sidebar: s, panel: budget - s }; }
+  const cutS = Math.min(extraS, Math.round(overflow * (extraS / extra)));
+  s = PANEL_MIN + extraS - cutS;
+  return { sidebar: s, panel: budget - s };
+}
+function readStoredWidths() {
+  try { const raw = localStorage.getItem(PANEL_STORAGE_KEY); if (!raw) return null; const o = JSON.parse(raw); const sidebar = +o.sidebar, panel = +o.panel; if (!Number.isFinite(sidebar) || !Number.isFinite(panel)) return null; return { sidebar, panel }; } catch { return null; }
+}
+function writeStoredWidths(w) { try { localStorage.setItem(PANEL_STORAGE_KEY, JSON.stringify({ sidebar: w.sidebar, panel: w.panel })); } catch { } }
+function currentPanelWidths() {
+  const cs = getComputedStyle(document.documentElement);
+  const num = v => { const n = parseFloat(cs.getPropertyValue(v)); return Number.isFinite(n) ? n : null; };
+  return { sidebar: num('--sidebar') ?? PANEL_DEFAULTS.sidebar, panel: num('--panel') ?? PANEL_DEFAULTS.panel };
+}
+function redrawAfterPanelResize() {
+  if (typeof cy !== 'undefined' && cy && typeof cy.resize === 'function') { try { cy.resize(); } catch { } }
+}
+function setPanelWidths(next, { store = true, redraw = true } = {}) {
+  const w = clampPanelPair(next.sidebar, next.panel, window.innerWidth);
+  document.documentElement.style.setProperty('--sidebar', w.sidebar + 'px');
+  document.documentElement.style.setProperty('--panel', w.panel + 'px');
+  const sb = $('#sidebar-resize'), pb = $('#panel-resize');
+  if (sb) { sb.setAttribute('aria-valuenow', String(w.sidebar)); sb.setAttribute('aria-valuemin', String(PANEL_MIN)); sb.setAttribute('aria-valuemax', String(Math.max(PANEL_MIN, Math.floor(window.innerWidth * PANEL_MAX_FRAC)))); }
+  if (pb) { pb.setAttribute('aria-valuenow', String(w.panel)); pb.setAttribute('aria-valuemin', String(PANEL_MIN)); pb.setAttribute('aria-valuemax', String(Math.max(PANEL_MIN, Math.floor(window.innerWidth * PANEL_MAX_FRAC)))); }
+  if (store) writeStoredWidths(w);
+  if (redraw) redrawAfterPanelResize();
+  return w;
+}
+function clearPanelWidthOverrides() {
+  document.documentElement.style.removeProperty('--sidebar');
+  document.documentElement.style.removeProperty('--panel');
+}
+function applyPanelWidthsFromStore({ redraw = false } = {}) {
+  if (!panelDesktop()) { clearPanelWidthOverrides(); return null; }
+  const stored = readStoredWidths();
+  if (!stored) {
+    const cur = currentPanelWidths();
+    const w = clampPanelPair(cur.sidebar, cur.panel, window.innerWidth);
+    if (w.sidebar !== cur.sidebar || w.panel !== cur.panel) return setPanelWidths(w, { store: false, redraw });
+    const sb = $('#sidebar-resize'), pb = $('#panel-resize');
+    if (sb) { sb.setAttribute('aria-valuenow', String(cur.sidebar)); sb.setAttribute('aria-valuemin', String(PANEL_MIN)); sb.setAttribute('aria-valuemax', String(Math.max(PANEL_MIN, Math.floor(window.innerWidth * PANEL_MAX_FRAC)))); }
+    if (pb) { pb.setAttribute('aria-valuenow', String(cur.panel)); pb.setAttribute('aria-valuemin', String(PANEL_MIN)); pb.setAttribute('aria-valuemax', String(Math.max(PANEL_MIN, Math.floor(window.innerWidth * PANEL_MAX_FRAC)))); }
+    return cur;
+  }
+  return setPanelWidths(stored, { store: true, redraw });
+}
+function bindColResizer(el, which) {
+  if (!el) return;
+  const start = ev => {
+    if (!panelDesktop()) return;
+    if (ev.type === 'mousedown' && ev.button !== 0) return;
+    ev.preventDefault();
+    const cur = currentPanelWidths();
+    const origin = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    const startW = which === 'sidebar' ? cur.sidebar : cur.panel;
+    document.body.classList.add('col-resizing');
+    const move = ev2 => {
+      const x = ev2.touches ? ev2.touches[0].clientX : ev2.clientX;
+      const dx = x - origin;
+      const next = { ...currentPanelWidths() };
+      if (which === 'sidebar') next.sidebar = startW + dx;
+      else next.panel = startW - dx;
+      setPanelWidths(next, { store: false, redraw: true });
+    };
+    const end = () => {
+      document.body.classList.remove('col-resizing');
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', end);
+      window.removeEventListener('touchmove', move);
+      window.removeEventListener('touchend', end);
+      writeStoredWidths(currentPanelWidths());
+      redrawAfterPanelResize();
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('touchend', end);
+  };
+  el.addEventListener('mousedown', start);
+  el.addEventListener('touchstart', start, { passive: false });
+  el.addEventListener('dblclick', ev => {
+    if (!panelDesktop()) return;
+    ev.preventDefault();
+    const cur = currentPanelWidths();
+    if (which === 'sidebar') cur.sidebar = PANEL_DEFAULTS.sidebar;
+    else cur.panel = PANEL_DEFAULTS.panel;
+    setPanelWidths(cur);
+  });
+  el.addEventListener('keydown', ev => {
+    if (!panelDesktop()) return;
+    const keys = { ArrowLeft: 1, ArrowRight: 1, ArrowUp: 1, ArrowDown: 1, Home: 1 };
+    if (!keys[ev.key]) return;
+    ev.preventDefault();
+    const cur = currentPanelWidths();
+    if (ev.key === 'Home') {
+      if (which === 'sidebar') cur.sidebar = PANEL_DEFAULTS.sidebar;
+      else cur.panel = PANEL_DEFAULTS.panel;
+    } else {
+      const step = ev.shiftKey ? PANEL_ARROW_STEP * 4 : PANEL_ARROW_STEP;
+      const dir = (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') ? 1 : -1;
+      if (which === 'sidebar') cur.sidebar += dir * step;
+      else cur.panel += dir * step;
+    }
+    setPanelWidths(cur);
+  });
+}
+function initPanelResize() {
+  bindColResizer($('#sidebar-resize'), 'sidebar');
+  bindColResizer($('#panel-resize'), 'panel');
+  applyPanelWidthsFromStore({ redraw: false });
+  window.addEventListener('resize', debounce(() => applyPanelWidthsFromStore({ redraw: false }), 120));
+}
+initPanelResize();
 
 // ---- 20-graph.js
 /* graph: cytoscape map, layouts, highlighting, keyboard navigation, focus/expand */
@@ -1743,6 +1977,7 @@ const lob = l => (l && LOBBY_LT.has(l.type) && l.lobbying) || null;
 const SUBJECTS = (() => { const c = new Map(); for (const l of D.links) for (const s of lob(l)?.subjects || []) c.set(s, (c.get(s) || 0) + 1); return [...c].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])); })();
 const LOBBY_TYPES_USED = [...LOBBY_LT].filter(t => D.links.some(l => l.type === t));
 const subjChip = (s, attrs = '') => `<span class="subj" ${attrs}>${esc(s)}</span>`;
+const subjDisclosure = (inner, n, extraClass = '') => `<details class="lob-subjects${extraClass ? ' ' + extraClass : ''}"><summary>Lobby subjects (${n})</summary>${inner}</details>`;
 const partyHtml = x => !x ? '' : x.entity_id && ENT.has(x.entity_id) ? entBtn(x.entity_id) : esc(x.name);
 const regLink = (u, label = 'Lobbying registry record') => { const s = safeUrl(u); return s ? `<a class="reg-link" href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>` : ''; };
 function commsList(cm) {
@@ -1752,7 +1987,7 @@ function commsList(cm) {
 function lobbyBlock(l, compact) {
   const x = lob(l); if (!x) return '';
   const parts = [];
-  if (x.subjects) parts.push(`<div class="lob-row"><span class="lbl">Subjects</span> <span class="subjs">${x.subjects.map(s => subjChip(s)).join('')}</span></div>`);
+  if (x.subjects) parts.push(subjDisclosure(`<span class="subjs">${x.subjects.map(s => subjChip(s)).join('')}</span>`, x.subjects.length, 'lob-row'));
   if (x.targets) parts.push(`<div class="lob-row"><span class="lbl">Lobbied on</span> <ul class="lob-targets">${x.targets.map(t => `<li>${partyHtml(t)}${t.entity_id && ENT.has(t.entity_id) ? ` <span class="muted small">${esc(TYPE[ENT.get(t.entity_id).type]?.label || '')}</span>` : ''}</li>`).join('')}</ul></div>`);
   if (x.communications) parts.push(compact ? `<div class="lob-row small muted">${x.communications.length} communication${x.communications.length === 1 ? '' : 's'} recorded${commRange(x.communications)}</div>` : `<div class="lob-row"><span class="lbl">Communications <span class="muted">${x.communications.length}</span></span>${commsList(x.communications)}</div>`);
   const reg = [['Client', partyHtml(x.client)], ['Firm', partyHtml(x.firm)], ['Registrant', x.registrant ? esc(x.registrant) : ''], ['Registrant type', x.registrant_type ? esc(REG_TYPES[x.registrant_type] || x.registrant_type) : ''], ['Registration start', x.registration_start ? esc(x.registration_start) : ''], ['Registration end', x.registration_end ? esc(x.registration_end) : '']].filter(r => r[1]);
@@ -1780,7 +2015,8 @@ function lobbyingFor(e) {
       ${cm.length ? `<div class="small muted">${cm.length} communication${cm.length === 1 ? '' : 's'}${commRange(cm)}</div>` : ''}
       <div class="small">${g.map(l => `<button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>`).join(' ')} ${[...regs].map((u, i) => regLink(u, regs.size > 1 ? `Registry record ${i + 1}` : 'Registry record')).join(' ')}</div></div>`;
   }).join('');
-  return panelSection('Lobbying for', `<div data-guide="lobbying-for">${body}</div>`, true, keys.filter(Boolean).length || undefined);
+  const nSubj = keys.filter(Boolean).length;
+  return panelSection('Lobbying for', subjDisclosure(`<div data-guide="lobbying-for">${body}</div>`, nSubj), true, nSubj || undefined);
 }
 // "Lobby to award" sequences
 const chainsOf = id => CHAINS.filter(c => c.lobby === id || c.client === id || c.target === id || c.recipient === id);
@@ -1814,6 +2050,7 @@ function renderLobbyFilters(first) {
     $('#f-ltypes').innerHTML = [...LOBBY_LT].map(t => chip(LT(t).label, null, true, `data-ltype="${t}"${n(t) ? '' : ' title="None in the current data"'}`, n(t))).join('');
     $('#f-subj').innerHTML = SUBJECTS.length ? SUBJECTS.map(([s, c]) => chip(s, null, false, `data-subj="${esc(s)}"`, c)).join('') : '<p class="help">No subject-matter data in the current build.</p>';
   }
+  if ($('#f-subj-n')) $('#f-subj-n').textContent = String(SUBJECTS.length);
   $$('#f-ltypes [data-ltype]').forEach(b => b.setAttribute('aria-pressed', S.ltypes.has(b.dataset.ltype)));
   $$('#f-subj [data-subj]').forEach(b => b.setAttribute('aria-pressed', S.subj.has(b.dataset.subj)));
 }
@@ -2427,9 +2664,10 @@ function solCrossing(x) { const a = solRole('immigration'), b = solRole('people_
 function solToggleHtml() {
   const row = (role, label) => { const id = solRole(role); const on = id && S.layers.has(id);
     return id ? `<button type="button" class="sol-tg${on ? ' on' : ''}" data-sol-role="${role}" aria-pressed="${!!on}">${esc((LAYERS[id] && LAYERS[id].label) || (D.meta.layer_proposed && D.meta.layer_proposed[id] && D.meta.layer_proposed[id].label) || label)}</button>`
-      : `<button type="button" class="sol-tg nodata" data-sol-role="${role}" aria-disabled="true" disabled title="${SOL_TOGGLES ? 'Layer not in the data yet' : 'Off until the approved data fold'}">${esc(label)} <span class="muted small">(${SOL_TOGGLES ? 'not in data yet' : 'off until data fold'})</span></button>`; };
+      : `<button type="button" class="sol-tg nodata coming-soon" data-sol-role="${role}" aria-disabled="true" disabled title="Coming soon: this turns on after the next data update." aria-describedby="sol-soon-note">${esc(label)} <span class="muted small">Coming soon</span></button>`; };
+  const note = (solRole('immigration') && solRole('people_boards')) ? 'With both on, only items explicitly marked as crossing both layers are outlined.' : (solRole('immigration') || solRole('people_boards') ? 'Crossing outlines need both layers in the data.' : 'Coming soon — these turn on after the next data update.');
   return `<div class="seg" role="group" aria-label="Context layers">${row('immigration', 'Immigration')}${row('people_boards', 'People and boards (TBB network)')}</div>
-    <p class="help small" data-sol-xing-note>${solRole('immigration') && solRole('people_boards') ? 'With both on, only items explicitly marked as crossing both layers are outlined.' : 'Crossing outlines need both layers in the data.'}</p>`;
+    <p class="help small" id="sol-soon-note" data-sol-xing-note>${esc(note)}</p>`;
 }
 const cell = v => v == null ? '<td class="muted" aria-label="missing">—</td>' : typeof v === 'object' ? '<td class="muted" data-sol-held aria-label="held: no traceable source for this year">held</td>' : `<td>${esc(v)}</td>`;
 function solTableHtml(t, cap) {
@@ -2540,7 +2778,7 @@ function renderTourCard() {
   const st = t.steps[S.step]; const n = t.steps.length;
   const ents = (st.entity_ids || []).filter(id => ENT.has(id)).slice(0, 8), lks = (st.link_ids || []).filter(id => LNK.has(id)).slice(0, 6);
   c.innerHTML = `<div class="tc-top"><span class="kindtag">Tour</span> <span class="muted small">${esc(t.title)}</span><button type="button" class="icon-btn" data-tour-exit aria-label="Exit tour">✕</button></div>
-    <h2 id="tc-title">${esc(st.title || 'Step ' + (S.step + 1))}</h2><p>${esc(st.text || '')}</p>
+    <h2 id="tc-title">${esc(st.title || 'Step ' + (S.step + 1))}</h2>${st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`}
     ${tourLeadHtml(st)}
     ${ents.length ? `<div class="small">${ents.map(entBtn).join(' · ')}</div>` : ''}
     ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(id)}">claim</button></li>`; }).join('')}</ul>` : ''}
@@ -2562,9 +2800,28 @@ document.addEventListener('keydown', e => {
   if (/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName || '') || document.activeElement === $('#cy')) return;
   if (e.key === 'ArrowRight') { e.preventDefault(); tourGo(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); tourGo(-1); } else if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); exitTour(); }
 }, true);
+const TOUR_LIST_PRIORITY = ['first-visit', 'tour_immigration', 'tour_cija', 'tour_carney', 'tour_awz_ventures'];
+function tourPriorityIndex(id, title) {
+  const s = String(id || '').toLowerCase(), t = String(title || '').toLowerCase();
+  const slots = [
+    { i: 0, keys: ['first-visit'] },
+    { i: 1, keys: ['tour_immigration', 'immigration'], word: 'immigration' },
+    { i: 2, keys: ['tour_cija', 'cija'], word: 'cija' },
+    { i: 3, keys: ['tour_carney', 'carney'], word: 'carney' },
+    { i: 4, keys: ['tour_awz_ventures', 'awz_ventures', 'awz-ventures'] }
+  ];
+  for (const sl of slots) {
+    if (sl.keys.some(k => s === k || s.startsWith(k + '_') || s.startsWith(k + '-'))) return sl.i;
+    if (sl.word && new RegExp('(^|[^a-z0-9])' + sl.word + '([^a-z0-9]|$)').test(s + ' ' + t)) return sl.i;
+  }
+  return slots.length;
+}
+function orderTours(tours) {
+  return (tours || []).map((tour, i) => ({ tour, i, k: tourPriorityIndex(tour && tour.id, tour && tour.title) })).sort((a, b) => a.k - b.k || a.i - b.i).map(x => x.tour);
+}
 function renderTours() {
   if (!EXTRA.loaded.guide) { $('#tr-list').innerHTML = loadingNote('tours'); loadExtra('guide'); return; }
-  const ts = (GUIDE.tours || []).filter(t => t.steps && t.steps.length);
+  const ts = orderTours((GUIDE.tours || []).filter(t => t.steps && t.steps.length));
   $('#tr-summary').textContent = ts.length ? `${ts.length} tours` : '';
   $('#tr-list').innerHTML = ts.length ? ts.map(t => `<article class="net-card tour-item"><div class="nc-head"><span class="ic" aria-hidden="true">▶</span><b>${esc(t.title)}</b></div><p class="small">${esc(t.summary || '')}</p><div class="nc-meta"><span class="muted">${t.steps.length} steps</span></div><div class="nc-act"><button type="button" class="btn sm accent" data-tour-go="${esc(t.id)}">Start tour</button> <a class="linkish small" href="#tour=${encodeURIComponent(t.id)}&step=0">link</a></div></article>`).join('')
     : '<p class="muted pad">No guided tours in this build. The map works the same without them.</p>';
@@ -2572,7 +2829,7 @@ function renderTours() {
 $('#view-tours').addEventListener('click', e => { const b = e.target.closest('[data-tour-go]'); if (b) startTour(b.dataset.tourGo, 0); });
 
 // ---- spotlight a [data-guide] element (used by tours with `target` and by the walkthrough)
-const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types' }; // events: the Events type chip (map), else the Type filter
+const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types', rings: '[data-layout="rings"]', clusters: '[data-layout="clusters"]', hubs: '#g-maxdeg' }; // events: the Events type chip (map), else the Type filter
 function guideEl(target) {
   if (!target) return null;
   const cands = [...document.querySelectorAll(`[data-guide="${CSS.escape(target)}"]`)].filter(el => el.offsetParent !== null || el === document.body);
@@ -2586,13 +2843,73 @@ function spotlightTarget(target) { clearSpot(); const el = guideEl(target); if (
 const WALK_KEY = 'wiretap-map:walkthrough-done';
 const BUILTIN_WALK = { title: 'Welcome', steps: [
   { target: 'search', title: 'Search everything', text: 'Type a person, organization, bill or registry number. Press / from anywhere.' },
-  { target: 'layers', title: 'Source layers', text: 'Turn the Wiretap, FringeViews, Bl00d Money and Public records layers on or off, or show only items seen in several layers.' },
+  { target: 'layers', title: 'Source layers', text: 'Turn FringeViews (mostly unverified commentary) on or off, or show only items seen in several layers.' },
   { target: 'profile', title: 'Profiles', text: 'Click a node for its profile: badges, sources, money in and out, and suggested next steps.' },
   { target: 'pathfinder', title: 'How are these connected?', text: 'Pick two entities to see up to three shortest chains of sourced links.' },
   { target: 'leads', title: 'Leads', text: 'Timing patterns in public data. A lead is a question to check, not evidence of wrongdoing.' },
+  { target: 'rings', title: 'Rings', text: 'Rings arranges the map in concentric rings by type (people, organizations, events and so on). Choose it from the layout buttons above the map.' },
+  { target: 'clusters', title: 'Clusters', text: 'Clusters arranges the map by auto-detected clusters (labelled auto_*), computed from the link structure. The same groupings appear under Auto-detected clusters in the sidebar.' },
+  { target: 'hubs', title: 'Hide hubs', text: 'Hide hubs temporarily hides nodes with more links than the number you pick. Selected and expanded nodes always stay. The control starts at off, so every node in the current filters stays visible until you set a limit.', collapsed: true, summary: 'How Hide hubs works' },
   { target: 'help', title: 'Help', text: 'Replay this walkthrough at any time.' }] };
 let WALK = null, walkI = 0;
-function walkSteps() { const w = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return w; }
+function normalizeWalkStep(st) {
+  if (!st) return st;
+  let text = st.text || '';
+  if ((st.target === 'layers' || st.title === 'Source layers') && /Polly\s+St\.?\s*George|bl00d\.money|Wiretap reporting|Turn Wiretap, FringeViews|Turn the Wiretap, FringeViews/i.test(text)) {
+    text = /Every claim carries|Source layers toggle/.test(text) ? 'The Source layers toggle switches FringeViews (mostly unverified commentary) on or off. Every claim carries a small chip naming its layer.'
+      : /At least one stays on/.test(text) ? 'Turn FringeViews (mostly unverified commentary) on or off. At least one stays on.'
+      : 'Turn FringeViews (mostly unverified commentary) on or off, or show only items seen in several layers.';
+  }
+  if (st.target === 'explain' || /Explain (a|this) link/i.test(st.title || '')) {
+    if (/status badge:/.test(text) && /not found/i.test(text)) text = 'Click any line on the map to read the claim in plain words, with its amount, date, sources and status badge: verified, partly verified, reported or contradicted.';
+    else if (/with its sources and status:/.test(text) && /not found/i.test(text)) text = 'Click any line to see the claim in plain words with its sources and status: verified, partly verified, reported or contradicted.';
+  }
+  const before = text; text = text.replace(/,?\s*not found(?: in [^.]+)?/gi, '').replace(/,?\s*\bmissing\b(?: labels?)?/gi, ''); if (text !== before) { text = text.replace(/reported,\s*or /gi, 'reported or ').replace(/,\s*or contradicted/gi, ' or contradicted'); } text = text.replace(/[ \t]{2,}/g, ' ').replace(/\s+,/g, ',').replace(/\s+\./g, '.').trim();
+  if (st.target === 'money' || /Follow the money/i.test(st.title || '')) {
+    text = text.replace(/,?\s*never added up twice\b/gi, '').replace(/,?\s*never added twice\b/gi, '');
+    text = text.replace(/[ \t]{2,}/g, ' ').replace(/\s+\(/g, ' (').replace(/\s+\)/g, ')').replace(/\s+\./g, '.').trim();
+  }
+  if (st.target === 'networks' || /Networks and tours/i.test(st.title || '')) {
+    text = text.replace(/;\s*being in a network does not mean the members act together\.?/gi, '.').replace(/\s*Being in a network does not mean the members act together\.?/g, '');
+    text = text.replace(/[ \t]{2,}/g, ' ').replace(/\s+\./g, '.').trim();
+  }
+  if (st.target === 'events' || /hollow stars/i.test(st.title || '') || /^Events\b/i.test(st.title || '')) {
+    const ev = text.match(/^(.*?or (?:it )?did not happen)\b/i);
+    if (ev) text = ev[1].replace(/[\s;:,]+$/, '') + '.';
+  }
+  const key = (st.target === 'rings' || /^Rings$/i.test(st.title || '')) ? 'rings' : (st.target === 'clusters' || /^Clusters$/i.test(st.title || '')) ? 'clusters' : (st.target === 'hubs' || /hide hubs/i.test(st.title || '')) ? 'hubs' : null;
+  let out = { ...st, text };
+  if (key === 'rings') out = { ...out, target: 'rings', title: out.title || 'Rings', text: 'Rings arranges the map in concentric rings by type (people, organizations, events and so on). Choose it from the layout buttons above the map.', view: out.view || 'map' };
+  if (key === 'clusters') out = { ...out, target: 'clusters', title: out.title || 'Clusters', text: 'Clusters arranges the map by auto-detected clusters (labelled auto_*), computed from the link structure. The same groupings appear under Auto-detected clusters in the sidebar.', view: out.view || 'map' };
+  if (key === 'hubs') out = { ...out, target: 'hubs', title: out.title || 'Hide hubs', text: 'Hide hubs temporarily hides nodes with more links than the number you pick. Selected and expanded nodes always stay. The control starts at off, so every node in the current filters stays visible until you set a limit.', view: out.view || 'map', collapsed: true, summary: out.summary || 'How Hide hubs works' };
+  return out;
+}
+function layoutWalkKey(st) { if (!st) return null; const t = String(st.target || '').toLowerCase(), title = String(st.title || ''); if (t === 'rings' || /^Rings$/i.test(title)) return 'rings'; if (t === 'clusters' || /^Clusters$/i.test(title)) return 'clusters'; if (t === 'hubs' || /hide hubs/i.test(title)) return 'hubs'; return null; }
+function ensureFirstVisitLayoutSteps(steps) {
+  const ringsT = 'Rings arranges the map in concentric rings by type (people, organizations, events and so on). Choose it from the layout buttons above the map.';
+  const clustersT = 'Clusters arranges the map by auto-detected clusters (labelled auto_*), computed from the link structure. The same groupings appear under Auto-detected clusters in the sidebar.';
+  const hubsT = 'Hide hubs temporarily hides nodes with more links than the number you pick. Selected and expanded nodes always stay. The control starts at off, so every node in the current filters stays visible until you set a limit.';
+  const wanted = [
+    { target: 'rings', title: 'Rings', text: ringsT, view: 'map' },
+    { target: 'clusters', title: 'Clusters', text: clustersT, view: 'map' },
+    { target: 'hubs', title: 'Hide hubs', text: hubsT, view: 'map', collapsed: true, summary: 'How Hide hubs works' }
+  ];
+  const out = (steps || []).map(normalizeWalkStep);
+  const missing = wanted.filter(w => !out.some(st => layoutWalkKey(st) === w.target));
+  const rest = out.filter(st => !layoutWalkKey(st));
+  let at = rest.findIndex(st => { const t = String(st.target || '').toLowerCase(), title = String(st.title || ''); return t === 'networks' || t === 'tours' || /Networks and tours|Guided tours/i.test(title); });
+  if (at >= 0) at += 1;
+  else {
+    const marks = [st => String(st.target || '').toLowerCase() === 'events' || /hollow stars/i.test(st.title || '') || /^Events\b/i.test(st.title || ''), st => String(st.target || '').toLowerCase() === 'leads' || /^Leads$/i.test(st.title || ''), st => String(st.target || '').toLowerCase() === 'help' || /^Help$/i.test(st.title || '')];
+    at = -1;
+    for (const pred of marks) { const i = rest.findIndex(pred); if (i >= 0) { at = i; break; } }
+    if (at < 0) at = rest.length;
+  }
+  const block = wanted.map(w => out.find(st => layoutWalkKey(st) === w.target) || w);
+  return [...rest.slice(0, at), ...block, ...rest.slice(at)];
+}
+function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitLayoutSteps(w.steps) }; }
+function walkSteps() { const raw = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return normalizeWalkthrough(raw); }
 function openWalk(i = 0) { if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
 function closeWalk(silent) { if ($('#wt').hidden) return; $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) $('#btn-help').focus(); }
 function renderWalk() {
@@ -2601,7 +2918,8 @@ function renderWalk() {
   const el = spotlightTarget(st.target); const spot = $('#wt-spot'), card = $('#wt-card');
   if (el) { const r = el.getBoundingClientRect(); Object.assign(spot.style, { display: 'block', left: r.left - 6 + 'px', top: r.top - 6 + 'px', width: r.width + 12 + 'px', height: r.height + 12 + 'px' }); }
   else spot.style.display = 'none';
-  card.innerHTML = `<div class="tc-top"><span class="kindtag">${esc(WALK.title || 'Welcome')}</span><span class="muted small">${walkI + 1} / ${n}</span></div><h2 id="wt-title">${esc(st.title || '')}</h2><p>${esc(st.text || '')}</p>
+  const body = st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`;
+  card.innerHTML = `<div class="tc-top"><span class="kindtag">${esc(WALK.title || 'Welcome')}</span><span class="muted small">${walkI + 1} / ${n}</span></div><h2 id="wt-title">${esc(st.title || '')}</h2>${body}
     <div class="tc-nav"><button type="button" class="linkish" data-wt-skip>Skip</button><span></span><button type="button" class="btn sm" data-wt-prev ${walkI === 0 ? 'disabled' : ''}>← Back</button>${walkI < n - 1 ? '<button type="button" class="btn sm accent" data-wt-next>Next →</button>' : '<button type="button" class="btn sm accent" data-wt-skip>Done</button>'}</div>`;
   // place the card near the target, inside the viewport
   const vw = window.innerWidth, vh = window.innerHeight; const cw = Math.min(360, vw - 24);
