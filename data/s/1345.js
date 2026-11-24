@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1345,{"💥scandal":[26812,430,27666,430,28439,392,28534,410,28607,401,28735,430],"💥scandalous":[26752,419],"💥seguin":[28522,401],"💥suspicious":[27167,410]});
+window.__wiretapShard&&window.__wiretapShard(1345,{"💥a":[27149,430,27285,385],"💥absolute":[27628,410],"💥after":[27793,401,27866,401,27922,410],"💥alert":[28568,410],"💥another":[27381,419],"💥awkward":[27008,430]});

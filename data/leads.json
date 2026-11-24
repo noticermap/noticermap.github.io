@@ -1,6 +1,6 @@
 {
  "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
- "built_at": "2026-11-24T13:16:53.142Z",
+ "built_at": "2026-11-24T13:50:22.064Z",
  "window_months": 24,
  "leads": [
   {
@@ -5756,6 +5756,142 @@
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {
+   "id": "lead_bell_textron_ukraine_reg_during_finance_tenure",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Bell Textron Canada Limited Ukraine-subject registration during Freeland's Finance tenure; 0 comms with her",
+   "summary": "Bell Textron Canada Limited (mapped to the existing Bell Helicopter Textron Canada Limited entity) filed Ukraine-subject in-house registration 955839-5062-70, effective 2024-05-13 to 2024-08-13, listing Finance Canada, PMO, GAC and Transport Canada among institutions, while Freeland was still Minister of Finance (until 2024-12-15). The 2026-10-26 OCL communications export contains 0 Ukraine-subject communication reports for this client and none naming Freeland or her then-office. A registration naming a department is not a meeting. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_company_bell_helicopter_textron_canada_limited",
+    "ent_organization_finance_canada",
+    "ent_person_chrystia_freeland"
+   ],
+   "link_ids": [
+    "lnk_freeland_7fa9f90f76f20381"
+   ],
+   "window": {
+    "start": "2024-05-13",
+    "end": "2024-08-13"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=5062&regId=952135",
+     "title": "Federal lobbying registration 955839-5062-70 — Bell Textron Canada Limited",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2024-05-13",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists",
+     "record_id": "955839-5062-70",
+     "note": "In-house registration, effective 2024-05-13 to 2024-08-13 (REG_ID_ENR 952135). Bulk export extract date 2026-10-26, retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    },
+    {
+     "url": "https://www.ourcommons.ca/members/en/chrystia-freeland(84665)/roles",
+     "title": "Roles and responsibilities — Chrystia Freeland",
+     "publisher": "House of Commons of Canada",
+     "date": "2026-01-09",
+     "kind": "public_record",
+     "note": "Parliamentary roles and end dates as published on the member page.",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2024-05-13"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_black_creek_labs_ukraine_reg_transport_overlap",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "28-day overlap: Black Creek Labs Ukraine-subject registration and Freeland's Transport tenure",
+   "summary": "Black Creek Labs Inc. registration 776466-380720-2, effective 2025-08-19, lists Transport Canada and Finance Canada among institutions and states, as filed, “Federal government support and funding to deliver defence to Ukraine.” Freeland's Transport and Internal Trade tenure ended 2025-09-16, a 28-day overlap. The held Ukraine-contracts folder records 3 Ukraine-subject communication reports for this client, none naming Freeland or her then-office. A registration naming a department is not a meeting. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_company_black_creek_labs_inc",
+    "ent_organization_transport_canada",
+    "ent_person_chrystia_freeland"
+   ],
+   "link_ids": [
+    "lnk_freeland_aa27287f0e1db663"
+   ],
+   "window": {
+    "start": "2025-08-19",
+    "end": "2025-09-16"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=380720&regId=973054",
+     "title": "Federal lobbying registration 776466-380720-2 — Black Creek Labs Inc. / The Capital Hill Group Inc.",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2025-08-19",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists",
+     "record_id": "776466-380720-2",
+     "note": "Consultant registration, effective 2025-08-19, no end date in the 2026-10-26 export (REG_ID_ENR 973054). Retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    },
+    {
+     "url": "https://www.ourcommons.ca/members/en/chrystia-freeland(84665)/roles",
+     "title": "Roles and responsibilities — Chrystia Freeland",
+     "publisher": "House of Commons of Canada",
+     "date": "2026-01-09",
+     "kind": "public_record",
+     "note": "Parliamentary roles and end dates as published on the member page.",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2025-08-19"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
    "id": "lead_black_opportunity_fund_lobbying_before_vote_45_1_c_9",
    "pattern": "other",
    "origin": [
@@ -5915,6 +6051,266 @@
     },
     "gap_days": 72,
     "text": "Black Opportunity Fund lobbied Infrastructure Canada, 2025-11-05 (source: Office of the Commissioner of Lobbying of Canada); Black Opportunity Fund lobbied on Bill C-9, 2026-01-16 (source: Office of the Commissioner of Lobbying of Canada). Gap: 72 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_colt_canada_ukraine_reg_during_foreign_affairs",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Colt Canada Ukraine-subject registration overlapping Freeland's Foreign Affairs tenure; 0 comms with her",
+   "summary": "Colt Canada Corporation (mapped to the existing COLT CANADA CORP. entity) filed Ukraine-subject consultant registration 776466-360932-2, effective 2018-06-01 to 2021-03-12, listing GAC and PMO among institutions. Freeland was Minister of Foreign Affairs until 2019-11-20, overlapping the first part of that registration. The 2026-10-26 OCL communications export contains 0 Ukraine-subject communication reports for this client and none naming Freeland or her then-office. A registration naming a department is not a meeting. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_company_colt_canada_corp",
+    "ent_organization_global_affairs_canada",
+    "ent_person_chrystia_freeland"
+   ],
+   "link_ids": [
+    "lnk_freeland_ed79a83dd3c10762"
+   ],
+   "window": {
+    "start": "2018-06-01",
+    "end": "2019-11-20"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=360932&regId=880876",
+     "title": "Federal lobbying registration 776466-360932-2 — Colt Canada Corporation / The Capital Hill Group Inc.",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2018-06-01",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists",
+     "record_id": "776466-360932-2",
+     "note": "Consultant registration, effective 2018-06-01 to 2021-03-12 (REG_ID_ENR 880876). Bulk export extract date 2026-10-26, retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    },
+    {
+     "url": "https://www.ourcommons.ca/members/en/chrystia-freeland(84665)/roles",
+     "title": "Roles and responsibilities — Chrystia Freeland",
+     "publisher": "House of Commons of Canada",
+     "date": "2026-01-09",
+     "kind": "public_record",
+     "note": "Parliamentary roles and end dates as published on the member page.",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2018-06-01"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_freeland_armatec_church_comm_88d",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "88 days: Armatec–Freeland communication (2023-06-27) then Armatec–Church communication (2023-09-23)",
+   "summary": "Armatec Survivability communication report 572716 with Freeland, Deputy Prime Minister, PMO, is dated 2023-06-27 (OCL comlogId 572716). 88 days later, on 2023-09-23, Armatec communication report 579335 names Leslie Church, Chief of Staff, Office of the Minister, Finance Canada — Freeland's then Finance chief of staff. Freeland herself is not listed on the second report (OCL comlogId 579335). The second report is also 105 days after the 2023-06-10 Kyiv visit. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_company_armatec_survivability",
+    "ent_person_chrystia_freeland",
+    "ent_person_leslie_church"
+   ],
+   "link_ids": [
+    "lnk_freeland_8694d579f78fd81f",
+    "lnk_freeland_3f85b787ed0974ba"
+   ],
+   "window": {
+    "start": "2023-06-27",
+    "end": "2023-09-23"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=572716",
+     "title": "Monthly communication report 572716 — Armatec Survivability",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2023-06-27",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists - Monthly Communication Reports",
+     "record_id": "572716",
+     "note": "Communication date 2023-06-27; posted 2023-07-14. Bulk export extract date 2026-10-26, retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    },
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=579335",
+     "title": "Monthly communication report 579335 — Armatec Survivability",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2023-09-23",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists - Monthly Communication Reports",
+     "record_id": "579335",
+     "note": "Communication date 2023-09-23; posted 2023-10-15. Freeland herself is not listed. Bulk export extract date 2026-10-26, retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2023-06-27"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "auto",
+    "a": {
+     "who": "Armatec Survivability",
+     "what": "lobbied Chrystia Freeland",
+     "amount": "",
+     "date": "2023-06-27",
+     "source": {
+      "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=572716",
+      "label": "Office of the Commissioner of Lobbying of Canada"
+     },
+     "link_id": "lnk_freeland_8694d579f78fd81f"
+    },
+    "b": {
+     "who": "Armatec Survivability",
+     "what": "lobbied Leslie Church",
+     "amount": "",
+     "date": "2023-09-23",
+     "source": {
+      "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=579335",
+      "label": "Office of the Commissioner of Lobbying of Canada"
+     },
+     "link_id": "lnk_freeland_3f85b787ed0974ba"
+    },
+    "gap_days": 88,
+    "text": "Armatec Survivability lobbied Chrystia Freeland, 2023-06-27 (source: Office of the Commissioner of Lobbying of Canada); Armatec Survivability lobbied Leslie Church, 2023-09-23 (source: Office of the Commissioner of Lobbying of Canada). Gap: 88 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_freeland_kyiv_visit_armatec_comm_17d",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "17 days: Kyiv visit (2023-06-10) then Armatec–Freeland communication (2023-06-27)",
+   "summary": "On 2023-06-10 Freeland accompanied Prime Minister Trudeau on an official visit to Kyiv; the PMO release announced further military assistance, including further Roshel deliveries (source: pm.gc.ca, 2023-06-10). 17 days later, on 2023-06-27, Armatec Survivability logged communication report 572716 with Freeland, Deputy Prime Minister, PMO (source: OCL comlogId 572716). The Kyiv release names Roshel, not Armatec. The communication report has no custom subject text naming Ukraine. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_person_chrystia_freeland",
+    "ent_person_justin_trudeau",
+    "ent_event_pm_trudeau_kyiv_visit_2023_06_10",
+    "ent_company_armatec_survivability"
+   ],
+   "link_ids": [
+    "lnk_freeland_c5d2cb1d8012e6d4",
+    "lnk_freeland_8694d579f78fd81f"
+   ],
+   "window": {
+    "start": "2023-06-10",
+    "end": "2023-06-27"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2023/06/10/prime-minister-visits-kyiv-ukraine",
+     "title": "Prime Minister visits Kyiv, Ukraine",
+     "publisher": "Prime Minister of Canada",
+     "date": "2023-06-10",
+     "kind": "public_record",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=572716",
+     "title": "Monthly communication report 572716 — Armatec Survivability",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2023-06-27",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists - Monthly Communication Reports",
+     "record_id": "572716",
+     "note": "Communication date 2023-06-27; posted 2023-07-14. Bulk export extract date 2026-10-26, retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2023-06-10"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED",
+    "QC"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "auto",
+    "a": {
+     "who": "Chrystia Freeland",
+     "what": "participated in Prime Minister Trudeau visits Kyiv; Freeland accompanied (2023-06-10)",
+     "amount": "",
+     "date": "2023-06-10",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2023/06/10/prime-minister-visits-kyiv-ukraine",
+      "label": "Prime Minister of Canada"
+     },
+     "link_id": "lnk_freeland_c5d2cb1d8012e6d4"
+    },
+    "b": {
+     "who": "Armatec Survivability",
+     "what": "lobbied Chrystia Freeland",
+     "amount": "",
+     "date": "2023-06-27",
+     "source": {
+      "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/cmmLgPblcVw?comlogId=572716",
+      "label": "Office of the Commissioner of Lobbying of Canada"
+     },
+     "link_id": "lnk_freeland_8694d579f78fd81f"
+    },
+    "gap_days": 17,
+    "text": "Chrystia Freeland participated in Prime Minister Trudeau visits Kyiv; Freeland accompanied (2023-06-10), 2023-06-10 (source: Prime Minister of Canada); Armatec Survivability lobbied Chrystia Freeland, 2023-06-27 (source: Office of the Commissioner of Lobbying of Canada). Gap: 17 days."
    },
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
@@ -6158,6 +6554,75 @@
     "gap_days": null,
     "text": "Brookfield owns Westinghouse Electric Canada, 2023 (source: Investigative Journalism Foundation); Westinghouse Electric Canada lobbied Innovation, Science and Economic Development Canada, 2025-06-12 (source: Investigative Journalism Foundation)."
    },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_ingoldsby_finance_office_skycan_registration",
+   "pattern": "revolving_door",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "1,866 days: Ingoldsby left Freeland's Finance office (2021-04-01) then registered for SkyCan (2026-05-11)",
+   "summary": "Michael Ingoldsby's OCL public-office record lists him as Senior Policy Advisor, Minister's Office, Finance Canada, 2020-08-01 to 2021-04-01 (and earlier as Policy Advisor, Deputy Prime Minister's Office, Privy Council Office, 2019-11-01 to 2020-08-01). 1,866 days after that Finance end date, on 2026-05-11, he registered as a consultant lobbyist at Summa Strategies Canada for SkyCan Systems, Inc. (registration 964550-386219-1). The subject text does not name Ukraine. No communication reports under that registrant appear in the 2026-10-26 export. Freeland had left Parliament on 2026-01-09. SkyCan appears in the held Ukraine-contracts lobbying set via other registrations that do name Ukraine; this registration is not one of them. Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
+   "entities": [
+    "ent_person_michael_ingoldsby",
+    "ent_company_skycan_systems_inc",
+    "ent_company_summa_strategies_canada",
+    "ent_organization_finance_canada",
+    "ent_person_chrystia_freeland"
+   ],
+   "link_ids": [
+    "lnk_freeland_b9aa63c776642015"
+   ],
+   "window": {
+    "start": "2021-04-01",
+    "end": "2026-05-11"
+   },
+   "credit": "freeland portfolio fold 2026-11-24",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=386219&regId=988639",
+     "title": "Federal lobbying registration 964550-386219-1 — SkyCan Systems, Inc. / Summa Strategies Canada (Michael Ingoldsby)",
+     "publisher": "Office of the Commissioner of Lobbying of Canada",
+     "date": "2026-05-11",
+     "kind": "public_record",
+     "registry": "Federal Registry of Lobbyists",
+     "record_id": "964550-386219-1",
+     "note": "Consultant registration, effective 2026-05-11 to 2026-05-13 (REG_ID_ENR 988639); followed by 964550-386219-2 (REG_ID_ENR 988726) from 2026-05-13 with no end date in the 2026-10-26 export. Retrieved 2026-10-28.",
+     "source_layer": "records",
+     "retrieved_date": "2026-10-28"
+    },
+    {
+     "url": "https://www.ourcommons.ca/members/en/chrystia-freeland(84665)/roles",
+     "title": "Roles and responsibilities — Chrystia Freeland",
+     "publisher": "House of Commons of Canada",
+     "date": "2026-01-09",
+     "kind": "public_record",
+     "note": "Parliamentary roles and end dates as published on the member page.",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": 1866,
+   "gap_basis": "window",
+   "timing": {
+    "mode": "gap",
+    "text": "gap 61 months"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by freeland portfolio fold 2026-11-24",
+   "strength": 3,
+   "detail_pending": true,
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {

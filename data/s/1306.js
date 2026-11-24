@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1306,{"şahin":[10683,578]});
+window.__wiretapShard&&window.__wiretapShard(1306,{"şahin":[10699,578]});

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1317,{"⬇️":[28436,441,29222,578]});
+window.__wiretapShard&&window.__wiretapShard(1317,{"національний":[4101,187]});

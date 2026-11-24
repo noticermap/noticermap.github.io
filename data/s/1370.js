@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1370,{"🧵on":[33380,401]});
+window.__wiretapShard&&window.__wiretapShard(1370,{"🚨41":[27419,401]});

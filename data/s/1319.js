@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1319,{"预警信息":[28949,193]});
+window.__wiretapShard&&window.__wiretapShard(1319,{"пишний":[4940,168,27170,401]});

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1350,{"😬":[31299,401]});
+window.__wiretapShard&&window.__wiretapShard(1350,{"💥federal":[28345,430],"💥fingerprints":[28533,419],"💥flashback":[26969,441],"💥frances":[28124,419],"💥french":[26822,430],"💥from":[27778,410,28288,410],"💥fucking":[27414,419]});

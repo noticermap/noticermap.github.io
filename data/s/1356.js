@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1356,{"🚨canada":[27068,410],"🚨canadian":[27058,419],"🚨confirmed":[27418,419,27805,419,27839,401],"🚨cover":[26789,401]});
+window.__wiretapShard&&window.__wiretapShard(1356,{"💥largest":[26810,401],"💥leaked":[27050,393,27146,419],"💥lesbian":[28091,419],"💥liberal":[27445,410],"💥listen":[28592,419]});

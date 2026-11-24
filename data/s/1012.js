@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1012,{"reward":[32232,410],"rewarded":[32965,419],"rewards":[432,57,20736,61,26775,377],"rewired":[28809,377],"rewiring":[27669,410],"reworded":[24802,125],"rewording":[24793,168],"rewrites":[26971,651],"rewrote":[29881,605]});
+window.__wiretapShard&&window.__wiretapShard(1012,{"reward":[32282,410],"rewarded":[33016,419],"rewards":[434,57,20752,61,26813,377],"rewired":[28857,377],"rewiring":[27712,410],"reworded":[24818,125],"rewording":[24809,168],"rewrites":[27009,651],"rewrote":[29930,605]});

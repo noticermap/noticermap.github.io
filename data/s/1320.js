@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1320,{"🇨🇦":[26904,554,26905,377]});
+window.__wiretapShard&&window.__wiretapShard(1320,{"прямого":[27170,401]});

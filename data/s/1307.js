@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1307,{"€150":[29930,401]});
+window.__wiretapShard&&window.__wiretapShard(1307,{"андрій":[4940,168]});

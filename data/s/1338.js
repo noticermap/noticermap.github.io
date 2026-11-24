@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1338,{"💥keeping":[27277,419]});
+window.__wiretapShard&&window.__wiretapShard(1338,{"🇺🇦":[26934,514]});
