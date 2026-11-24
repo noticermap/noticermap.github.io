@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1337,{"🇨🇦":[26942,554,26943,377]});
+window.__wiretapShard&&window.__wiretapShard(1337,{"⬆️":[29510,578]});

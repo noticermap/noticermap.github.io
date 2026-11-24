@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1275,{"zte":[1921,131]});
+window.__wiretapShard&&window.__wiretapShard(1275,{"znoujtve7w8":[37320,201]});

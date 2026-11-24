@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1316,{"залучення":[27170,401]});
+window.__wiretapShard&&window.__wiretapShard(1316,{"для":[27345,401]});

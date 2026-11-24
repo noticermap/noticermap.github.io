@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1327,{"→":[152,175,19799,163,19859,136,19861,134,19877,136,25695,168]});
+window.__wiretapShard&&window.__wiretapShard(1327,{"інвестицій":[27345,401],"іноземним":[27345,401]});

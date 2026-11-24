@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-24T14:25:47.777Z",
+ "generated_at": "2026-11-24T15:06:57.005Z",
  "summary": {
-  "likely_duplicates": 520,
-  "likely_duplicate_links": 428,
+  "likely_duplicates": 524,
+  "likely_duplicate_links": 430,
   "cross_layer_duplicates": 97,
   "province_mismatches": 4,
   "entities_without_sources": 9,
@@ -243,6 +243,26 @@
    "layers": [
     [
      "records"
+    ],
+    [
+     "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_company_brookfield",
+   "a_name": "Brookfield",
+   "b": "ent_company_brookfield_corporation",
+   "b_name": "Brookfield Corporation",
+   "type": "company",
+   "score": 1,
+   "why": "same name “Brookfield Corporation”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "wiretap",
+     "records",
+     "samcooper"
     ],
     [
      "records"
@@ -1409,6 +1429,24 @@
    ]
   },
   {
+   "a": "ent_organization_psp_investments",
+   "a_name": "PSP Investments",
+   "b": "ent_theory_org_psp_investments",
+   "b_name": "PSP Investments",
+   "type": "organization",
+   "score": 1,
+   "why": "same name “PSP Investments”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_organization_free_speech_union_of_canada",
    "a_name": "Free Speech Union of Canada",
    "b": "ent_organization_free_speech_union_uk",
@@ -1478,24 +1516,6 @@
     ],
     [
      "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_organization_psp_investments",
-   "a_name": "PSP Investments",
-   "b": "ent_theory_org_psp_investments",
-   "b_name": "PSP Investments",
-   "type": "organization",
-   "score": 1,
-   "why": "same name “PSP Investments”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "records"
-    ],
-    [
-     "theories"
     ]
    ]
   },
@@ -3453,6 +3473,117 @@
    ]
   },
   {
+   "a": "ent_organization_talent_beyond_boundaries_belgium",
+   "a_name": "Talent Beyond Boundaries (Belgium VZW)",
+   "b": "ent_organization_talent_beyond_boundaries_canada",
+   "b_name": "Talent Beyond Boundaries Canada",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries” / “Talent Beyond Boundaries Canada”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "tbb"
+    ],
+    [
+     "immigration",
+     "tbb"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_talent_beyond_boundaries_belgium",
+   "a_name": "Talent Beyond Boundaries (Belgium VZW)",
+   "b": "ent_organization_talent_beyond_boundaries_ltd",
+   "b_name": "Talent Beyond Boundaries Ltd",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries” / “Talent Beyond Boundaries Ltd”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "tbb"
+    ],
+    [
+     "tbb"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_talent_beyond_boundaries_belgium",
+   "a_name": "Talent Beyond Boundaries (Belgium VZW)",
+   "b": "ent_organization_talent_beyond_boundaries_uk",
+   "b_name": "Talent Beyond Boundaries UK",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries” / “Talent Beyond Boundaries UK”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "tbb"
+    ],
+    [
+     "tbb"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_talent_beyond_boundaries_canada",
+   "a_name": "Talent Beyond Boundaries Canada",
+   "b": "ent_organization_talent_beyond_boundaries_ltd",
+   "b_name": "Talent Beyond Boundaries Ltd",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries Canada” / “Talent Beyond Boundaries Ltd”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "immigration",
+     "tbb"
+    ],
+    [
+     "tbb"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_talent_beyond_boundaries_canada",
+   "a_name": "Talent Beyond Boundaries Canada",
+   "b": "ent_organization_talent_beyond_boundaries_uk",
+   "b_name": "Talent Beyond Boundaries UK",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries Canada” / “Talent Beyond Boundaries UK”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "immigration",
+     "tbb"
+    ],
+    [
+     "tbb"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_talent_beyond_boundaries_ltd",
+   "a_name": "Talent Beyond Boundaries Ltd",
+   "b": "ent_organization_talent_beyond_boundaries_uk",
+   "b_name": "Talent Beyond Boundaries UK",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “Talent Beyond Boundaries Ltd” / “Talent Beyond Boundaries UK”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "tbb"
+    ],
+    [
+     "tbb"
+    ]
+   ]
+  },
+  {
    "a": "ent_event_bc_sff_ndp_2021_07_28_019",
    "a_name": "Jeopardy! With Garry Begg",
    "b": "ent_event_bc_sff_ndp_2023_09_27_049",
@@ -3944,6 +4075,26 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_jeffrey_epstein",
+   "a_name": "Jeffrey Epstein",
+   "b": "ent_theory_person_jeffrey_epstein",
+   "b_name": "Jeffrey Epstein",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Jeffrey Epstein”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "fringeviews",
+     "samcooper"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -5470,60 +5621,6 @@
    ]
   },
   {
-   "a": "ent_event_rfe_liberal_markham_2019_05_23_49",
-   "a_name": "An Evening with the Hon. Mary Ng",
-   "b": "ent_event_rfe_liberal_markham_2024_04_13_401",
-   "b_name": "An Evening with the Hon. Mary Ng",
-   "type": "event",
-   "score": 1,
-   "why": "same name “An Evening with the Hon. Mary Ng”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_markham_2019_05_23_49",
-   "a_name": "An Evening with the Hon. Mary Ng",
-   "b": "ent_event_rfe_liberal_thornhill_2023_10_01_335",
-   "b_name": "An Evening with the Hon. Mary Ng",
-   "type": "event",
-   "score": 1,
-   "why": "same name “An Evening with the Hon. Mary Ng”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_markham_2024_04_13_401",
-   "a_name": "An Evening with the Hon. Mary Ng",
-   "b": "ent_event_rfe_liberal_thornhill_2023_10_01_335",
-   "b_name": "An Evening with the Hon. Mary Ng",
-   "type": "event",
-   "score": 1,
-   "why": "same name “An Evening with the Hon. Mary Ng”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
    "a": "ent_person_j_belley",
    "a_name": "J.-L. Michel Belley",
    "b": "ent_person_michel_belley",
@@ -5739,26 +5836,6 @@
     ],
     [
      "records"
-    ]
-   ]
-  },
-  {
-   "a": "ent_person_jeffrey_epstein",
-   "a_name": "Jeffrey Epstein",
-   "b": "ent_theory_person_jeffrey_epstein",
-   "b_name": "Jeffrey Epstein",
-   "type": "person",
-   "score": 1,
-   "why": "same name “Jeffrey Epstein”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "wiretap",
-     "fringeviews",
-     "samcooper"
-    ],
-    [
-     "theories"
     ]
    ]
   },
@@ -5985,6 +6062,26 @@
    ]
   },
   {
+   "a": "ent_person_michelle_rempel",
+   "a_name": "Michelle Rempel",
+   "b": "ent_person_michelle_rempel_garner",
+   "b_name": "Michelle Rempel Garner",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Michelle Rempel”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "bloodmoney"
+    ],
+    [
+     "wiretap",
+     "bloodmoney",
+     "immigration"
+    ]
+   ]
+  },
+  {
    "a": "ent_person_harvey_weinstein",
    "a_name": "Harvey Weinstein",
    "b": "ent_theory_person_harvey_weinstein",
@@ -6162,26 +6259,6 @@
     ],
     [
      "records"
-    ]
-   ]
-  },
-  {
-   "a": "ent_person_michelle_rempel",
-   "a_name": "Michelle Rempel",
-   "b": "ent_person_michelle_rempel_garner",
-   "b_name": "Michelle Rempel Garner",
-   "type": "person",
-   "score": 1,
-   "why": "same name “Michelle Rempel”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "bloodmoney"
-    ],
-    [
-     "wiretap",
-     "bloodmoney",
-     "immigration"
     ]
    ]
   },
@@ -7644,6 +7721,24 @@
    "type": "event",
    "score": 0.78,
    "why": "similar names “awards gala or dinner — Soraya Martinez Ferrada (Quebec City, 2023-11-03)” / “gala — Soraya Martinez Ferrada (Quebec City, 2023-11-03)”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "events"
+    ],
+    [
+     "events"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_niagara_centre_federal_liberal_association",
+   "a_name": "Niagara Centre Federal Liberal Association",
+   "b": "ent_organization_niagara_falls_federal_liberal_association",
+   "b_name": "Niagara Falls Federal Liberal Association",
+   "type": "organization",
+   "score": 0.75,
+   "why": "similar names “Niagara Centre Federal Liberal Association” / “Niagara Falls Federal Liberal Association”",
    "cross_layer": false,
    "layers": [
     [
@@ -9296,24 +9391,6 @@
    ]
   },
   {
-   "a": "ent_organization_niagara_centre_federal_liberal_association",
-   "a_name": "Niagara Centre Federal Liberal Association",
-   "b": "ent_organization_niagara_falls_federal_liberal_association",
-   "b_name": "Niagara Falls Federal Liberal Association",
-   "type": "organization",
-   "score": 0.75,
-   "why": "similar names “Niagara Centre Federal Liberal Association” / “Niagara Falls Federal Liberal Association”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
    "a": "ent_organization_idf_widows_and_orphans_canada",
    "a_name": "IDF WIDOWS AND ORPHANS CANADA",
    "b": "ent_organization_idf_widows_and_orphans_organization",
@@ -9569,6 +9646,23 @@
   },
   {
    "ids": [
+    "lnk_7c966274cfa6e26b",
+    "lnk_r2_carney_boe_governor"
+   ],
+   "from": "Mark Carney",
+   "to": "Bank of England",
+   "type": "employed_by",
+   "dates": [
+    null,
+    "2013-07-01"
+   ],
+   "amounts": [
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
     "lnk_b69fa97ecd351c3b",
     "lnk_fv_90113702a0b1"
    ],
@@ -9634,6 +9728,26 @@
     "2024-10-28"
    ],
    "amounts": [
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "lnk_c66e69ddefd9c1c3",
+    "lnk_r2_carney_boc_governor",
+    "lnk_r2_carney_boc_deputy"
+   ],
+   "from": "Mark Carney",
+   "to": "Bank of Canada",
+   "type": "employed_by",
+   "dates": [
+    null,
+    "2008-02-01",
+    "2003-08"
+   ],
+   "amounts": [
+    null,
     null,
     null
    ]
@@ -18326,15 +18440,15 @@
    "kept": 4000
   },
   "shared_people": {
-   "found": 522,
-   "kept": 522
+   "found": 558,
+   "kept": 558
   },
   "co_network": {
    "found": 2665,
    "kept": 2665
   },
   "co_cited": {
-   "found": 9887,
+   "found": 10183,
    "kept": 4000
   },
   "money_path": {
@@ -18342,8 +18456,8 @@
    "kept": 2046
   },
   "same_place": {
-   "found": 3153,
-   "kept": 3153
+   "found": 3160,
+   "kept": 3160
   }
  },
  "top_overlaps": [
@@ -18441,6 +18555,47 @@
   },
   {
    "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries",
+   "b": "ent_organization_talent_beyond_boundaries_inc",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_fadi_chalouhy",
+    "ent_person_mary_louise_cohen",
+    "ent_person_judy_slatyer",
+    "ent_person_john_cameron",
+    "ent_person_jennifer_bond",
+    "ent_person_david_crawford"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_inc_director",
+    "lnk_tbb_bruce_cohen_global_board",
+    "lnk_tbb_fadi_chalouhy_inc_director",
+    "lnk_tbb_fadi_chalouhy_global_board",
+    "lnk_tbb_mary_louise_cohen_inc_director_president",
+    "lnk_tbb_mary_louise_cohen_global_board",
+    "lnk_tbb_judy_slatyer_inc_director",
+    "lnk_tbb_judy_slatyer_global_board",
+    "lnk_tbb_john_cameron_inc_director",
+    "lnk_tbb_john_cameron_global_board",
+    "lnk_tbb_jennifer_bond_inc_director",
+    "lnk_tbb_jennifer_bond_global_board",
+    "lnk_tbb_david_crawford_inc_director",
+    "lnk_tbb_david_crawford_global_board"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 13.5,
+   "sources": [
+    "https://www.talentbeyondboundaries.org/s/Talent-Beyond-Boundaries-2024-Public-Inspection-Copy-1.pdf",
+    "https://www.talentbeyondboundaries.org/our-people",
+    "https://static1.squarespace.com/static/5dc0262432cd095744bf1bf2/t/6a50c5b20914961591dc07ba/1783678387017/TBB+ANNUAL+REPORT+2025.pdf"
+   ],
+   "id": "ov2"
+  },
+  {
+   "type": "shared_people",
    "a": "ent_organization_we_charity",
    "b": "ent_organization_we_charity_foundation",
    "via": [
@@ -18483,7 +18638,7 @@
     "https://open.canada.ca/data/dataset/9bdf4776-61f2-48f3-9ce9-5efeb2669343/resource/c2021d21-62a5-46f4-8d00-897aac97f501/download/director_updated.csv",
     "https://openparliament.ca/committees/finance/43-1/51/scott-baker-1/"
    ],
-   "id": "ov2"
+   "id": "ov3"
   },
   {
    "type": "shared_people",
@@ -18513,7 +18668,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov3"
+   "id": "ov4"
   },
   {
    "type": "shared_people",
@@ -18552,7 +18707,7 @@
     "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=5236&regId=933444",
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/vwRg?cno=3262&regId=56568409"
    ],
-   "id": "ov4"
+   "id": "ov5"
   },
   {
    "type": "shared_people",
@@ -18582,7 +18737,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov5"
+   "id": "ov6"
   },
   {
    "type": "shared_people",
@@ -18614,7 +18769,7 @@
     "https://www.eurasiagroup.net/our-people",
     "https://find-and-update.company-information.service.gov.uk/company/05702582/filing-history"
    ],
-   "id": "ov6"
+   "id": "ov7"
   },
   {
    "type": "shared_people",
@@ -18641,7 +18796,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov7"
+   "id": "ov8"
   },
   {
    "type": "shared_people",
@@ -18668,7 +18823,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov8"
+   "id": "ov9"
   },
   {
    "type": "shared_people",
@@ -18703,7 +18858,7 @@
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8",
     "https://open.canada.ca/data/dataset/3e8a4d9f-9a12-4498-9a0b-a5c81d3281b4/resource/9b2d0f3d-9b66-401d-a551-863ec27414c1/download/directors_2021_updated.csv"
    ],
-   "id": "ov9"
+   "id": "ov10"
   },
   {
    "type": "shared_people",
@@ -18730,7 +18885,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov10"
+   "id": "ov11"
   },
   {
    "type": "shared_people",
@@ -18757,7 +18912,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov11"
+   "id": "ov12"
   },
   {
    "type": "shared_recipient",
@@ -18823,7 +18978,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q4-00616",
     "https://search.open.canada.ca/contracts/record/ssc-spc,C-2022-2023-Q2-00010"
    ],
-   "id": "ov12"
+   "id": "ov13"
   },
   {
    "type": "shared_recipient",
@@ -18889,7 +19044,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2023-2024-Q3-00239",
     "https://search.open.canada.ca/contracts/record/ssc-spc,C-2022-2023-Q2-00010"
    ],
-   "id": "ov13"
+   "id": "ov14"
   },
   {
    "type": "shared_funder",
@@ -18958,7 +19113,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q1-00332",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-01670"
    ],
-   "id": "ov14"
+   "id": "ov15"
   },
   {
    "type": "shared_recipient",
@@ -19037,7 +19192,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2023-2024-Q3-00239",
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2024-2025-Q1-00619"
    ],
-   "id": "ov15"
+   "id": "ov16"
   },
   {
    "type": "shared_recipient",
@@ -19146,7 +19301,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2023-2024-Q3-00239",
     "https://wiretapmedia.ca/denial-discharge-caf-weapons-procurement-costing-soldiers-their-careers/"
    ],
-   "id": "ov16"
+   "id": "ov17"
   },
   {
    "type": "shared_recipient",
@@ -19235,7 +19390,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q4-00616",
     "https://wiretapmedia.ca/denial-discharge-caf-weapons-procurement-costing-soldiers-their-careers/"
    ],
-   "id": "ov17"
+   "id": "ov18"
   },
   {
    "type": "shared_recipient",
@@ -19293,7 +19448,7 @@
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2020-2021-Q4-00190",
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2023-2024-Q1-00232"
    ],
-   "id": "ov18"
+   "id": "ov19"
   },
   {
    "type": "shared_recipient",
@@ -19359,7 +19514,7 @@
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2020-2021-Q3-00119,current",
     "https://search.open.canada.ca/grants/record/esdc-edsc,GC-2017-Q2-00026,current"
    ],
-   "id": "ov19"
+   "id": "ov20"
   },
   {
    "type": "shared_recipient",
@@ -19409,7 +19564,7 @@
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2024-2025-Q4-00344",
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2024-2025-Q3-00125"
    ],
-   "id": "ov20"
+   "id": "ov21"
   },
   {
    "type": "shared_funder",
@@ -19467,7 +19622,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003"
    ],
-   "id": "ov21"
+   "id": "ov22"
   },
   {
    "type": "shared_funder",
@@ -19531,7 +19686,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2014-2015-Q4-04039",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q3-01824"
    ],
-   "id": "ov22"
+   "id": "ov23"
   },
   {
    "type": "shared_funder",
@@ -19611,7 +19766,7 @@
     "https://search.open.canada.ca/contracts/record/hc-sc,C-2016-2017-Q4-00014",
     "https://search.open.canada.ca/grants/record/tc,TC-2016-Q4-10119,current"
    ],
-   "id": "ov23"
+   "id": "ov24"
   },
   {
    "type": "shared_people",
@@ -19638,7 +19793,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov24"
+   "id": "ov25"
   },
   {
    "type": "shared_people",
@@ -19669,7 +19824,7 @@
     "https://open.canada.ca/data/dataset/05b3abd0-e70f-4b3b-a9c5-acc436bd15b6/resource/798a4a5f-f1ac-41a1-82d7-ef777f905bfe/download/directors_2023_updated.csv",
     "https://open.canada.ca/data/dataset/76564bbf-4391-488a-8ea2-fe5025ee7f2d/resource/ffd739df-8d1e-4a9b-a790-e7dccdd7b425/download/directors_2010_updated.csv"
    ],
-   "id": "ov25"
+   "id": "ov26"
   },
   {
    "type": "shared_people",
@@ -19696,7 +19851,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov26"
+   "id": "ov27"
   },
   {
    "type": "shared_people",
@@ -19724,7 +19879,7 @@
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=3eb35dcd-9b0c-4ae9-a45c-e5e481567c23&filters=%7B%22BN%22%3A%20%22134593391RR0001%22%7D"
    ],
-   "id": "ov27"
+   "id": "ov28"
   },
   {
    "type": "shared_funder",
@@ -19797,7 +19952,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2020-2021-Q2-00095",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2004-2005-Q2-01722"
    ],
-   "id": "ov28"
+   "id": "ov29"
   },
   {
    "type": "shared_funder",
@@ -19862,7 +20017,7 @@
     "https://search.open.canada.ca/grants/record/pc,154-2023-2024-Q4-00197,current",
     "https://search.open.canada.ca/grants/record/pc,154-2023-2024-Q1-00022,current"
    ],
-   "id": "ov29"
+   "id": "ov30"
   },
   {
    "type": "shared_recipient",
@@ -19916,7 +20071,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2004-2005-Q2-01722",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2007-2008-Q4-01021"
    ],
-   "id": "ov30"
+   "id": "ov31"
   },
   {
    "type": "shared_recipient",
@@ -19966,7 +20121,7 @@
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2017-2018-Q4-01387",
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2017-2018-Q4-01249"
    ],
-   "id": "ov31"
+   "id": "ov32"
   },
   {
    "type": "shared_funder",
@@ -20017,7 +20172,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-04342",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q1-00062"
    ],
-   "id": "ov32"
+   "id": "ov33"
   },
   {
    "type": "shared_funder",
@@ -20068,7 +20223,7 @@
     "https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?q.srchNm=118974179RR0001",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"118974179RR0001\",+\"Donee+BN\":+\"119043891RR0001\"}"
    ],
-   "id": "ov33"
+   "id": "ov34"
   },
   {
    "type": "shared_recipient",
@@ -20118,7 +20273,7 @@
     "https://x.com/WiretapMediaHQ/status/1763243964419764623",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168"
    ],
-   "id": "ov34"
+   "id": "ov35"
   },
   {
    "type": "shared_recipient",
@@ -20171,7 +20326,7 @@
     "https://wiretapmedia.ca/denial-discharge-caf-weapons-procurement-costing-soldiers-their-careers/",
     "https://www.canada.ca/en/department-national-defence/news/2022/10/canada-awards-contract-for-new-army-pistols.html"
    ],
-   "id": "ov35"
+   "id": "ov36"
   },
   {
    "type": "shared_people",
@@ -20209,7 +20364,7 @@
     "https://open.canada.ca/data/en/dataset/70ef2117-1095-4d77-80eb-b87f2bada2a4",
     "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=111&regId=497691"
    ],
-   "id": "ov36"
+   "id": "ov37"
   },
   {
    "type": "shared_people",
@@ -20248,7 +20403,7 @@
     "https://lobbycanada.gc.ca/app/secure/ocl/lrs/do/vwRg?cno=366647&regId=992147",
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/vwRg?cno=3274&regId=56584083"
    ],
-   "id": "ov37"
+   "id": "ov38"
   },
   {
    "type": "shared_funder",
@@ -20300,7 +20455,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q1-00332",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-01670"
    ],
-   "id": "ov38"
+   "id": "ov39"
   },
   {
    "type": "shared_people",
@@ -20327,7 +20482,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov39"
+   "id": "ov40"
   },
   {
    "type": "shared_recipient",
@@ -20380,7 +20535,7 @@
     "https://search.open.canada.ca/contracts/record/ic,C-2017-2018-Q3-00160",
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013"
    ],
-   "id": "ov40"
+   "id": "ov41"
   },
   {
    "type": "shared_funder",
@@ -20434,7 +20589,7 @@
     "https://search.open.canada.ca/grants/record/tc,TC-2017-Q3-10586,current",
     "https://search.open.canada.ca/grants/record/tc,217-2024-2025-Q2-15846,current"
    ],
-   "id": "ov41"
+   "id": "ov42"
   },
   {
    "type": "shared_funder",
@@ -20485,7 +20640,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-04342",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q1-00062"
    ],
-   "id": "ov42"
+   "id": "ov43"
   },
   {
    "type": "shared_funder",
@@ -20538,7 +20693,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q1-00332",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-01670"
    ],
-   "id": "ov43"
+   "id": "ov44"
   },
   {
    "type": "shared_funder",
@@ -20585,7 +20740,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016"
    ],
-   "id": "ov44"
+   "id": "ov45"
   },
   {
    "type": "shared_funder",
@@ -20632,7 +20787,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2006-2007-Q2-00504",
     "https://search.open.canada.ca/contracts/record/tc,TC-2021-2022-Q3-00166"
    ],
-   "id": "ov45"
+   "id": "ov46"
   },
   {
    "type": "shared_funder",
@@ -20692,7 +20847,7 @@
     "https://search.open.canada.ca/grants/record/ps-sp,GC-2018-Q2-00050,current",
     "https://search.open.canada.ca/grants/record/tc,217-2019-2020-Q2-00664,current"
    ],
-   "id": "ov46"
+   "id": "ov47"
   },
   {
    "type": "shared_funder",
@@ -20737,7 +20892,7 @@
     "https://search.open.canada.ca/contracts/record/ec,C-2019-2020-Q1-00199",
     "https://search.open.canada.ca/contracts/record/ec,C-2019-2020-Q1-00232"
    ],
-   "id": "ov47"
+   "id": "ov48"
   },
   {
    "type": "shared_funder",
@@ -20776,7 +20931,7 @@
     "https://open.canada.ca/data/dataset/0bb1fb56-74d0-47f4-b4b3-2b574229416d/resource/4c9252b1-eaa2-4586-ac88-22e2979399aa/download/qualified_donees_2014_updated.csv",
     "https://open.canada.ca/data/dataset/73602f89-08fc-435b-880b-691bfbe96123/resource/681d3cf9-8494-4a57-8c41-7a7c6ebde7c2/download/qualified_donees_2015_updated.csv"
    ],
-   "id": "ov48"
+   "id": "ov49"
   },
   {
    "type": "shared_recipient",
@@ -20822,7 +20977,7 @@
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2022-2023-Q2-16958,current",
     "https://search.open.canada.ca/grants/record/esdc-edsc,GC-2005-Q4-00099,current"
    ],
-   "id": "ov49"
+   "id": "ov50"
   },
   {
    "type": "shared_recipient",
@@ -20869,7 +21024,7 @@
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q4-00741",
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q3-00459"
    ],
-   "id": "ov50"
+   "id": "ov51"
   },
   {
    "type": "shared_recipient",
@@ -20917,7 +21072,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-04348",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2016-2017-Q2-02747"
    ],
-   "id": "ov51"
+   "id": "ov52"
   },
   {
    "type": "shared_recipient",
@@ -20969,7 +21124,7 @@
     "https://search.open.canada.ca/contracts/record/ic,C-2017-2018-Q3-00160",
     "https://wiretapmedia.ca/denial-discharge-caf-weapons-procurement-costing-soldiers-their-careers/"
    ],
-   "id": "ov52"
+   "id": "ov53"
   },
   {
    "type": "shared_recipient",
@@ -21021,7 +21176,7 @@
     "https://search.open.canada.ca/contracts/record/tc,TC-2014-2015-Q3-04842",
     "https://search.open.canada.ca/contracts/record/tc,TC-2019-2020-Q4-00595"
    ],
-   "id": "ov53"
+   "id": "ov54"
   },
   {
    "type": "shared_people",
@@ -21045,7 +21200,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov54"
+   "id": "ov55"
   },
   {
    "type": "shared_recipient",
@@ -21088,7 +21243,7 @@
     "https://open.canada.ca/data/dataset/9f494834-fcec-48b7-b097-09ad4594a27b/resource/3c9bfb9f-0f0a-4018-9129-254d62cbb8e7/download/donee_updated.csv",
     "https://open.canada.ca/data/dataset/44c8c671-7ff8-4f2e-911e-995a01eab2c7/resource/57058d10-daad-464b-b340-085eac38a8f0/download/donee_updated.csv"
    ],
-   "id": "ov55"
+   "id": "ov56"
   },
   {
    "type": "shared_recipient",
@@ -21139,7 +21294,7 @@
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2016-2017-Q4-00257",
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2024-2025-Q1-00708"
    ],
-   "id": "ov56"
+   "id": "ov57"
   },
   {
    "type": "shared_funder",
@@ -21189,7 +21344,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2020-2021-Q2-00095",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2004-2005-Q2-01722"
    ],
-   "id": "ov57"
+   "id": "ov58"
   },
   {
    "type": "shared_recipient",
@@ -21233,7 +21388,7 @@
     "https://search.open.canada.ca/contracts/record/tc,TC-2014-2015-Q3-04842",
     "https://search.open.canada.ca/contracts/record/tc,TC-2019-2020-Q4-00595"
    ],
-   "id": "ov58"
+   "id": "ov59"
   },
   {
    "type": "shared_recipient",
@@ -21286,7 +21441,7 @@
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2020-2021-Q1-00231",
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2014-2015-Q3-00321"
    ],
-   "id": "ov59"
+   "id": "ov60"
   },
   {
    "type": "shared_recipient",
@@ -21325,7 +21480,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2022-2023-Q2-00557",
     "https://search.open.canada.ca/contracts/record/ps-sp,C-2018-2019-Q3-00017"
    ],
-   "id": "ov60"
+   "id": "ov61"
   },
   {
    "type": "shared_funder",
@@ -21364,7 +21519,7 @@
     "https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?q.srchNm=839545803RR0001",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"839545803RR0001\",+\"Donee+BN\":+\"134593391RR0001\"}"
    ],
-   "id": "ov61"
+   "id": "ov62"
   },
   {
    "type": "shared_people",
@@ -21392,7 +21547,7 @@
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/vwRg?cno=6477&regId=56584799",
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/vwRg?cno=6477&regId=56582544"
    ],
-   "id": "ov62"
+   "id": "ov63"
   },
   {
    "type": "shared_people",
@@ -21419,7 +21574,7 @@
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/mssDtstRprt?file=BC_ORL_Registration_Data.zip",
     "https://www.lobbyistsregistrar.bc.ca/app/secure/orl/lrs/do/vwRg?cno=3274&regId=56584083"
    ],
-   "id": "ov63"
+   "id": "ov64"
   },
   {
    "type": "shared_funder",
@@ -21474,7 +21629,7 @@
     "https://search.open.canada.ca/grants/record/pch,016-2024-2025-Q1-1367587,current",
     "https://search.open.canada.ca/grants/record/pch,016-2020-2021-Q1-1332039,current"
    ],
-   "id": "ov64"
+   "id": "ov65"
   },
   {
    "type": "shared_funder",
@@ -21525,7 +21680,7 @@
     "https://search.open.canada.ca/grants/record/tc,217-2024-2025-Q2-15846,current",
     "https://search.open.canada.ca/grants/record/tc,217-2024-2025-Q4-15385,current"
    ],
-   "id": "ov65"
+   "id": "ov66"
   },
   {
    "type": "shared_people",
@@ -21552,7 +21707,7 @@
     "https://open.canada.ca/data/dataset/bd2c9156-2bbe-43c9-b5fe-513e28b7af4e/resource/a722ecef-116b-4bff-8146-3b9bde1205fe/download/directors_2009_updated.csv",
     "https://open.canada.ca/data/dataset/4ee0c993-2fb6-43ac-90c7-146cd4e64b86/resource/9d245c01-408a-4dfc-9ab9-10cce12ab66d/download/director_updated.csv"
    ],
-   "id": "ov66"
+   "id": "ov67"
   },
   {
    "type": "shared_people",
@@ -21576,7 +21731,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov67"
+   "id": "ov68"
   },
   {
    "type": "shared_people",
@@ -21600,7 +21755,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov68"
+   "id": "ov69"
   },
   {
    "type": "shared_people",
@@ -21624,7 +21779,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov69"
+   "id": "ov70"
   },
   {
    "type": "shared_people",
@@ -21650,7 +21805,67 @@
     "https://open.canada.ca/data/dataset/21118663-1847-48ce-81ce-1ac7cff674c0/resource/9b8fec45-8995-4813-9467-023219f46612/download/directors_2019_updated.csv",
     "https://open.canada.ca/data/dataset/3e8a4d9f-9a12-4498-9a0b-a5c81d3281b4/resource/9b2d0f3d-9b66-401d-a551-863ec27414c1/download/directors_2021_updated.csv"
    ],
-   "id": "ov70"
+   "id": "ov71"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries_belgium",
+   "b": "ent_organization_talent_beyond_boundaries_inc",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_mary_louise_cohen",
+    "ent_person_john_cameron"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_inc_director",
+    "lnk_tbb_bruce_cohen_be_director",
+    "lnk_tbb_mary_louise_cohen_inc_director_president",
+    "lnk_tbb_mary_louise_cohen_be_director",
+    "lnk_tbb_john_cameron_inc_director",
+    "lnk_tbb_john_cameron_be_director",
+    "lnk_tbb_john_cameron_be_daily_management"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 6.92,
+   "sources": [
+    "https://www.talentbeyondboundaries.org/s/Talent-Beyond-Boundaries-2024-Public-Inspection-Copy-1.pdf",
+    "https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?ondernemingsnummer=801579096",
+    "https://www.talentbeyondboundaries.org/our-people"
+   ],
+   "id": "ov72"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries",
+   "b": "ent_organization_talent_beyond_boundaries_belgium",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_mary_louise_cohen",
+    "ent_person_john_cameron"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_global_board",
+    "lnk_tbb_bruce_cohen_be_director",
+    "lnk_tbb_mary_louise_cohen_global_board",
+    "lnk_tbb_mary_louise_cohen_be_director",
+    "lnk_tbb_john_cameron_global_board",
+    "lnk_tbb_john_cameron_be_director",
+    "lnk_tbb_john_cameron_be_daily_management"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 6.92,
+   "sources": [
+    "https://www.talentbeyondboundaries.org/our-people",
+    "https://static1.squarespace.com/static/5dc0262432cd095744bf1bf2/t/6a50c5b20914961591dc07ba/1783678387017/TBB+ANNUAL+REPORT+2025.pdf",
+    "https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?ondernemingsnummer=801579096"
+   ],
+   "id": "ov73"
   },
   {
    "type": "shared_recipient",
@@ -21693,7 +21908,7 @@
     "https://search.open.canada.ca/contracts/record/ic,C-2017-2018-Q4-00164",
     "https://search.open.canada.ca/contracts/record/ic,C-2021-2022-Q4-00900"
    ],
-   "id": "ov71"
+   "id": "ov74"
   },
   {
    "type": "shared_funder",
@@ -21732,7 +21947,7 @@
     "https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?q.srchNm=839545803RR0001",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"839545803RR0001\",+\"Donee+BN\":+\"119043891RR0001\"}"
    ],
-   "id": "ov72"
+   "id": "ov75"
   },
   {
    "type": "shared_recipient",
@@ -21773,7 +21988,7 @@
     "https://x.com/WiretapMediaHQ/status/1763243964419764623",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168"
    ],
-   "id": "ov73"
+   "id": "ov76"
   },
   {
    "type": "shared_funder",
@@ -21821,7 +22036,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2014-2015-Q4-04039",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q3-01824"
    ],
-   "id": "ov74"
+   "id": "ov77"
   },
   {
    "type": "shared_funder",
@@ -21866,7 +22081,7 @@
     "https://search.open.canada.ca/grants/record/pch,GC-2012-Q1-00412,current",
     "https://search.open.canada.ca/grants/record/dfatd-maecd,GC-2016-Q1-0077,current"
    ],
-   "id": "ov75"
+   "id": "ov78"
   },
   {
    "type": "shared_recipient",
@@ -21907,7 +22122,7 @@
     "https://web.archive.org/web/20240314202527/https://gcstrategies.ca/",
     "https://www.cbsa-asfc.gc.ca/transparency-transparence/pd-dp/bbp-rpp/oggo/2024-01-18/menu-eng.html"
    ],
-   "id": "ov76"
+   "id": "ov79"
   },
   {
    "type": "shared_recipient",
@@ -21956,7 +22171,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-00024",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-04348"
    ],
-   "id": "ov77"
+   "id": "ov80"
   },
   {
    "type": "shared_people",
@@ -21980,7 +22195,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov78"
+   "id": "ov81"
   },
   {
    "type": "shared_funder",
@@ -22019,7 +22234,7 @@
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q4-00741",
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q3-00459"
    ],
-   "id": "ov79"
+   "id": "ov82"
   },
   {
    "type": "shared_recipient",
@@ -22064,7 +22279,64 @@
     "https://search.open.canada.ca/contracts/record/ec,C-2019-2020-Q2-00190",
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q4-00741"
    ],
-   "id": "ov80"
+   "id": "ov83"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries_canada",
+   "b": "ent_organization_talent_beyond_boundaries_inc",
+   "via": [
+    "ent_person_john_mccallum",
+    "ent_person_bruce_cohen"
+   ],
+   "links": [
+    "lnk_tbb_mccallum_canada_chair",
+    "lnk_tbb_mccallum_inc_director",
+    "lnk_tbb_bruce_cohen_canada_director",
+    "lnk_tbb_bruce_cohen_inc_director"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 6.39,
+   "sources": [
+    "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8",
+    "https://www.talentbeyondboundaries.org/blog/tbb-welcomes-new-economic-pathway-for-more-skilled-refugees-to-build-careers-in-canada",
+    "https://www.cerc.ca/page/TBB-Bios-Dec2022Webinar",
+    "https://www.talentbeyondboundaries.org/canada-board",
+    "https://www.pm.gc.ca/en/news/statements/2025/06/22/statement-prime-minister-carney-passing-honourable-john-mccallum",
+    "https://www.talentbeyondboundaries.org/s/Talent-Beyond-Boundaries-2024-Public-Inspection-Copy-1.pdf",
+    "https://www.talentbeyondboundaries.org/our-people"
+   ],
+   "id": "ov84"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries_ltd",
+   "b": "ent_organization_talent_beyond_boundaries_uk",
+   "via": [
+    "ent_person_john_cameron",
+    "ent_person_alison_cameron"
+   ],
+   "links": [
+    "lnk_tbb_john_cameron_uk_chair",
+    "lnk_tbb_john_cameron_au_director",
+    "lnk_tbb_alison_cameron_uk_trustee",
+    "lnk_tbb_alison_cameron_au_director"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 6.39,
+   "sources": [
+    "https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/5168804/trustees",
+    "https://register-of-charities.charitycommission.gov.uk/en/charity-search/-/charity-details/5168804/full-print",
+    "https://www.talentbeyondboundaries.org/our-people",
+    "https://www.acnc.gov.au/charity/charities/e4428cb1-3aaf-e811-a95e-000d3ad24c60/profile"
+   ],
+   "id": "ov85"
   },
   {
    "type": "shared_recipient",
@@ -22116,7 +22388,7 @@
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2022-2023-Q2-00501",
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2014-2015-Q4-00262"
    ],
-   "id": "ov81"
+   "id": "ov86"
   },
   {
    "type": "shared_funder",
@@ -22161,7 +22433,7 @@
     "https://search.open.canada.ca/grants/record/pch,GC-2017-Q4-01479,current",
     "https://search.open.canada.ca/grants/record/pch,016-2024-2025-Q4-1374349,current"
    ],
-   "id": "ov82"
+   "id": "ov87"
   },
   {
    "type": "shared_funder",
@@ -22197,7 +22469,7 @@
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2014-2015-Q4-00262",
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2021-2022-Q4-00657"
    ],
-   "id": "ov83"
+   "id": "ov88"
   },
   {
    "type": "shared_recipient",
@@ -22244,7 +22516,7 @@
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2017-2018-Q4-00215",
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2019-2020-Q1-00087"
    ],
-   "id": "ov84"
+   "id": "ov89"
   },
   {
    "type": "shared_people",
@@ -22268,7 +22540,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov85"
+   "id": "ov90"
   },
   {
    "type": "shared_funder",
@@ -22311,7 +22583,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2008-2009-Q4-00603",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2005-2006-Q1-00192"
    ],
-   "id": "ov86"
+   "id": "ov91"
   },
   {
    "type": "shared_recipient",
@@ -22353,7 +22625,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"118974179RR0001\",+\"Donee+BN\":+\"810956565RR0001\"}",
     "https://open.canada.ca/data/dataset/2fd1ba9b-ef22-4454-b652-c3b8b522dfc3/resource/4627b002-8047-46e7-bc04-63a2225b7972/download/donee_updated.csv"
    ],
-   "id": "ov87"
+   "id": "ov92"
   },
   {
    "type": "shared_recipient",
@@ -22400,7 +22672,7 @@
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2017-2018-Q4-00496",
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2016-2017-Q4-00257"
    ],
-   "id": "ov88"
+   "id": "ov93"
   },
   {
    "type": "shared_recipient",
@@ -22445,7 +22717,7 @@
     "https://search.open.canada.ca/contracts/record/ic,C-2020-2021-Q2-00160",
     "https://search.open.canada.ca/contracts/record/ic,C-2020-2021-Q3-00200"
    ],
-   "id": "ov89"
+   "id": "ov94"
   },
   {
    "type": "shared_recipient",
@@ -22495,7 +22767,7 @@
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2016-2017-Q4-00257",
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2024-2025-Q1-00708"
    ],
-   "id": "ov90"
+   "id": "ov95"
   },
   {
    "type": "shared_recipient",
@@ -22536,7 +22808,7 @@
     "https://search.open.canada.ca/grants/record/nrc-cnrc,GC-2012-Q1-19981,current",
     "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b"
    ],
-   "id": "ov91"
+   "id": "ov96"
   },
   {
    "type": "shared_recipient",
@@ -22582,7 +22854,7 @@
     "https://search.open.canada.ca/contracts/record/ec,C-2019-2020-Q2-00190",
     "https://search.open.canada.ca/contracts/record/ec,C-2018-2019-Q4-00741"
    ],
-   "id": "ov92"
+   "id": "ov97"
   },
   {
    "type": "shared_funder",
@@ -22622,7 +22894,7 @@
     "https://search.open.canada.ca/contracts/record/tc,TC-2018-2019-Q4-00410",
     "https://search.open.canada.ca/contracts/record/tc,TC-2018-2019-Q1-00143"
    ],
-   "id": "ov93"
+   "id": "ov98"
   },
   {
    "type": "shared_people",
@@ -22656,7 +22928,7 @@
     "https://exigentfoundation.org/our-story/",
     "https://www.canada.ca/en/department-national-defence/news/2016/08/vice-admiral-mark-norman-becomes-canada-s-new-vice-chief-of-the-defence-staff.html"
    ],
-   "id": "ov94"
+   "id": "ov99"
   },
   {
    "type": "shared_recipient",
@@ -22696,7 +22968,7 @@
     "https://search.open.canada.ca/grants/record/jus,119-2024-2025-Q4-00011,current",
     "https://search.open.canada.ca/grants/record/isc-sac,1910-2025-2026-Qrt4-0021326,current"
    ],
-   "id": "ov95"
+   "id": "ov100"
   },
   {
    "type": "shared_people",
@@ -22720,7 +22992,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov96"
+   "id": "ov101"
   },
   {
    "type": "shared_people",
@@ -22744,7 +23016,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov97"
+   "id": "ov102"
   },
   {
    "type": "shared_people",
@@ -22768,7 +23040,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov98"
+   "id": "ov103"
   },
   {
    "type": "shared_people",
@@ -22792,7 +23064,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov99"
+   "id": "ov104"
   },
   {
    "type": "shared_people",
@@ -22816,7 +23088,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov100"
+   "id": "ov105"
   },
   {
    "type": "shared_people",
@@ -22840,7 +23112,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov101"
+   "id": "ov106"
   },
   {
    "type": "shared_recipient",
@@ -22883,7 +23155,7 @@
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030"
    ],
-   "id": "ov102"
+   "id": "ov107"
   },
   {
    "type": "shared_funder",
@@ -22926,7 +23198,7 @@
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2019-2020-Q2-00699,current",
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2019-2020-Q2-00083,current"
    ],
-   "id": "ov103"
+   "id": "ov108"
   },
   {
    "type": "shared_funder",
@@ -22970,7 +23242,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q3-00737",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-04716"
    ],
-   "id": "ov104"
+   "id": "ov109"
   },
   {
    "type": "shared_funder",
@@ -23013,7 +23285,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2014-2015-Q4-04039",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q3-01824"
    ],
-   "id": "ov105"
+   "id": "ov110"
   },
   {
    "type": "shared_funder",
@@ -23057,7 +23329,7 @@
     "https://search.open.canada.ca/grants/record/dfo-mpo,086-2021-2022-Q4-00350,current",
     "https://search.open.canada.ca/grants/record/dfo-mpo,086-2019-2020-Q3-00370,current"
    ],
-   "id": "ov106"
+   "id": "ov111"
   },
   {
    "type": "shared_recipient",
@@ -23104,7 +23376,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q4-00616",
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013"
    ],
-   "id": "ov107"
+   "id": "ov112"
   },
   {
    "type": "shared_funder",
@@ -23141,7 +23413,7 @@
     "https://open.canada.ca/data/dataset/0bb1fb56-74d0-47f4-b4b3-2b574229416d/resource/4c9252b1-eaa2-4586-ac88-22e2979399aa/download/qualified_donees_2014_updated.csv",
     "https://open.canada.ca/data/dataset/73602f89-08fc-435b-880b-691bfbe96123/resource/681d3cf9-8494-4a57-8c41-7a7c6ebde7c2/download/qualified_donees_2015_updated.csv"
    ],
-   "id": "ov108"
+   "id": "ov113"
   },
   {
    "type": "shared_recipient",
@@ -23188,7 +23460,7 @@
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2019-2020-Q4-01143,current",
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2022-2023-Q2-16958,current"
    ],
-   "id": "ov109"
+   "id": "ov114"
   },
   {
    "type": "shared_recipient",
@@ -23238,7 +23510,7 @@
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
     "https://search.open.canada.ca/grants/record/tc,217-2019-2020-Q2-00664,current"
    ],
-   "id": "ov110"
+   "id": "ov115"
   },
   {
    "type": "shared_funder",
@@ -23281,7 +23553,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2008-2009-Q4-00603",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2005-2006-Q1-00192"
    ],
-   "id": "ov111"
+   "id": "ov116"
   },
   {
    "type": "shared_people",
@@ -23305,7 +23577,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov112"
+   "id": "ov117"
   },
   {
    "type": "shared_people",
@@ -23329,7 +23601,7 @@
    "sources": [
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8"
    ],
-   "id": "ov113"
+   "id": "ov118"
   },
   {
    "type": "shared_funder",
@@ -23369,7 +23641,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q3-00737",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-04716"
    ],
-   "id": "ov114"
+   "id": "ov119"
   },
   {
    "type": "shared_funder",
@@ -23406,7 +23678,7 @@
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8",
     "https://search.open.canada.ca/grants/record/feddevontario,GC-2018-Q2-0015,current"
    ],
-   "id": "ov115"
+   "id": "ov120"
   },
   {
    "type": "shared_funder",
@@ -23442,7 +23714,7 @@
     "https://search.open.canada.ca/grants/record/aandc-aadnc,0420-2020-2021-Qrt4-0000290,current",
     "https://search.open.canada.ca/grants/record/aandc-aadnc,0420-2018-2019-Qrt3-0002804,current"
    ],
-   "id": "ov116"
+   "id": "ov121"
   },
   {
    "type": "shared_recipient",
@@ -23475,7 +23747,7 @@
     "https://search.open.canada.ca/contracts/record/csc-scc,C2025-2026-Q2-00675",
     "https://search.open.canada.ca/contracts/record/csc-scc,C-2018-2019-Q1-00379"
    ],
-   "id": "ov117"
+   "id": "ov122"
   },
   {
    "type": "shared_funder",
@@ -23508,7 +23780,7 @@
     "https://open.canada.ca/data/dataset/b2acb3be-c720-4329-a8c0-d4d36c8db61e/resource/af071c2f-e88d-4d9f-9d1c-173bcb161d3e/download/qualified_donees_2022_updated.csv",
     "https://open.canada.ca/data/dataset/05b3abd0-e70f-4b3b-a9c5-acc436bd15b6/resource/c603fe1f-cc4c-480e-b1cd-7fd949c42487/download/qualified_donees_2023_updated.csv"
    ],
-   "id": "ov118"
+   "id": "ov123"
   },
   {
    "type": "shared_funder",
@@ -23542,7 +23814,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"827915521RR0001\",+\"Donee+BN\":+\"118974294RR0001\"}",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"827915521RR0001\",+\"Donee+BN\":+\"810956565RR0001\"}"
    ],
-   "id": "ov119"
+   "id": "ov124"
   },
   {
    "type": "shared_funder",
@@ -23576,7 +23848,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"827915521RR0001\",+\"Donee+BN\":+\"810956565RR0001\"}",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"827915521RR0001\",+\"Donee+BN\":+\"119043891RR0001\"}"
    ],
-   "id": "ov120"
+   "id": "ov125"
   },
   {
    "type": "shared_recipient",
@@ -23616,7 +23888,7 @@
     "https://search.open.canada.ca/contracts/record/cra-arc,C-2025-2026-Q3-00005",
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013"
    ],
-   "id": "ov121"
+   "id": "ov126"
   },
   {
    "type": "shared_funder",
@@ -23650,7 +23922,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"118974179RR0001\",+\"Donee+BN\":+\"134593391RR0001\"}",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"118974179RR0001\",+\"Donee+BN\":+\"118974294RR0001\"}"
    ],
-   "id": "ov122"
+   "id": "ov127"
   },
   {
    "type": "shared_recipient",
@@ -23697,7 +23969,7 @@
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2019-2020-Q1-00087",
     "https://search.open.canada.ca/contracts/record/tc,TC-2014-2015-Q3-04842"
    ],
-   "id": "ov123"
+   "id": "ov128"
   },
   {
    "type": "shared_funder",
@@ -23732,7 +24004,7 @@
     "https://search.open.canada.ca/grants/record/isc-sac,1910-2025-2026-Qrt4-0021326,current",
     "https://search.open.canada.ca/grants/record/isc-sac,1910-2020-2021-Qrt4-0009258,current"
    ],
-   "id": "ov124"
+   "id": "ov129"
   },
   {
    "type": "shared_funder",
@@ -23778,7 +24050,7 @@
     "https://search.open.canada.ca/grants/record/pch,GC-2016-Q4-03286,current",
     "https://search.open.canada.ca/grants/record/pch,GC-2016-Q1-00732,current"
    ],
-   "id": "ov125"
+   "id": "ov130"
   },
   {
    "type": "shared_recipient",
@@ -23816,7 +24088,7 @@
     "https://search.open.canada.ca/grants/record/aandc-aadnc,910A-2018-2019-Qrt4-0005382,current",
     "https://search.open.canada.ca/grants/record/aandc-aadnc,910A-2018-2019-Qrt4-0006653,current"
    ],
-   "id": "ov126"
+   "id": "ov131"
   },
   {
    "type": "shared_funder",
@@ -23855,7 +24127,7 @@
     "https://search.open.canada.ca/grants/record/tc,200910Q2 - 4922,current",
     "https://search.open.canada.ca/contracts/record/tc,TC-2022-2023-Q1-00073"
    ],
-   "id": "ov127"
+   "id": "ov132"
   },
   {
    "type": "shared_funder",
@@ -23894,7 +24166,86 @@
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2023-2024-Q3-001027",
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2020-2021-Q2-00634"
    ],
-   "id": "ov128"
+   "id": "ov133"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries_belgium",
+   "b": "ent_organization_talent_beyond_boundaries_ltd",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_john_cameron"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_au_director",
+    "lnk_tbb_bruce_cohen_be_director",
+    "lnk_tbb_john_cameron_au_director",
+    "lnk_tbb_john_cameron_be_director",
+    "lnk_tbb_john_cameron_be_daily_management"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 5.21,
+   "sources": [
+    "https://www.acnc.gov.au/charity/charities/e4428cb1-3aaf-e811-a95e-000d3ad24c60/profile",
+    "https://www.talentbeyondboundaries.org/our-people",
+    "https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?ondernemingsnummer=801579096"
+   ],
+   "id": "ov134"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries_inc",
+   "b": "ent_organization_talent_beyond_boundaries_ltd",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_john_cameron"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_inc_director",
+    "lnk_tbb_bruce_cohen_au_director",
+    "lnk_tbb_john_cameron_inc_director",
+    "lnk_tbb_john_cameron_au_director"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 5.21,
+   "sources": [
+    "https://www.talentbeyondboundaries.org/s/Talent-Beyond-Boundaries-2024-Public-Inspection-Copy-1.pdf",
+    "https://www.acnc.gov.au/charity/charities/e4428cb1-3aaf-e811-a95e-000d3ad24c60/profile",
+    "https://www.talentbeyondboundaries.org/our-people"
+   ],
+   "id": "ov135"
+  },
+  {
+   "type": "shared_people",
+   "a": "ent_organization_talent_beyond_boundaries",
+   "b": "ent_organization_talent_beyond_boundaries_ltd",
+   "via": [
+    "ent_person_bruce_cohen",
+    "ent_person_john_cameron"
+   ],
+   "links": [
+    "lnk_tbb_bruce_cohen_global_board",
+    "lnk_tbb_bruce_cohen_au_director",
+    "lnk_tbb_john_cameron_global_board",
+    "lnk_tbb_john_cameron_au_director"
+   ],
+   "total_cad": 0,
+   "kinds": [
+    "board interlock"
+   ],
+   "strength": 5.21,
+   "sources": [
+    "https://www.talentbeyondboundaries.org/our-people",
+    "https://static1.squarespace.com/static/5dc0262432cd095744bf1bf2/t/6a50c5b20914961591dc07ba/1783678387017/TBB+ANNUAL+REPORT+2025.pdf",
+    "https://www.acnc.gov.au/charity/charities/e4428cb1-3aaf-e811-a95e-000d3ad24c60/profile"
+   ],
+   "id": "ov136"
   },
   {
    "type": "shared_recipient",
@@ -23931,7 +24282,7 @@
     "https://x.com/WiretapMediaHQ/status/1732953357868757461",
     "https://x.com/WiretapMediaHQ/status/1758267130250682802"
    ],
-   "id": "ov129"
+   "id": "ov137"
   },
   {
    "type": "shared_recipient",
@@ -23974,7 +24325,7 @@
     "https://open.canada.ca/data/dataset/38a2cce2-3639-43f9-ab59-8097b202e57e/resource/c8e40b8e-9386-4cf5-8dda-9cd8f225cdea/download/qualified_donees_2017_updated.csv",
     "https://open.canada.ca/data/dataset/206f5517-12c3-40e0-9494-c75d2e410c64/resource/f350fe3b-24c3-4ffc-ae3b-49181b305e32/download/qualified_donees_2018_updated.csv"
    ],
-   "id": "ov130"
+   "id": "ov138"
   },
   {
    "type": "shared_funder",
@@ -24013,7 +24364,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2006-2007-Q2-00504",
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013"
    ],
-   "id": "ov131"
+   "id": "ov139"
   },
   {
    "type": "shared_recipient",
@@ -24051,7 +24402,7 @@
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
     "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030"
    ],
-   "id": "ov132"
+   "id": "ov140"
   },
   {
    "type": "shared_funder",
@@ -24091,7 +24442,7 @@
     "https://x.com/WiretapMediaHQ/status/1763243964419764623",
     "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b"
    ],
-   "id": "ov133"
+   "id": "ov141"
   },
   {
    "type": "shared_recipient",
@@ -24134,7 +24485,7 @@
     "https://search.open.canada.ca/contracts/record/pc,C-2005-2006-Q1-00324",
     "https://search.open.canada.ca/contracts/record/pc,C-2015-2016-Q2-00739"
    ],
-   "id": "ov134"
+   "id": "ov142"
   },
   {
    "type": "shared_recipient",
@@ -24174,7 +24525,7 @@
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2017-2018-Q4-01387",
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2017-2018-Q4-01249"
    ],
-   "id": "ov135"
+   "id": "ov143"
   },
   {
    "type": "shared_recipient",
@@ -24215,7 +24566,7 @@
     "https://search.open.canada.ca/contracts/record/ic,C-2017-2018-Q3-00160",
     "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013"
    ],
-   "id": "ov136"
+   "id": "ov144"
   },
   {
    "type": "shared_recipient",
@@ -24256,7 +24607,7 @@
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2017-2018-Q4-00215",
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2019-2020-Q1-00087"
    ],
-   "id": "ov137"
+   "id": "ov145"
   },
   {
    "type": "shared_funder",
@@ -24292,7 +24643,7 @@
     "https://open.canada.ca/data/dataset/0bb1fb56-74d0-47f4-b4b3-2b574229416d/resource/4c9252b1-eaa2-4586-ac88-22e2979399aa/download/qualified_donees_2014_updated.csv",
     "https://open.canada.ca/data/dataset/73602f89-08fc-435b-880b-691bfbe96123/resource/681d3cf9-8494-4a57-8c41-7a7c6ebde7c2/download/qualified_donees_2015_updated.csv"
    ],
-   "id": "ov138"
+   "id": "ov146"
   },
   {
    "type": "shared_funder",
@@ -24326,7 +24677,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"839545803RR0001\",+\"Donee+BN\":+\"119043891RR0001\"}",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"839545803RR0001\",+\"Donee+BN\":+\"118779081RR0001\"}"
    ],
-   "id": "ov139"
+   "id": "ov147"
   },
   {
    "type": "money_path",
@@ -24363,7 +24714,7 @@
     "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501744",
     "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
    ],
-   "id": "ov140"
+   "id": "ov148"
   },
   {
    "type": "money_path",
@@ -24398,7 +24749,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
    ],
-   "id": "ov141"
+   "id": "ov149"
   },
   {
    "type": "money_path",
@@ -24435,7 +24786,7 @@
     "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
     "https://search.open.canada.ca/qpnotes/record/pwgsc-tpsgc,PSPC-2023-QP-00055"
    ],
-   "id": "ov142"
+   "id": "ov150"
   },
   {
    "type": "money_path",
@@ -24470,299 +24821,11 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
    ],
-   "id": "ov143"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_distill_mobile",
-   "b": "ent_organization_canada_border_services_agency",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_60fb81ee849467a8",
-    "lnk_spy_arrivecan_distill_mobile",
-    "lnk_spy_7822afd69f92b8b2",
-    "lnk_spy_botler_jv_gcs",
-    "lnk_spy_cw2233973_cbsa_gcs",
-    "lnk_spy_botler_cbsa_jv",
-    "lnk_spy_arrivecan_tab7_cbsa_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501745",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
-   ],
-   "id": "ov144"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_distill_mobile",
-   "b": "ent_organization_department_of_national_defence",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_6701d4d14debcb4b",
-    "lnk_spy_arrivecan_distill_mobile",
-    "lnk_3205380e438fd858",
-    "lnk_spy_85fb87591d5356ac",
-    "lnk_spy_botler_jv_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501745",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
-   ],
-   "id": "ov145"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_kpmg",
-   "b": "ent_organization_canada_border_services_agency",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_60fb81ee849467a8",
-    "lnk_spy_arrivecan_kpmg",
-    "lnk_spy_7822afd69f92b8b2",
-    "lnk_spy_botler_jv_gcs",
-    "lnk_spy_cw2233973_cbsa_gcs",
-    "lnk_spy_botler_cbsa_jv",
-    "lnk_spy_arrivecan_tab7_cbsa_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501746",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
-   ],
-   "id": "ov146"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_kpmg",
-   "b": "ent_organization_department_of_national_defence",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_6701d4d14debcb4b",
-    "lnk_spy_arrivecan_kpmg",
-    "lnk_3205380e438fd858",
-    "lnk_spy_85fb87591d5356ac",
-    "lnk_spy_botler_jv_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501746",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
-   ],
-   "id": "ov147"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_level_access",
-   "b": "ent_organization_canada_border_services_agency",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_60fb81ee849467a8",
-    "lnk_spy_arrivecan_level_access",
-    "lnk_spy_7822afd69f92b8b2",
-    "lnk_spy_botler_jv_gcs",
-    "lnk_spy_cw2233973_cbsa_gcs",
-    "lnk_spy_botler_cbsa_jv",
-    "lnk_spy_arrivecan_tab7_cbsa_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501747",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
-   ],
-   "id": "ov148"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_level_access",
-   "b": "ent_organization_department_of_national_defence",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_6701d4d14debcb4b",
-    "lnk_spy_arrivecan_level_access",
-    "lnk_3205380e438fd858",
-    "lnk_spy_85fb87591d5356ac",
-    "lnk_spy_botler_jv_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501747",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
-   ],
-   "id": "ov149"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_macadamian_technologies",
-   "b": "ent_organization_canada_border_services_agency",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_60fb81ee849467a8",
-    "lnk_spy_arrivecan_macadamian_technologies",
-    "lnk_spy_7822afd69f92b8b2",
-    "lnk_spy_botler_jv_gcs",
-    "lnk_spy_cw2233973_cbsa_gcs",
-    "lnk_spy_botler_cbsa_jv",
-    "lnk_spy_arrivecan_tab7_cbsa_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
-    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501749",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
-   ],
-   "id": "ov150"
-  },
-  {
-   "type": "money_path",
-   "a": "ent_company_macadamian_technologies",
-   "b": "ent_organization_department_of_national_defence",
-   "via": [
-    "ent_company_gc_strategies",
-    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
-   ],
-   "links": [
-    "lnk_6701d4d14debcb4b",
-    "lnk_spy_arrivecan_macadamian_technologies",
-    "lnk_3205380e438fd858",
-    "lnk_spy_85fb87591d5356ac",
-    "lnk_spy_botler_jv_gcs"
-   ],
-   "total_cad": 0,
-   "kinds": [],
-   "hops": 2,
-   "strength": 5,
-   "sources": [
-    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
-    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501749",
-    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
-    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
-   ],
    "id": "ov151"
   },
   {
    "type": "money_path",
-   "a": "ent_company_optiv",
+   "a": "ent_company_distill_mobile",
    "b": "ent_organization_canada_border_services_agency",
    "via": [
     "ent_company_gc_strategies",
@@ -24770,7 +24833,7 @@
    ],
    "links": [
     "lnk_60fb81ee849467a8",
-    "lnk_spy_arrivecan_optiv",
+    "lnk_spy_arrivecan_distill_mobile",
     "lnk_spy_7822afd69f92b8b2",
     "lnk_spy_botler_jv_gcs",
     "lnk_spy_cw2233973_cbsa_gcs",
@@ -24792,14 +24855,14 @@
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
     "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
     "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501750",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501745",
     "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
    ],
    "id": "ov152"
   },
   {
    "type": "money_path",
-   "a": "ent_company_optiv",
+   "a": "ent_company_distill_mobile",
    "b": "ent_organization_department_of_national_defence",
    "via": [
     "ent_company_gc_strategies",
@@ -24807,7 +24870,7 @@
    ],
    "links": [
     "lnk_6701d4d14debcb4b",
-    "lnk_spy_arrivecan_optiv",
+    "lnk_spy_arrivecan_distill_mobile",
     "lnk_3205380e438fd858",
     "lnk_spy_85fb87591d5356ac",
     "lnk_spy_botler_jv_gcs"
@@ -24820,7 +24883,7 @@
     "https://x.com/WiretapMediaHQ/status/1763243964419764623",
     "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
     "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
-    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501750",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501745",
     "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
     "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
@@ -24831,6 +24894,294 @@
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
    ],
    "id": "ov153"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_kpmg",
+   "b": "ent_organization_canada_border_services_agency",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_60fb81ee849467a8",
+    "lnk_spy_arrivecan_kpmg",
+    "lnk_spy_7822afd69f92b8b2",
+    "lnk_spy_botler_jv_gcs",
+    "lnk_spy_cw2233973_cbsa_gcs",
+    "lnk_spy_botler_cbsa_jv",
+    "lnk_spy_arrivecan_tab7_cbsa_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501746",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
+   ],
+   "id": "ov154"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_kpmg",
+   "b": "ent_organization_department_of_national_defence",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_6701d4d14debcb4b",
+    "lnk_spy_arrivecan_kpmg",
+    "lnk_3205380e438fd858",
+    "lnk_spy_85fb87591d5356ac",
+    "lnk_spy_botler_jv_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501746",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
+   ],
+   "id": "ov155"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_level_access",
+   "b": "ent_organization_canada_border_services_agency",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_60fb81ee849467a8",
+    "lnk_spy_arrivecan_level_access",
+    "lnk_spy_7822afd69f92b8b2",
+    "lnk_spy_botler_jv_gcs",
+    "lnk_spy_cw2233973_cbsa_gcs",
+    "lnk_spy_botler_cbsa_jv",
+    "lnk_spy_arrivecan_tab7_cbsa_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501747",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
+   ],
+   "id": "ov156"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_level_access",
+   "b": "ent_organization_department_of_national_defence",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_6701d4d14debcb4b",
+    "lnk_spy_arrivecan_level_access",
+    "lnk_3205380e438fd858",
+    "lnk_spy_85fb87591d5356ac",
+    "lnk_spy_botler_jv_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501747",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
+   ],
+   "id": "ov157"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_macadamian_technologies",
+   "b": "ent_organization_canada_border_services_agency",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_60fb81ee849467a8",
+    "lnk_spy_arrivecan_macadamian_technologies",
+    "lnk_spy_7822afd69f92b8b2",
+    "lnk_spy_botler_jv_gcs",
+    "lnk_spy_cw2233973_cbsa_gcs",
+    "lnk_spy_botler_cbsa_jv",
+    "lnk_spy_arrivecan_tab7_cbsa_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501749",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
+   ],
+   "id": "ov158"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_macadamian_technologies",
+   "b": "ent_organization_department_of_national_defence",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_6701d4d14debcb4b",
+    "lnk_spy_arrivecan_macadamian_technologies",
+    "lnk_3205380e438fd858",
+    "lnk_spy_85fb87591d5356ac",
+    "lnk_spy_botler_jv_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501749",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
+   ],
+   "id": "ov159"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_optiv",
+   "b": "ent_organization_canada_border_services_agency",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_60fb81ee849467a8",
+    "lnk_spy_arrivecan_optiv",
+    "lnk_spy_7822afd69f92b8b2",
+    "lnk_spy_botler_jv_gcs",
+    "lnk_spy_cw2233973_cbsa_gcs",
+    "lnk_spy_botler_cbsa_jv",
+    "lnk_spy_arrivecan_tab7_cbsa_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2022-2022-Q1-101",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-0030",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q4-105",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q1-00240",
+    "https://search.open.canada.ca/contracts/record/cbsa-asfc,C-2021-2022-Q3-00332",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501750",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence"
+   ],
+   "id": "ov160"
+  },
+  {
+   "type": "money_path",
+   "a": "ent_company_optiv",
+   "b": "ent_organization_department_of_national_defence",
+   "via": [
+    "ent_company_gc_strategies",
+    "ent_company_dalian_coradix_joint_venture>ent_company_gc_strategies"
+   ],
+   "links": [
+    "lnk_6701d4d14debcb4b",
+    "lnk_spy_arrivecan_optiv",
+    "lnk_3205380e438fd858",
+    "lnk_spy_85fb87591d5356ac",
+    "lnk_spy_botler_jv_gcs"
+   ],
+   "total_cad": 0,
+   "kinds": [],
+   "hops": 2,
+   "strength": 5,
+   "sources": [
+    "https://x.com/WiretapMediaHQ/status/1763243964419764623",
+    "https://www.ourcommons.ca/Content/Committee/441/OGGO/WebDoc/WD12174692/12174692/DocumentsRelatedToTheArriveCANApplicationSubmittedByGCStrategies-e.pdf",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12174692",
+    "https://www.ourcommons.ca/DocumentViewer/en/44-1/OGGO/related-document/12501750",
+    "https://www.ourcommons.ca/documentviewer/en/44-1/OGGO/meeting-83/evidence",
+    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00002",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00003",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00004",
+    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q4-00016",
+    "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
+   ],
+   "id": "ov161"
   },
   {
    "type": "money_path",
@@ -24865,7 +25216,7 @@
     "https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?q.srchNm=134593391RR0001",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"134593391RR0001\",+\"Donee+BN\":+\"118974179RR0001\"}"
    ],
-   "id": "ov154"
+   "id": "ov162"
   },
   {
    "type": "money_path",
@@ -24900,7 +25251,7 @@
     "https://apps.cra-arc.gc.ca/ebci/hacc/srch/pub/dsplyBscSrch?q.srchNm=134593391RR0001",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"134593391RR0001\",+\"Donee+BN\":+\"118974179RR0001\"}"
    ],
-   "id": "ov155"
+   "id": "ov163"
   },
   {
    "type": "money_path",
@@ -24935,7 +25286,7 @@
     "https://open.canada.ca/data/dataset/49cb599c-03f6-4191-b8d3-fb5b8e35b218/resource/021e4180-e71c-480a-a776-14e96f3f1e47/download/qualified_donees_2013_updated.csv",
     "https://open.canada.ca/data/dataset/0bb1fb56-74d0-47f4-b4b3-2b574229416d/resource/4c9252b1-eaa2-4586-ac88-22e2979399aa/download/qualified_donees_2014_updated.csv"
    ],
-   "id": "ov156"
+   "id": "ov164"
   },
   {
    "type": "money_path",
@@ -24969,7 +25320,7 @@
     "https://open.canada.ca/data/dataset/8940f53e-74e5-486c-b5ed-458a935d98aa/resource/85fa5795-5696-49aa-8fbf-f7a4c8c83abb/download/qualified_donees_2016_updated.csv",
     "https://open.canada.ca/data/dataset/2fd1ba9b-ef22-4454-b652-c3b8b522dfc3/resource/4627b002-8047-46e7-bc04-63a2225b7972/download/donee_updated.csv"
    ],
-   "id": "ov157"
+   "id": "ov165"
   },
   {
    "type": "shared_recipient",
@@ -25011,7 +25362,7 @@
     "https://search.open.canada.ca/contracts/record/pc,C-2015-2016-Q2-00739",
     "https://search.open.canada.ca/contracts/record/pc,C-2008-2009-Q3-00391"
    ],
-   "id": "ov158"
+   "id": "ov166"
   },
   {
    "type": "shared_funder",
@@ -25047,7 +25398,7 @@
     "https://search.open.canada.ca/contracts/record/hc-sc,C-2022-2023-Q4-01003",
     "https://search.open.canada.ca/contracts/record/csc-scc,C-2023-2024-Q3-00551"
    ],
-   "id": "ov159"
+   "id": "ov167"
   },
   {
    "type": "shared_funder",
@@ -25087,7 +25438,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2017-2018-Q1-02098",
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2024-2025-Q2-00017"
    ],
-   "id": "ov160"
+   "id": "ov168"
   },
   {
    "type": "shared_funder",
@@ -25123,7 +25474,7 @@
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2023-2024-Q4-00658",
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2022-2023-Q2-00501"
    ],
-   "id": "ov161"
+   "id": "ov169"
   },
   {
    "type": "shared_recipient",
@@ -25161,7 +25512,7 @@
     "https://search.open.canada.ca/contracts/record/tc,TC-2019-2020-Q2-00185",
     "https://search.open.canada.ca/contracts/record/tc,TC-2017-2018-Q1-00099"
    ],
-   "id": "ov162"
+   "id": "ov170"
   },
   {
    "type": "shared_recipient",
@@ -25200,7 +25551,7 @@
     "https://search.open.canada.ca/contracts/record/phac-aspc,C-2021-2022-Q4-00986",
     "https://search.open.canada.ca/contracts/record/phac-aspc,C-2021-2022-Q2-00499"
    ],
-   "id": "ov163"
+   "id": "ov171"
   },
   {
    "type": "shared_funder",
@@ -25228,7 +25579,7 @@
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"119276723RR0001\",+\"Donee+BN\":+\"108075748RR0001\"}",
     "https://open.canada.ca/data/api/action/datastore_search?resource_id=8195b2cb-ce2d-4cd2-b829-6d07f4959f49&filters={\"BN\":+\"119276723RR0001\",+\"Donee+BN\":+\"134593391RR0001\"}"
    ],
-   "id": "ov164"
+   "id": "ov172"
   },
   {
    "type": "shared_funder",
@@ -25268,7 +25619,7 @@
     "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2025-2026-Q4-18048,current",
     "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2021-2022-Q4-11953,current"
    ],
-   "id": "ov165"
+   "id": "ov173"
   },
   {
    "type": "shared_funder",
@@ -25309,7 +25660,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-04342",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q1-00062"
    ],
-   "id": "ov166"
+   "id": "ov174"
   },
   {
    "type": "shared_funder",
@@ -25348,7 +25699,7 @@
     "https://search.open.canada.ca/grants/record/esdc-edsc,141-2020-2021-Q3-00119,current",
     "https://search.open.canada.ca/grants/record/esdc-edsc,GC-2017-Q2-00026,current"
    ],
-   "id": "ov167"
+   "id": "ov175"
   },
   {
    "type": "shared_recipient",
@@ -25385,7 +25736,7 @@
     "https://search.open.canada.ca/contracts/record/nrc-cnrc,C-2017-2018-Q4-00437",
     "https://search.open.canada.ca/contracts/record/nrc-cnrc,C-2020-2021-Q1-00374"
    ],
-   "id": "ov168"
+   "id": "ov176"
   },
   {
    "type": "shared_recipient",
@@ -25418,7 +25769,7 @@
     "https://www.canada.ca/en/public-services-procurement/corporate/transparency/question-period-notes/phoenix-ibm-systems-upgrades.html",
     "https://www.canada.ca/en/shared-services/corporate/transparency/briefing-documents/ministerial-briefing-book/issues.html"
    ],
-   "id": "ov169"
+   "id": "ov177"
   },
   {
    "type": "shared_people",
@@ -25452,7 +25803,7 @@
     "https://wiretapmedia.ca/liberals-hand-hostile-nation-canadas-critical-telecom-infrastructure-the-national-security-risk-no-one-is-talking-about/",
     "https://www.ourcommons.ca/Members/en/melanie-joly(88384)/roles/xml"
    ],
-   "id": "ov170"
+   "id": "ov178"
   },
   {
    "type": "shared_funder",
@@ -25488,7 +25839,7 @@
     "https://search.open.canada.ca/contracts/record/phac-aspc,C-2021-2022-Q2-00499",
     "https://search.open.canada.ca/contracts/record/phac-aspc,C-2018-2019-Q4-00731"
    ],
-   "id": "ov171"
+   "id": "ov179"
   },
   {
    "type": "shared_funder",
@@ -25528,7 +25879,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-04342",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q1-00062"
    ],
-   "id": "ov172"
+   "id": "ov180"
   },
   {
    "type": "shared_recipient",
@@ -25569,7 +25920,7 @@
     "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2024-2025-Q1-15402,current",
     "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2017-2018-Q4-07373,current"
    ],
-   "id": "ov173"
+   "id": "ov181"
   },
   {
    "type": "shared_funder",
@@ -25610,7 +25961,7 @@
     "https://search.open.canada.ca/contracts/record/pco-bcp,C-2019-2020-Q1-00011",
     "https://search.open.canada.ca/contracts/record/pco-bcp,C-2018-2019-Q4-00145"
    ],
-   "id": "ov174"
+   "id": "ov182"
   },
   {
    "type": "shared_recipient",
@@ -25647,7 +25998,7 @@
     "https://x.com/WiretapMediaHQ/status/1763243964419764623",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q1-00168"
    ],
-   "id": "ov175"
+   "id": "ov183"
   },
   {
    "type": "shared_recipient",
@@ -25683,7 +26034,7 @@
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2017-2018-Q2-01397",
     "https://search.open.canada.ca/contracts/record/dfo-mpo,C-2020-2021-Q2-01447"
    ],
-   "id": "ov176"
+   "id": "ov184"
   },
   {
    "type": "shared_funder",
@@ -25722,7 +26073,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2017-2018-Q1-02098",
     "https://wiretapmedia.ca/why-canadas-secret-rcmp-beijing-police-pact-stinks-of-betrayal/"
    ],
-   "id": "ov177"
+   "id": "ov185"
   },
   {
    "type": "shared_recipient",
@@ -25759,7 +26110,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q3-00024",
     "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-04348"
    ],
-   "id": "ov178"
+   "id": "ov186"
   },
   {
    "type": "shared_recipient",
@@ -25804,7 +26155,7 @@
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2020-2021-Q4-01004",
     "https://search.open.canada.ca/contracts/record/esdc-edsc,C-2022-2023-Q4-00048"
    ],
-   "id": "ov179"
+   "id": "ov187"
   },
   {
    "type": "shared_recipient",
@@ -25840,7 +26191,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2025-2026-Q3-00694",
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2025-2026-Q2-00869"
    ],
-   "id": "ov180"
+   "id": "ov188"
   },
   {
    "type": "shared_recipient",
@@ -25876,7 +26227,7 @@
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2018-2019-Q3-00112",
     "https://search.open.canada.ca/contracts/?search_text=%22Abacus+Data%22"
    ],
-   "id": "ov181"
+   "id": "ov189"
   },
   {
    "type": "shared_funder",
@@ -25915,7 +26266,7 @@
     "https://search.open.canada.ca/grants/record/dfo-mpo,086-2020-2021-Q4-00199,current",
     "https://search.open.canada.ca/grants/record/dfo-mpo,253-2018-2019-Q3-00131,current"
    ],
-   "id": "ov182"
+   "id": "ov190"
   },
   {
    "type": "shared_funder",
@@ -25953,7 +26304,7 @@
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2016-2017-Q4-00903",
     "https://search.open.canada.ca/grants/record/esdc-edsc,014-2024-2025-Q4-01331,current"
    ],
-   "id": "ov183"
+   "id": "ov191"
   },
   {
    "type": "shared_funder",
@@ -25992,7 +26343,7 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2025-2026-Q4-06277",
     "https://canadabuys.canada.ca/en/tender-opportunities/award-notice/cw2381685"
    ],
-   "id": "ov184"
+   "id": "ov192"
   },
   {
    "type": "shared_funder",
@@ -26028,7 +26379,7 @@
     "https://open.canada.ca/data/en/dataset/80c00cdb-1358-415c-bb8b-0de7f12675b8",
     "https://open.canada.ca/data/dataset/bd2c9156-2bbe-43c9-b5fe-513e28b7af4e/resource/58c04c7c-c100-4914-9b63-6208c4d420b3/download/qualified_donees_2009_updated.csv"
    ],
-   "id": "ov185"
+   "id": "ov193"
   },
   {
    "type": "shared_funder",
@@ -26063,7 +26414,7 @@
     "https://search.open.canada.ca/contracts/record/phac-aspc,C-2018-2019-Q4-00731",
     "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2021-2022-Q1-00104"
    ],
-   "id": "ov186"
+   "id": "ov194"
   },
   {
    "type": "shared_recipient",
@@ -26105,7 +26456,7 @@
     "https://search.open.canada.ca/grants/record/jus,119-2024-2025-Q2-00012,current",
     "https://search.open.canada.ca/grants/record/jus,119-2020-2021-Q3-00061,current"
    ],
-   "id": "ov187"
+   "id": "ov195"
   },
   {
    "type": "shared_recipient",
@@ -26142,7 +26493,7 @@
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2023-2024-Q3-00239",
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2024-2025-Q1-00619"
    ],
-   "id": "ov188"
+   "id": "ov196"
   },
   {
    "type": "shared_recipient",
@@ -26184,7 +26535,7 @@
     "https://search.open.canada.ca/contracts/record/jus,C-2020-2021-Q2-00009",
     "https://search.open.canada.ca/contracts/record/dfatd-maecd,C-2021-2022-Q3-00111"
    ],
-   "id": "ov189"
+   "id": "ov197"
   },
   {
    "type": "shared_recipient",
@@ -26220,7 +26571,7 @@
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202402-01-e.html",
     "https://www.canada.ca/en/auditor-general/our-work/audit-reports/parl-oag-202506-04-e.html"
    ],
-   "id": "ov190"
+   "id": "ov198"
   },
   {
    "type": "shared_funder",
@@ -26259,306 +26610,6 @@
     "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q2-03579",
     "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2022-2023-Q4-01186"
    ],
-   "id": "ov191"
-  },
-  {
-   "type": "shared_recipient",
-   "a": "ent_organization_infrastructure_canada",
-   "b": "ent_organization_innovation_science_and_economic_development_canada",
-   "via": [
-    "ent_organization_ontario_tech_university",
-    "ent_company_gc_strategies",
-    "ent_company_bc_ferries"
-   ],
-   "links": [
-    "lnk_e29ac842702707fe",
-    "lnk_fdb819caa2904fcc",
-    "lnk_01543dc2ece773cb",
-    "lnk_4f663e4ad760b9d5",
-    "lnk_8665ae3f522b87d9",
-    "lnk_e522c2f5220d7c71"
-   ],
-   "total_cad": 79657556.7,
-   "kinds": [],
-   "strength": 4.67,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
-    "https://search.open.canada.ca/grants/record/infc,278-2022-2023-Q4-00144,current",
-    "https://search.open.canada.ca/grants/record/infc,278-2022-2023-Q4-00146,current",
-    "https://search.open.canada.ca/grants/record/ic,033-2010-2011-Q2-801145,current",
-    "https://search.open.canada.ca/grants/record/ic,033-2010-2011-Q3-508826,current",
-    "https://search.open.canada.ca/grants/record/ic,033-2012-2013-Q1-510329,current",
-    "https://search.open.canada.ca/grants/record/ic,033-2012-2013-Q4-803991,current",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/infc,C-2019-2020-Q1-00002",
-    "https://search.open.canada.ca/contracts/record/ic,C-2020-2021-Q2-00160",
-    "https://search.open.canada.ca/contracts/record/ic,C-2020-2021-Q3-00200",
-    "https://search.open.canada.ca/contracts/record/ic,C-2018-2019-Q4-00142"
-   ],
-   "id": "ov192"
-  },
-  {
-   "type": "shared_recipient",
-   "a": "ent_organization_infrastructure_canada",
-   "b": "ent_organization_transport_canada",
-   "via": [
-    "ent_organization_ontario_tech_university",
-    "ent_company_gc_strategies",
-    "ent_company_bc_ferries"
-   ],
-   "links": [
-    "lnk_01181cd61e1940ba",
-    "lnk_099fb430bba7297b",
-    "lnk_d852f24e7d99ca58",
-    "lnk_e29ac842702707fe",
-    "lnk_01543dc2ece773cb",
-    "lnk_eedf8e0e40ea868b",
-    "lnk_3a5ff2c8a895dcda",
-    "lnk_4fb81d36aae775ae",
-    "lnk_8665ae3f522b87d9"
-   ],
-   "total_cad": 74523091.29,
-   "kinds": [],
-   "strength": 4.67,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
-    "https://search.open.canada.ca/grants/record/tc,217-2019-2020-Q2-00664,current",
-    "https://search.open.canada.ca/grants/record/tc,TC-2012-Q4-6823,current",
-    "https://search.open.canada.ca/grants/record/tc,217-2022-2023-Q2-07063,current",
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/tc,TC-2015-2016-Q3-06680",
-    "https://search.open.canada.ca/grants/record/infc,278-2022-2023-Q4-00144,current",
-    "https://search.open.canada.ca/grants/record/infc,278-2022-2023-Q4-00146,current",
-    "https://search.open.canada.ca/contracts/record/infc,C-2019-2020-Q1-00002",
-    "https://search.open.canada.ca/contracts/record/tc,TC-2018-2019-Q1-00143",
-    "https://search.open.canada.ca/contracts/record/tc,TC-2019-2020-Q2-00185",
-    "https://search.open.canada.ca/contracts/record/tc,TC-2017-2018-Q1-00099"
-   ],
-   "id": "ov193"
-  },
-  {
-   "type": "shared_funder",
-   "a": "ent_company_carahsoft",
-   "b": "ent_company_coradix_technology_consulting",
-   "via": [
-    "ent_organization_department_of_national_defence",
-    "ent_organization_royal_canadian_mounted_police",
-    "ent_organization_shared_services_canada",
-    "ent_organization_canada_border_services_agency"
-   ],
-   "links": [
-    "lnk_spy_64244d295b773f36",
-    "lnk_spy_9131d075a52ceb61",
-    "lnk_spy_d883b34e6669036d",
-    "lnk_spy_88d7feb258c3b4c0",
-    "lnk_spy_5f3648c34231f897",
-    "lnk_spy_b1085a98c152441e",
-    "lnk_spy_20cc0ad99ff5d776",
-    "lnk_spy_bc4ba2c2741e7e24"
-   ],
-   "total_cad": 345107044.72999996,
-   "kinds": [],
-   "strength": 4.66,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2025-2026-Q4-02290",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2013-2014-Q3-02558",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2026-2027-Q1-00425",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q4-01102",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2025-2026-Q4-02289",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-04690",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00012",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00013",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q4-00365",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-00011",
-    "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2025-2026-Q2-00765"
-   ],
-   "id": "ov194"
-  },
-  {
-   "type": "shared_recipient",
-   "a": "ent_organization_impact_assessment_agency_of_canada",
-   "b": "ent_organization_indigenous_services_canada",
-   "via": [
-    "ent_organization_assembly_of_first_nations",
-    "ent_organization_bc_assembly_of_first_nations",
-    "ent_organization_afn_alberta_association"
-   ],
-   "links": [
-    "lnk_6e1ddbe638e9e05c",
-    "lnk_bdc29a6e3a87e454",
-    "lnk_1bd217414d66a70d",
-    "lnk_cb4bfd8ff58670b2",
-    "lnk_2efafc7326d346bc",
-    "lnk_cd7f4f45914a129f"
-   ],
-   "total_cad": 4557196.96,
-   "kinds": [],
-   "strength": 4.65,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2019-2020-Qrt4-0005036,current",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2019-2020-Qrt4-0005038,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,071-2021-2022-Q3-00100,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,GC-2018-Q2-00010,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,GC-2019-Q3-00002,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,071-2026-2027-Q1-00115,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,071-2025-2026-Q1-00048,current",
-    "https://search.open.canada.ca/grants/record/iaac-aeic,071-2025-2026-Q4-00088,current",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2025-2026-Qrt4-0021326,current",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2020-2021-Qrt4-0009258,current",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2019-2020-Qrt2-0003744,current"
-   ],
-   "id": "ov195"
-  },
-  {
-   "type": "shared_recipient",
-   "a": "ent_organization_indigenous_services_canada",
-   "b": "ent_organization_natural_resources_canada",
-   "via": [
-    "ent_company_accenture",
-    "ent_company_gc_strategies",
-    "ent_organization_assembly_of_first_nations",
-    "ent_organization_bc_assembly_of_first_nations"
-   ],
-   "links": [
-    "lnk_1f012a0845fd8640",
-    "lnk_7ab5148939f6696a",
-    "lnk_1fcef75ae02fb934",
-    "lnk_edc0e0a99e9f39b3",
-    "lnk_6e1ddbe638e9e05c",
-    "lnk_808e920e877f606c",
-    "lnk_db8d8dd245269f85",
-    "lnk_ff0dd12cff96aea9",
-    "lnk_cb4bfd8ff58670b2",
-    "lnk_f1b19aa15e26e4ae"
-   ],
-   "total_cad": 7000261.42,
-   "kinds": [],
-   "strength": 4.65,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/isc-sac,C-2024-2025-Q3-00201",
-    "https://search.open.canada.ca/contracts/record/isc-sac,C-2025-2026-Q3-00078",
-    "https://search.open.canada.ca/contracts/record/isc-sac,C-2025-2026-Q2-00104",
-    "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2021-2022-Q1-00104",
-    "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2020-2021-Q3-00015",
-    "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2018-2019-Q3-00242",
-    "https://search.open.canada.ca/contracts/record/nrcan-rncan,C-2020-2021-Q4-00327",
-    "https://search.open.canada.ca/contracts/record/isc-sac,C-2018-2019-Q3-00101",
-    "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2019-2020-Qrt4-0005036,current",
-    "https://search.open.canada.ca/grants/record/isc-sac,1910-2019-2020-Qrt4-0005038,current"
-   ],
-   "id": "ov196"
-  },
-  {
-   "type": "shared_funder",
-   "a": "ent_company_abacus_data",
-   "b": "ent_organization_bc_assembly_of_first_nations",
-   "via": [
-    "ent_organization_global_affairs_canada",
-    "ent_organization_natural_resources_canada",
-    "ent_organization_women_and_gender_equality"
-   ],
-   "links": [
-    "lnk_8fa4db22eb8f2a7b",
-    "lnk_cl1106_deea5ebb418fc4",
-    "lnk_cl1106_ce15d574d81e6e",
-    "lnk_f1b19aa15e26e4ae",
-    "lnk_cl1106_2802440edf0ab1",
-    "lnk_ab009d36cdbe5a7a",
-    "lnk_cl1106_004eec43c6e1cb"
-   ],
-   "total_cad": 1027121.38,
-   "kinds": [],
-   "strength": 4.64,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/432527ab-7aac-45b5-81d6-7597107a7013",
-    "https://search.open.canada.ca/grants/record/dfatd-maecd,064-2024-2025-Q4-A0031,current",
-    "https://search.open.canada.ca/contracts/?search_text=%22Abacus+Data%22",
-    "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2023-2024-Q4-14980,current",
-    "https://search.open.canada.ca/grants/record/nrcan-rncan,115-2024-2025-Q2-15673,current",
-    "https://search.open.canada.ca/grants/record/wage,001-2021-2022-Q3-00018,current"
-   ],
-   "id": "ov197"
-  },
-  {
-   "type": "shared_funder",
-   "a": "ent_company_accenture",
-   "b": "ent_company_coradix_technology_consulting",
-   "via": [
-    "ent_organization_department_of_national_defence",
-    "ent_organization_royal_canadian_mounted_police",
-    "ent_organization_shared_services_canada",
-    "ent_organization_canada_border_services_agency"
-   ],
-   "links": [
-    "lnk_88b661d2a7c12192",
-    "lnk_spy_9131d075a52ceb61",
-    "lnk_cf2af261e2a76570",
-    "lnk_spy_88d7feb258c3b4c0",
-    "lnk_46c3d53567223ebd",
-    "lnk_spy_b1085a98c152441e",
-    "lnk_54df9be9b21caae0",
-    "lnk_spy_bc4ba2c2741e7e24"
-   ],
-   "total_cad": 303526381.43,
-   "kinds": [],
-   "strength": 4.64,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2025-2026-Q4-01837",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q4-03344",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2024-2025-Q1-00332",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,2018-2019-Q4-01670",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2022-2023-Q4-00616",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-04690",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00012",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00013",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q4-00365",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-00011",
-    "https://search.open.canada.ca/contracts/record/rcmp-grc,C-2023-2024-Q2-00124"
-   ],
-   "id": "ov198"
-  },
-  {
-   "type": "shared_funder",
-   "a": "ent_company_coradix_technology_consulting",
-   "b": "ent_company_teel_technologies_canada",
-   "via": [
-    "ent_organization_department_of_national_defence",
-    "ent_organization_royal_canadian_mounted_police",
-    "ent_organization_shared_services_canada",
-    "ent_organization_canada_border_services_agency"
-   ],
-   "links": [
-    "lnk_spy_9131d075a52ceb61",
-    "lnk_spy_9c6873bf1ed00108",
-    "lnk_spy_88d7feb258c3b4c0",
-    "lnk_spy_4f7c4efdab042c48",
-    "lnk_spy_b1085a98c152441e",
-    "lnk_spy_dafac66c7602de17",
-    "lnk_spy_bc4ba2c2741e7e24",
-    "lnk_spy_a840c4e30e60f651"
-   ],
-   "total_cad": 295336919.28000003,
-   "kinds": [],
-   "strength": 4.64,
-   "sources": [
-    "https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-04690",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00012",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2019-2020-Q3-00013",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2021-2022-Q4-00365",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2023-2024-Q2-00011",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2017-2018-Q1-02020",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2017-2018-Q1-02202",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2015-2016-Q2-00981",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2025-2026-Q1-00799",
-    "https://search.open.canada.ca/contracts/record/dnd-mdn,C-2015-2016-Q4-01747",
-    "https://open.canada.ca/data/en/dataset/a1acb126-9ce8-40a9-b889-5da2b1dd20cb/resource/e1a69400-665a-4b53-9c7c-3d21ed64b13b"
-   ],
    "id": "ov199"
   }
  ],
@@ -26581,7 +26632,7 @@
   {
    "id": "ent_organization_government_of_canada",
    "name": "Government of Canada",
-   "partners": 158
+   "partners": 156
   },
   {
    "id": "ent_company_carahsoft",
@@ -26649,18 +26700,8 @@
    "partners": 113
   },
   {
-   "id": "ent_organization_global_affairs_canada",
-   "name": "Global Affairs Canada",
-   "partners": 113
-  },
-  {
    "id": "ent_company_m_d_charlton_co_ltd",
    "name": "M.D. Charlton Co. Ltd.",
-   "partners": 112
-  },
-  {
-   "id": "ent_organization_ontario_tech_university",
-   "name": "University of Ontario Institute of Technology",
    "partners": 112
   },
   {
@@ -26669,9 +26710,19 @@
    "partners": 110
   },
   {
+   "id": "ent_organization_global_affairs_canada",
+   "name": "Global Affairs Canada",
+   "partners": 110
+  },
+  {
    "id": "ent_company_dataminr",
    "name": "Dataminr",
    "partners": 110
+  },
+  {
+   "id": "ent_organization_ontario_tech_university",
+   "name": "University of Ontario Institute of Technology",
+   "partners": 108
   },
   {
    "id": "ent_company_thales_canada",
@@ -26741,7 +26792,7 @@
   {
    "id": "ent_organization_royal_canadian_mounted_police",
    "name": "Royal Canadian Mounted Police",
-   "partners": 98
+   "partners": 97
   },
   {
    "id": "ent_company_teel_technologies_canada",
@@ -26817,8 +26868,33 @@
  "corroborated": [
   {
    "kind": "e",
+   "id": "ent_community_brampton",
+   "layers": [
+    "immigration",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_community_hamilton",
+   "layers": [
+    "immigration",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_community_ottawa",
+   "layers": [
+    "immigration",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_community_vancouver",
    "layers": [
+    "immigration",
     "records",
     "samcooper"
    ]
@@ -27288,6 +27364,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_company_tim_hortons",
+   "layers": [
+    "immigration",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_company_viisights",
    "layers": [
     "breach",
@@ -27445,6 +27529,22 @@
    "layers": [
     "bloodmoney",
     "records"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_funder_interim_federal_health_program",
+   "layers": [
+    "immigration",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_funder_interim_housing_assistance_program",
+   "layers": [
+    "immigration",
+    "wiretap"
    ]
   },
   {
@@ -27756,8 +27856,18 @@
   },
   {
    "kind": "e",
+   "id": "ent_organization_bank_of_canada",
+   "layers": [
+    "immigration",
+    "records",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_organization_bank_of_england",
    "layers": [
+    "records",
     "samcooper",
     "wiretap"
    ]
@@ -27849,6 +27959,7 @@
    "id": "ent_organization_canada_border_services_agency",
    "layers": [
     "bloodmoney",
+    "immigration",
     "records",
     "wiretap"
    ]
@@ -27875,6 +27986,7 @@
    "id": "ent_organization_canada_mortgage_and_housing_corporation",
    "layers": [
     "breach",
+    "immigration",
     "records"
    ]
   },
@@ -28065,8 +28177,25 @@
   },
   {
    "kind": "e",
+   "id": "ent_organization_city_of_surrey",
+   "layers": [
+    "events",
+    "immigration"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_city_of_toronto",
+   "layers": [
+    "immigration",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_organization_city_of_vancouver",
    "layers": [
+    "immigration",
     "records",
     "samcooper"
    ]
@@ -28896,6 +29025,7 @@
    "kind": "e",
    "id": "ent_organization_office_of_the_auditor_general_of_canada",
    "layers": [
+    "immigration",
     "records",
     "wiretap"
    ]
@@ -28921,6 +29051,14 @@
    "id": "ent_organization_office_of_the_intelligence_commissioner",
    "layers": [
     "records",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_office_of_the_parliamentary_budget_officer",
+   "layers": [
+    "immigration",
     "wiretap"
    ]
   },
@@ -29209,6 +29347,7 @@
    "layers": [
     "bloodmoney",
     "breach",
+    "immigration",
     "records"
    ]
   },
@@ -29218,6 +29357,30 @@
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_talent_beyond_boundaries",
+   "layers": [
+    "immigration",
+    "tbb"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_talent_beyond_boundaries_canada",
+   "layers": [
+    "immigration",
+    "tbb"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_talent_beyond_boundaries_inc",
+   "layers": [
+    "immigration",
+    "tbb"
    ]
   },
   {
@@ -31690,7 +31853,8 @@
     "bloodmoney",
     "events",
     "immigration",
-    "samcooper"
+    "samcooper",
+    "tbb"
    ]
   },
   {
@@ -34009,6 +34173,7 @@
    "id": "ent_province_alberta",
    "layers": [
     "fringeviews",
+    "immigration",
     "records",
     "wiretap"
    ]
@@ -34028,14 +34193,32 @@
    "kind": "e",
    "id": "ent_province_manitoba",
    "layers": [
+    "immigration",
     "records",
     "wiretap"
    ]
   },
   {
    "kind": "e",
+   "id": "ent_province_new_brunswick",
+   "layers": [
+    "immigration",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_province_newfoundland_and_labrador",
+   "layers": [
+    "immigration",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_province_nova_scotia",
    "layers": [
+    "immigration",
     "records",
     "wiretap"
    ]
@@ -34045,6 +34228,7 @@
    "id": "ent_province_ontario",
    "layers": [
     "fringeviews",
+    "immigration",
     "records",
     "wiretap"
    ]
@@ -34062,6 +34246,7 @@
    "kind": "e",
    "id": "ent_province_saskatchewan",
    "layers": [
+    "immigration",
     "records",
     "wiretap"
    ]

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1117,{"tk":[1360,557,4447,677,11237,635,20154,352,20155,459,20156,377,26337,177],"tk1nodfbgni":[37115,201],"tkemlups":[33558,182],"tkm":[3377,143,10669,224,22266,173,38262,419]});
+window.__wiretapShard&&window.__wiretapShard(1117,{"thyssenkrupp":[564,704,25393,565]});

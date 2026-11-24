@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1324,{"€150":[29979,401]});
+window.__wiretapShard&&window.__wiretapShard(1324,{"прямого":[27345,401]});

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1136,{"ub5tkm3kjom":[36177,201],"ubc":[9353,212,10114,220,28594,614,32146,639,39282,752],"ubcm":[1951,130],"uber":[21043,60,34282,614],"ublansky":[5345,578,23721,466]});
+window.__wiretapShard&&window.__wiretapShard(1136,{"tḱemlúps":[33774,410]});

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1350,{"💥federal":[28345,430],"💥fingerprints":[28533,419],"💥flashback":[26969,441],"💥frances":[28124,419],"💥french":[26822,430],"💥from":[27778,410,28288,410],"💥fucking":[27414,419]});
+window.__wiretapShard&&window.__wiretapShard(1350,{"💥b":[27471,410],"💥bill":[28379,420],"💥bombshell":[27779,401,28127,430,28140,410,29040,430,29129,430,29201,430],"💥breaking":[27730,401,28061,410,28126,410,28429,420,29012,420],"💥brookfield":[27890,410]});

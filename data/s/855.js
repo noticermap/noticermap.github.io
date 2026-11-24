@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(855,{"often":[3362,54,11546,58,11547,58,11548,58,11549,69,11551,64,34391,614],"ofthe":[7812,165,12170,90,13491,51],"oftheconservativeparty":[2489,728,16970,497,16971,514,16972,466]});
+window.__wiretapShard&&window.__wiretapShard(855,{"ofer":[9276,578]});

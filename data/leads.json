@@ -1,6 +1,6 @@
 {
  "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
- "built_at": "2026-11-24T14:25:57.589Z",
+ "built_at": "2026-11-24T15:07:07.298Z",
  "window_months": 24,
  "leads": [
   {
@@ -4992,6 +4992,7 @@
      "publisher": "Prime Minister’s Office, 10 Downing Street",
      "date": "2012-11-26",
      "kind": "public_record",
+     "id": "gov-nd-mark-carney-appointment-as-bank-of-england-governo",
      "source_layer": "records",
      "retrieved_date": "2026-11-24",
      "attribution": "organization's own claim"
@@ -5001,6 +5002,7 @@
      "title": "Toronto Sun on the Wilderness Festival photograph",
      "publisher": "Toronto Sun",
      "kind": "public_record",
+     "id": "torontosun-nd-toronto-sun-on-the-wilderness-festival-photograph",
      "source_layer": "records",
      "retrieved_date": "2026-11-24"
     }
@@ -6055,6 +6057,903 @@
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {
+   "id": "lead_cbf_abu_dhabi_flatt_then_uae_visit",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Brookfield delegation meets Abu Dhabi Crown Prince, then Carney's UAE visit, 8 days apart",
+   "summary": "A Brookfield delegation led by Bruce Flatt met Abu Dhabi's Crown Prince (2025-11-13). Prime Minister Mark Carney announced new agreements with the UAE (release date) (2025-11-21). Gap: 8 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. A meeting, not a contract. Gap counted to the PMO release date (2025-11-21); the tracker dates the trip start 2025-11-20 (7 days).",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield",
+    "ent_person_bruce_flatt"
+   ],
+   "link_ids": [
+    "lnk_cbf_abu_dhabi_flatt_then_uae_visit_brookfield",
+    "lnk_cbf_abu_dhabi_flatt_then_uae_visit_carney"
+   ],
+   "window": {
+    "start": "2025-11-13",
+    "end": "2025-11-21"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-executive-management-delegation-from-brookfield-corporation/",
+     "title": "Khaled bin Mohamed bin Zayed meets executive management delegation from Brookfield Corporation",
+     "publisher": "Abu Dhabi Media Office",
+     "date": "2025-11-13",
+     "kind": "public_record",
+     "id": "mediaoffice-nd-khaled-bin-mohamed-bin-zayed-meets-executive-manag",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2025/11/21/prime-minister-carney-secures-new-agreements-united-arab-emirates",
+     "title": "Prime Minister Carney secures new agreements with United Arab Emirates",
+     "publisher": "Prime Minister of Canada",
+     "date": "2025-11-21",
+     "kind": "public_record",
+     "id": "pm-2025-11-21-prime-minister-carney-secures-new-agreements-with-",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2025-11-13"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Brookfield Corporation delegation (CEO Bruce Flatt, Chair Frank McKenna)",
+     "what": "Met Abu Dhabi Crown Prince Sheikh Khaled bin Mohamed bin Zayed on investment cooperation; no deal announced",
+     "amount": "",
+     "date": "2025-11-13",
+     "source": {
+      "url": "https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-executive-management-delegation-from-brookfield-corporation/",
+      "label": "mediaoffice.abudhabi"
+     }
+    },
+    "b": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Visit to the UAE; new agreements announced",
+     "amount": "",
+     "date": "2025-11-21",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2025/11/21/prime-minister-carney-secures-new-agreements-united-arab-emirates",
+      "label": "pm.gc.ca"
+     }
+    },
+    "gap_days": 8,
+    "text": "Brookfield Corporation delegation (CEO Bruce Flatt, Chair Frank McKenna) Met Abu Dhabi Crown Prince Sheikh Khaled bin Mohamed bin Zayed on investment cooperation; no deal announced, 2025-11-13 (source: mediaoffice.abudhabi); Mark Carney (Prime Minister) Visit to the UAE; new agreements announced, 2025-11-21 (source: pm.gc.ca). Gap: 8 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_davos_andhra_review",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney at Davos and Brookfield–Andhra Pradesh pact review at Davos, 2 days apart",
+   "summary": "Prime Minister Mark Carney attended the WEF in Davos (2026-01-19). Brookfield and the Andhra Pradesh government reviewed their US$12 billion pact at Davos (2026-01-21). Gap: 2 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. No documented Carney–Brookfield meeting at Davos. Same venue, different parties.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_davos_andhra_review_carney",
+    "lnk_cbf_davos_andhra_review_brookfield"
+   ],
+   "window": {
+    "start": "2026-01-19",
+    "end": "2026-01-21"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/21/prime-minister-carney-builds-resilient-partnerships-and-attracts-new",
+     "title": "Prime Minister Carney builds resilient partnerships (Davos)",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-01-21",
+     "kind": "public_record",
+     "id": "pm-2026-01-21-prime-minister-carney-builds-resilient-partnership",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.business-standard.com/india-news/brookfield-andhra-pradesh-govt-review-12-billion-pact-at-davos-meeting-126012100607_1.html",
+     "title": "Brookfield, Andhra Pradesh govt review $12 billion pact at Davos meeting",
+     "publisher": "Business Standard",
+     "date": "2026-01-21",
+     "kind": "public_record",
+     "id": "business-standard-nd-brookfield-andhra-pradesh-govt-review-12-billion-p",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-01-19"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "World Economic Forum, Davos (19–21 Jan 2026)",
+     "amount": "",
+     "date": "2026-01-19",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/21/prime-minister-carney-builds-resilient-partnerships-and-attracts-new",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Brookfield; Government of Andhra Pradesh (India)",
+     "what": "Reviewed their US$12B clean-energy pact at Davos",
+     "amount": "US$12B (existing pact)",
+     "date": "2026-01-21",
+     "source": {
+      "url": "https://www.business-standard.com/india-news/brookfield-andhra-pradesh-govt-review-12-billion-pact-at-davos-meeting-126012100607_1.html",
+      "label": "business-standard.com"
+     }
+    },
+    "gap_days": 2,
+    "text": "Mark Carney (Prime Minister) World Economic Forum, Davos (19–21 Jan 2026), 2026-01-19 (source: pm.gc.ca); Brookfield; Government of Andhra Pradesh (India) Reviewed their US$12B clean-energy pact at Davos, US$12B (existing pact), 2026-01-21 (source: business-standard.com). Gap: 2 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_dc_visit_westinghouse_us_80b",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney's White House visit and US–Brookfield/Cameco Westinghouse partnership, 21 days apart",
+   "summary": "Prime Minister Mark Carney met President Trump at the White House (2025-10-07). Brookfield and Cameco announced a partnership with the US government for at least US$80 billion of new Westinghouse reactors (2025-10-28). Gap: 21 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Westinghouse is on Carney's conflict screen (IJF lead already on map). The PMO release for the visit does not mention Westinghouse or nuclear deals; this deal is a US-government agreement, not a Canadian one.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield",
+    "ent_company_cameco",
+    "ent_company_westinghouse_electric_company_llc"
+   ],
+   "link_ids": [
+    "lnk_cbf_dc_visit_westinghouse_us_80b_carney",
+    "lnk_cbf_brookfield_cameco_us_partnership"
+   ],
+   "window": {
+    "start": "2025-10-07",
+    "end": "2025-10-28"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2025/10/08/prime-minister-carney-concludes-visit-washington-dc",
+     "title": "Prime Minister Carney concludes working visit to Washington, D.C.",
+     "publisher": "Prime Minister of Canada",
+     "date": "2025-10-08",
+     "kind": "public_record",
+     "id": "pm-2025-10-08-prime-minister-carney-concludes-working-visit-to-w",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.cameco.com/media/news/cameco-and-brookfield-establish-transformational-partnership-with-united-states",
+     "title": "Cameco and Brookfield establish transformational partnership with United States Government",
+     "publisher": "Cameco",
+     "date": "2025-10-28",
+     "kind": "public_record",
+     "id": "cameco-nd-cameco-and-brookfield-establish-transformational-p",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    },
+    {
+     "url": "https://www.reuters.com/business/energy/westinghouse-electric-cameco-corp-brookfield-asset-management-80-bln-nuclear-2025-10-28/",
+     "title": "US strikes $80 billion deal for new nuclear power plants",
+     "publisher": "Reuters",
+     "date": "2025-10-28",
+     "kind": "public_record",
+     "id": "reuters-nd-us-strikes-80-billion-deal-for-new-nuclear-power-p",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2025-10-07"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED",
+    "SK"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Working visit to Washington, Oval Office meeting with President Trump",
+     "amount": "",
+     "date": "2025-10-07",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2025/10/08/prime-minister-carney-concludes-visit-washington-dc",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Brookfield and Cameco (Westinghouse owners) with the US government",
+     "what": "Partnership/term sheet for at least US$80B of new Westinghouse reactors",
+     "amount": "US$80B (at least)",
+     "date": "2025-10-28",
+     "source": {
+      "url": "https://www.cameco.com/media/news/cameco-and-brookfield-establish-transformational-partnership-with-united-states",
+      "label": "cameco.com"
+     }
+    },
+    "gap_days": 21,
+    "text": "Mark Carney (Prime Minister) Working visit to Washington, Oval Office meeting with President Trump, 2025-10-07 (source: pm.gc.ca); Brookfield and Cameco (Westinghouse owners) with the US government Partnership/term sheet for at least US$80B of new Westinghouse reactors, US$80B (at least), 2025-10-28 (source: cameco.com). Gap: 21 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_india_visit_acme",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney's India visit and Brookfield's ACME green-molecules investment, 199 days apart",
+   "summary": "Prime Minister Mark Carney concluded his India visit (2026-03-02). Brookfield announced up to US$600 million for ACME's green-molecule projects in India and Oman (2026-09-17). Gap: 199 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. The release says the 'Brookfield Global Transition Fund strategy'; it does not say BGTF I (the only fund in which Carney holds carry per Beber). Do not assume BGTF I.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_india_visit_acme_carney",
+    "lnk_cbf_india_visit_acme_brookfield"
+   ],
+   "window": {
+    "start": "2026-03-02",
+    "end": "2026-09-17"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
+     "title": "Prime Minister Carney secures ambitious new partnership with India",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-03-02",
+     "kind": "public_record",
+     "id": "pm-2026-03-02-prime-minister-carney-secures-ambitious-new-partne",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20to%20Invest%20up%20to%20%24600%20Million%20in%20ACME%E2%80%99s%20Green%20Molecule%20Platform.pdf",
+     "title": "Brookfield to Invest up to $600 Million in ACME’s Green Molecule Platform",
+     "publisher": "Brookfield",
+     "date": "2026-09-17",
+     "kind": "public_record",
+     "id": "brookfield-nd-brookfield-to-invest-up-to-600-million-in-acme-s-g",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-03-02"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Official visit to India",
+     "amount": "",
+     "date": "2026-03-02",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Brookfield (Brookfield Global Transition Fund strategy)",
+     "what": "Up to US$600M in ACME Cleantech Ventures for green ammonia/methanol in India and Oman",
+     "amount": "up to US$600M",
+     "date": "2026-09-17",
+     "source": {
+      "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20to%20Invest%20up%20to%20%24600%20Million%20in%20ACME%E2%80%99s%20Green%20Molecule%20Platform.pdf",
+      "label": "brookfield.com"
+     }
+    },
+    "gap_days": 199,
+    "text": "Mark Carney (Prime Minister) Official visit to India, 2026-03-02 (source: pm.gc.ca); Brookfield (Brookfield Global Transition Fund strategy) Up to US$600M in ACME Cleantech Ventures for green ammonia/methanol in India and Oman, up to US$600M, 2026-09-17 (source: brookfield.com). Gap: 199 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_india_visit_lumara",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney's India visit and Brookfield's Lumara India renewables platform, 150 days apart",
+   "summary": "Prime Minister Mark Carney concluded his India visit with a new partnership focused on energy (2026-03-02). Brookfield launched Lumara, a renewable platform targeting about US$600 million in India (2026-07-30). Gap: 150 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Long gap; Brookfield says it already has over US$32B invested in India. Brookfield COO Justin Beber testified Carney has no carry in the Catalytic Transition Fund.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_india_visit_lumara_carney",
+    "lnk_cbf_india_visit_lumara_brookfield"
+   ],
+   "window": {
+    "start": "2026-03-02",
+    "end": "2026-07-30"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
+     "title": "Prime Minister Carney secures ambitious new partnership with India",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-03-02",
+     "kind": "public_record",
+     "id": "pm-2026-03-02-prime-minister-carney-secures-ambitious-new-partne",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20launches%20Lumara.pdf",
+     "title": "Brookfield Launches Lumara, a Renewable Energy Platform Targeting $600 Million Deployment in India",
+     "publisher": "Brookfield",
+     "date": "2026-07-30",
+     "kind": "public_record",
+     "id": "brookfield-nd-brookfield-launches-lumara-a-renewable-energy-plat",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-03-02"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Official visit to India (27 Feb–2 Mar 2026); partnership on energy, talent, technology",
+     "amount": "",
+     "date": "2026-03-02",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Brookfield (Catalytic Transition Fund)",
+     "what": "Launched Lumara, targeting about US$600M across 6 GW+ of solar, wind and storage in India",
+     "amount": "about US$600M",
+     "date": "2026-07-30",
+     "source": {
+      "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20launches%20Lumara.pdf",
+      "label": "brookfield.com"
+     }
+    },
+    "gap_days": 150,
+    "text": "Mark Carney (Prime Minister) Official visit to India (27 Feb–2 Mar 2026); partnership on energy, talent, technology, 2026-03-02 (source: pm.gc.ca); Brookfield (Catalytic Transition Fund) Launched Lumara, targeting about US$600M across 6 GW+ of solar, wind and storage in India, about US$600M, 2026-07-30 (source: brookfield.com). Gap: 150 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_japan_visit_westinghouse_japan",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney's Japan visit and US–Japan Westinghouse project roles, 8 days apart",
+   "summary": "Prime Minister Mark Carney announced a new comprehensive strategic partnership with Japan (2026-03-06). Westinghouse said the US and Japan agreed their roles in a potential nuclear project (2026-03-14). Gap: 8 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. A US–Japan arrangement; Canada is not a party. Japan Times page not opened (tracker 'reported').",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_westinghouse_electric_company_llc",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_japan_visit_westinghouse_japan_carney",
+    "lnk_cbf_japan_visit_westinghouse_japan_brookfield"
+   ],
+   "window": {
+    "start": "2026-03-06",
+    "end": "2026-03-14"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/06/prime-minister-carney-forges-new-comprehensive-strategic-partnership",
+     "title": "Prime Minister Carney forges new comprehensive strategic partnership (Japan)",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-03-06",
+     "kind": "public_record",
+     "id": "pm-2026-03-06-prime-minister-carney-forges-new-comprehensive-str",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.japantimes.co.jp/business/2026/03/14/us-japan-nuclear-power-project/",
+     "title": "US-Japan nuclear power project (Westinghouse)",
+     "publisher": "The Japan Times",
+     "date": "2026-03-14",
+     "kind": "public_record",
+     "id": "japantimes-2026-03-14-us-japan-nuclear-power-project-westinghouse",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-03-06"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Visit to Japan; comprehensive strategic partnership",
+     "amount": "",
+     "date": "2026-03-06",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/06/prime-minister-carney-forges-new-comprehensive-strategic-partnership",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Westinghouse (owned by Brookfield and Cameco); US and Japan governments",
+     "what": "US and Japan agreed roles in a potential nuclear project under Japan's US$550B US investment package",
+     "amount": "",
+     "date": "2026-03-14",
+     "source": {
+      "url": "https://www.japantimes.co.jp/business/2026/03/14/us-japan-nuclear-power-project/",
+      "label": "japantimes.co.jp"
+     }
+    },
+    "gap_days": 8,
+    "text": "Mark Carney (Prime Minister) Visit to Japan; comprehensive strategic partnership, 2026-03-06 (source: pm.gc.ca); Westinghouse (owned by Brookfield and Cameco); US and Japan governments US and Japan agreed roles in a potential nuclear project under Japan's US$550B US investment package, 2026-03-14 (source: japantimes.co.jp). Gap: 8 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_jeddah_visit_pif_bmep",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney's Saudi Arabia visit and PIF-anchored Brookfield Middle East fund first close, 18 days apart",
+   "summary": "Prime Minister Mark Carney visited Jeddah and met Crown Prince Mohammed bin Salman (2026-07-09). Brookfield announced an approximately US$2 billion first close of its PIF-anchored Middle East fund (2026-07-27). Gap: 18 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. The PMO release lists Cohere–HUMAIN and BlackBerry–Aramco Digital, not Brookfield, among the visit's commercial items. Fund close is private fundraising with a state wealth fund, not a government contract.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_jeddah_visit_pif_bmep_carney",
+    "lnk_cbf_pif_anchors_bmep"
+   ],
+   "window": {
+    "start": "2026-07-09",
+    "end": "2026-07-27"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/07/09/prime-minister-carney-deepens-partnership-saudi-arabia-across-trade",
+     "title": "Prime Minister Carney deepens partnership with Saudi Arabia",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-07-09",
+     "kind": "public_record",
+     "id": "pm-2026-07-09-prime-minister-carney-deepens-partnership-with-sau",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    },
+    {
+     "url": "https://www.pif.gov.sa/en/news-and-insights/press-releases/2026/brookfield-announces-approximately-2-billion-first-close-of-pif-anchored-middle-east-focused-fund/",
+     "title": "Brookfield Announces Approximately $2 Billion First Close of PIF-anchored Middle East-Focused Fund",
+     "publisher": "Public Investment Fund",
+     "date": "2026-07-27",
+     "kind": "public_record",
+     "id": "pif-nd-brookfield-announces-approximately-2-billion-first",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-07-09"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Visit to Jeddah; met Crown Prince Mohammed bin Salman; 13 commercial agreements/MOUs worth over $1B",
+     "amount": "",
+     "date": "2026-07-09",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/07/09/prime-minister-carney-deepens-partnership-saudi-arabia-across-trade",
+      "label": "pm.gc.ca"
+     }
+    },
+    "b": {
+     "who": "Brookfield; Saudi Public Investment Fund (anchor)",
+     "what": "First close of Brookfield Middle East Partners, about US$2B, targeting 50% of investments in Saudi Arabia; Brookfield committing US$500M",
+     "amount": "about US$2B",
+     "date": "2026-07-27",
+     "source": {
+      "url": "https://www.pif.gov.sa/en/news-and-insights/press-releases/2026/brookfield-announces-approximately-2-billion-first-close-of-pif-anchored-middle-east-focused-fund/",
+      "label": "pif.gov.sa"
+     }
+    },
+    "gap_days": 18,
+    "text": "Mark Carney (Prime Minister) Visit to Jeddah; met Crown Prince Mohammed bin Salman; 13 commercial agreements/MOUs worth over $1B, 2026-07-09 (source: pm.gc.ca); Brookfield; Saudi Public Investment Fund (anchor) First close of Brookfield Middle East Partners, about US$2B, targeting 50% of investments in Saudi Arabia; Brookfield committing US$500M, about US$2B, 2026-07-27 (source: pif.gov.sa). Gap: 18 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_qatar_qai_then_doha_visit",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Brookfield–Qai US$20B AI venture and Carney's Doha visit, 40 days apart",
+   "summary": "Brookfield and Qai, a Qatar Investment Authority subsidiary, formed a US$20 billion AI-infrastructure joint venture (2025-12-09). Prime Minister Mark Carney visited Doha and met the Amir and heads of the Qatar Investment Authority (2026-01-18). Gap: 40 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Here the Brookfield item came first. Both items involve the same counterparty (QIA). No source ties the two.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_brookfield_qia_jv",
+    "lnk_cbf_qatar_qai_then_doha_visit_carney"
+   ],
+   "window": {
+    "start": "2025-12-09",
+    "end": "2026-01-18"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.qia.qa/en/Newsroom/Pages/Brookfield-and-Qai-Form-$20-Billion-Strategic-Investment-Partnership-for-AI-Infrastructure.aspx",
+     "title": "Brookfield and Qai Form $20 Billion Strategic Investment Partnership for AI Infrastructure",
+     "publisher": "Qatar Investment Authority",
+     "date": "2025-12-09",
+     "kind": "public_record",
+     "id": "qia-nd-brookfield-and-qai-form-20-billion-strategic-inves",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    },
+    {
+     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/18/prime-minister-carney-secures-new-partnership-qatar-increase-trade",
+     "title": "Prime Minister Carney secures new partnership with Qatar",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-01-18",
+     "kind": "public_record",
+     "id": "pm-2026-01-18-prime-minister-carney-secures-new-partnership-with",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2025-12-09"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Brookfield; Qai (Qatar Investment Authority subsidiary)",
+     "what": "US$20B AI-infrastructure joint venture with Government of Qatar strategic support",
+     "amount": "US$20B",
+     "date": "2025-12-09",
+     "source": {
+      "url": "https://www.qia.qa/en/Newsroom/Pages/Brookfield-and-Qai-Form-$20-Billion-Strategic-Investment-Partnership-for-AI-Infrastructure.aspx",
+      "label": "qia.qa"
+     }
+    },
+    "b": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "First visit by a sitting Canadian PM to Qatar; met the Amir and heads of the Qatar Investment Authority; Qatar committed investment in Canadian projects",
+     "amount": "",
+     "date": "2026-01-18",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/18/prime-minister-carney-secures-new-partnership-qatar-increase-trade",
+      "label": "pm.gc.ca"
+     }
+    },
+    "gap_days": 40,
+    "text": "Brookfield; Qai (Qatar Investment Authority subsidiary) US$20B AI-infrastructure joint venture with Government of Qatar strategic support, US$20B, 2025-12-09 (source: qia.qa); Mark Carney (Prime Minister) First visit by a sitting Canadian PM to Qatar; met the Amir and heads of the Qatar Investment Authority; Qatar committed investment in Canadian projects, 2026-01-18 (source: pm.gc.ca). Gap: 40 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_solarvest_then_malaysia_visit",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Brookfield–Solarvest Malaysia renewables, then Carney meets Malaysia's PM, 35 days apart",
+   "summary": "Brookfield and Solarvest announced a 1.5 GW Malaysian renewables partnership (2025-09-22). Prime Minister Mark Carney met Malaysian Prime Minister Anwar Ibrahim (2025-10-27). Gap: 35 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Brookfield item first. Solarvest release date taken from blog/tracker and search summary; confirm on the Solarvest page.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield"
+   ],
+   "link_ids": [
+    "lnk_cbf_solarvest_then_malaysia_visit_brookfield",
+    "lnk_cbf_solarvest_then_malaysia_visit_carney"
+   ],
+   "window": {
+    "start": "2025-09-22",
+    "end": "2025-10-27"
+   },
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://solarvest.com/brookfield-and-solarvest-partner-to-deliver-1-5gw-of-renewables-in-malaysia-over-next-three-to-five-years/",
+     "title": "Brookfield and Solarvest partner to deliver 1.5GW of renewables in Malaysia",
+     "publisher": "Solarvest",
+     "date": "2025-09-22",
+     "kind": "public_record",
+     "id": "solarvest-nd-brookfield-and-solarvest-partner-to-deliver-1-5gw-",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    },
+    {
+     "url": "https://www.pm.gc.ca/en/news/readouts/2025/10/27/prime-minister-carney-meets-prime-minister-malaysia-anwar-ibrahim",
+     "title": "Prime Minister Carney meets Prime Minister of Malaysia Anwar Ibrahim",
+     "publisher": "Prime Minister of Canada",
+     "date": "2025-10-27",
+     "kind": "public_record",
+     "id": "pm-2025-10-27-prime-minister-carney-meets-prime-minister-of-mala",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24",
+     "attribution": "organization's own claim"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2025-09-22"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by records collector",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "structured",
+    "a": {
+     "who": "Brookfield (Catalytic Transition Fund); Solarvest",
+     "what": "Partnership to deliver at least 1.5 GW of renewables in Malaysia",
+     "amount": "",
+     "date": "2025-09-22",
+     "source": {
+      "url": "https://solarvest.com/brookfield-and-solarvest-partner-to-deliver-1-5gw-of-renewables-in-malaysia-over-next-three-to-five-years/",
+      "label": "solarvest.com"
+     }
+    },
+    "b": {
+     "who": "Mark Carney (Prime Minister)",
+     "what": "Met Prime Minister Anwar Ibrahim in Kuala Lumpur",
+     "amount": "",
+     "date": "2025-10-27",
+     "source": {
+      "url": "https://www.pm.gc.ca/en/news/readouts/2025/10/27/prime-minister-carney-meets-prime-minister-malaysia-anwar-ibrahim",
+      "label": "pm.gc.ca"
+     }
+    },
+    "gap_days": 35,
+    "text": "Brookfield (Catalytic Transition Fund); Solarvest Partnership to deliver at least 1.5 GW of renewables in Malaysia, 2025-09-22 (source: solarvest.com); Mark Carney (Prime Minister) Met Prime Minister Anwar Ibrahim in Kuala Lumpur, 2025-10-27 (source: pm.gc.ca). Gap: 35 days."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_cbf_uk_visit_just_group_close",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Carney meets Starmer in London and Brookfield Wealth Solutions completes Just Group, 16 days apart",
+   "summary": "Carney met UK PM Keir Starmer in London on 2026-03-16 (pm.gc.ca readout; GOV.UK). Brookfield Wealth Solutions completed its £2.4B acquisition of Just Group on 2026-04-01 (Brookfield release). Gap: 16 days. Timing only; no link between the two is shown.",
+   "entities": [
+    "ent_person_mark_carney",
+    "ent_company_brookfield_wealth_solutions",
+    "ent_company_just_group",
+    "ent_event_carney_starmer_meeting_2026_03_16"
+   ],
+   "link_ids": [
+    "lnk_r2_carney_starmer",
+    "lnk_r2_bws_owns_just"
+   ],
+   "window": {
+    "start": "2026-03-16",
+    "end": "2026-04-01"
+   },
+   "credit": "carney research round 2",
+   "amount_cad": null,
+   "sources": [
+    {
+     "url": "https://www.pm.gc.ca/en/news/readouts/2026/03/16/prime-minister-carney-meets-prime-minister-united-kingdom-sir-keir-starmer",
+     "title": "Prime Minister Carney meets Prime Minister of the United Kingdom Sir Keir Starmer",
+     "publisher": "Prime Minister of Canada",
+     "date": "2026-03-16",
+     "kind": "public_record",
+     "id": "pm-2026-03-16-starmer",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    },
+    {
+     "url": "https://www.gov.uk/government/news/pm-meeting-with-prime-minister-carney-of-canada-16-march-2026",
+     "title": "PM meeting with Prime Minister Carney of Canada: 16 March 2026",
+     "publisher": "GOV.UK (Prime Minister’s Office, 10 Downing Street)",
+     "date": "2026-03-16",
+     "kind": "public_record",
+     "id": "govuk-2026-03-16-starmer",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    },
+    {
+     "url": "https://www.nasdaq.com/press-release/brookfield-wealth-solutions-completes-acquisition-just-group-2026-04-01",
+     "title": "Brookfield Wealth Solutions Completes Acquisition of Just Group",
+     "publisher": "Brookfield Wealth Solutions (GlobeNewswire via Nasdaq)",
+     "date": "2026-04-01",
+     "kind": "public_record",
+     "id": "nasdaq-2026-04-01-just",
+     "source_layer": "records",
+     "retrieved_date": "2026-11-24"
+    }
+   ],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "date",
+    "label": "Start date",
+    "text": "Start date 2026-03-16"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [
+    "FED"
+   ],
+   "origin_label": "Flagged by carney research round 2",
+   "strength": 3,
+   "lead_detail": {
+    "origin": "given",
+    "text": "Carney met UK PM Keir Starmer in London on 2026-03-16 (pm.gc.ca readout; GOV.UK). Brookfield Wealth Solutions completed its £2.4B acquisition of Just Group on 2026-04-01 (Brookfield release). Gap: 16 days. Timing only; no link between the two is shown."
+   },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
    "id": "lead_colt_canada_ukraine_reg_during_foreign_affairs",
    "pattern": "other",
    "origin": [
@@ -6449,11 +7348,12 @@
    ],
    "link_ids": [
     "lnk_ijf_572415b9490d07e8",
-    "lnk_ijf_8e09687cb9d8bf8b"
+    "lnk_ijf_8e09687cb9d8bf8b",
+    "lnk_cbf_brookfield_in_screen"
    ],
    "window": {
     "start": "2025-06-12",
-    "end": "2025-08-01"
+    "end": "2025-07-31"
    },
    "credit": "ijf article",
    "amount_cad": null,
@@ -6464,6 +7364,7 @@
      "publisher": "Investigative Journalism Foundation",
      "date": "2025-08-06",
      "kind": "public_record",
+     "id": "theijf-nd-westinghouse-is-on-mark-carney-s-conflict-of-inter",
      "note": "IJF reporting; summarized by records agent, no article text stored",
      "source_layer": "records"
     },
@@ -6475,6 +7376,7 @@
      "kind": "public_record",
      "registry": "Federal Registry of Lobbyists",
      "record_id": "957257-378839-4",
+     "id": "lobbycanada-nd-federal-lobbying-registration-957257-378839-4",
      "note": "Confirmed in OCL open-data registrations export (retrieved 2026-10-26/28)",
      "source_layer": "records",
      "retrieved_date": "2026-10-28"
@@ -6487,6 +7389,7 @@
      "kind": "public_record",
      "registry": "Federal Registry of Lobbyists - Monthly Communication Reports",
      "record_id": "comlogId 641656",
+     "id": "lobbycanada-nd-monthly-communication-report-641656",
      "note": "DPOHs: PMO Policy Advisor and Senior Policy Advisor",
      "source_layer": "records"
     },
@@ -6497,6 +7400,7 @@
      "kind": "public_record",
      "registry": "CIEC Public Registry",
      "record_id": "Declaration 43653 Annex A",
+     "id": "ethicscanada-nd-public-declaration-of-agreed-measure-mark-carney-a",
      "note": "Annex A opened 2026-10-28 at the current ethicscanada.ca address (old prciec URL now redirects); Westinghouse listed as item 23 in section A.",
      "source_layer": "records",
      "retrieved_date": "2026-10-28"
@@ -6508,6 +7412,7 @@
      "date": "2024-02-08",
      "kind": "public_record",
      "registry": "SEC EDGAR",
+     "id": "sec-nd-cameco-corporation-2023-management-discussion-and-",
      "source_layer": "records"
     }
    ],
@@ -6528,31 +7433,8 @@
    "origin_label": "Flagged by ijf article",
    "strength": 3,
    "lead_detail": {
-    "origin": "auto",
-    "a": {
-     "who": "Brookfield",
-     "what": "owns Westinghouse Electric Canada",
-     "amount": "",
-     "date": "2023",
-     "source": {
-      "url": "https://theijf.org/brief/westinghouse-is-on-mark-carneys-conflict-of-interest-list-that-hasnt-stopped-the-company-from-lobbying-his-office",
-      "label": "Investigative Journalism Foundation"
-     },
-     "link_id": "lnk_ijf_8e09687cb9d8bf8b"
-    },
-    "b": {
-     "who": "Westinghouse Electric Canada",
-     "what": "lobbied Innovation, Science and Economic Development Canada",
-     "amount": "",
-     "date": "2025-06-12",
-     "source": {
-      "url": "https://theijf.org/brief/westinghouse-is-on-mark-carneys-conflict-of-interest-list-that-hasnt-stopped-the-company-from-lobbying-his-office",
-      "label": "Investigative Journalism Foundation"
-     },
-     "link_id": "lnk_ijf_572415b9490d07e8"
-    },
-    "gap_days": null,
-    "text": "Brookfield owns Westinghouse Electric Canada, 2023 (source: Investigative Journalism Foundation); Westinghouse Electric Canada lobbied Innovation, Science and Economic Development Canada, 2025-06-12 (source: Investigative Journalism Foundation)."
+    "origin": "given",
+    "text": "Westinghouse is item 23 on Annex A of Carney’s conflict screen (disclosed 2025-07-10). Westinghouse Electric Canada’s lobbying registration (effective 2025-06-12) lists the PMO, and a communication with PMO policy advisers was reported for 2025-07-31. The screen governs Carney’s own participation; staff contact is not itself a breach, and no Commissioner finding exists."
    },
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
@@ -9977,777 +10859,6 @@
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {
-   "id": "lead_cbf_abu_dhabi_flatt_then_uae_visit",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Brookfield delegation meets Abu Dhabi Crown Prince, then Carney's UAE visit, 8 days apart",
-   "summary": "A Brookfield delegation led by Bruce Flatt met Abu Dhabi's Crown Prince (2025-11-13). Prime Minister Mark Carney announced new agreements with the UAE (release date) (2025-11-21). Gap: 8 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. A meeting, not a contract. Gap counted to the PMO release date (2025-11-21); the tracker dates the trip start 2025-11-20 (7 days).",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield",
-    "ent_person_bruce_flatt"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2025-11-13",
-    "end": "2025-11-21"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-executive-management-delegation-from-brookfield-corporation/",
-     "title": "Khaled bin Mohamed bin Zayed meets executive management delegation from Brookfield Corporation",
-     "publisher": "Abu Dhabi Media Office",
-     "date": "2025-11-13",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2025/11/21/prime-minister-carney-secures-new-agreements-united-arab-emirates",
-     "title": "Prime Minister Carney secures new agreements with United Arab Emirates",
-     "publisher": "Prime Minister of Canada",
-     "date": "2025-11-21",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2025-11-13"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Brookfield Corporation delegation (CEO Bruce Flatt, Chair Frank McKenna)",
-     "what": "Met Abu Dhabi Crown Prince Sheikh Khaled bin Mohamed bin Zayed on investment cooperation; no deal announced",
-     "amount": "",
-     "date": "2025-11-13",
-     "source": {
-      "url": "https://www.mediaoffice.abudhabi/en/crown-prince-news/khaled-bin-mohamed-bin-zayed-meets-executive-management-delegation-from-brookfield-corporation/",
-      "label": "mediaoffice.abudhabi"
-     }
-    },
-    "b": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Visit to the UAE; new agreements announced",
-     "amount": "",
-     "date": "2025-11-21",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2025/11/21/prime-minister-carney-secures-new-agreements-united-arab-emirates",
-      "label": "pm.gc.ca"
-     }
-    },
-    "gap_days": 8,
-    "text": "Brookfield Corporation delegation (CEO Bruce Flatt, Chair Frank McKenna) Met Abu Dhabi Crown Prince Sheikh Khaled bin Mohamed bin Zayed on investment cooperation; no deal announced, 2025-11-13 (source: mediaoffice.abudhabi); Mark Carney (Prime Minister) Visit to the UAE; new agreements announced, 2025-11-21 (source: pm.gc.ca). Gap: 8 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_davos_andhra_review",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney at Davos and Brookfield–Andhra Pradesh pact review at Davos, 2 days apart",
-   "summary": "Prime Minister Mark Carney attended the WEF in Davos (2026-01-19). Brookfield and the Andhra Pradesh government reviewed their US$12 billion pact at Davos (2026-01-21). Gap: 2 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. No documented Carney–Brookfield meeting at Davos. Same venue, different parties.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2026-01-19",
-    "end": "2026-01-21"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/21/prime-minister-carney-builds-resilient-partnerships-and-attracts-new",
-     "title": "Prime Minister Carney builds resilient partnerships (Davos)",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-01-21",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.business-standard.com/india-news/brookfield-andhra-pradesh-govt-review-12-billion-pact-at-davos-meeting-126012100607_1.html",
-     "title": "Brookfield, Andhra Pradesh govt review $12 billion pact at Davos meeting",
-     "publisher": "Business Standard",
-     "date": "2026-01-21",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2026-01-19"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "World Economic Forum, Davos (19–21 Jan 2026)",
-     "amount": "",
-     "date": "2026-01-19",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/21/prime-minister-carney-builds-resilient-partnerships-and-attracts-new",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Brookfield; Government of Andhra Pradesh (India)",
-     "what": "Reviewed their US$12B clean-energy pact at Davos",
-     "amount": "US$12B (existing pact)",
-     "date": "2026-01-21",
-     "source": {
-      "url": "https://www.business-standard.com/india-news/brookfield-andhra-pradesh-govt-review-12-billion-pact-at-davos-meeting-126012100607_1.html",
-      "label": "business-standard.com"
-     }
-    },
-    "gap_days": 2,
-    "text": "Mark Carney (Prime Minister) World Economic Forum, Davos (19–21 Jan 2026), 2026-01-19 (source: pm.gc.ca); Brookfield; Government of Andhra Pradesh (India) Reviewed their US$12B clean-energy pact at Davos, US$12B (existing pact), 2026-01-21 (source: business-standard.com). Gap: 2 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_dc_visit_westinghouse_us_80b",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney's White House visit and US–Brookfield/Cameco Westinghouse partnership, 21 days apart",
-   "summary": "Prime Minister Mark Carney met President Trump at the White House (2025-10-07). Brookfield and Cameco announced a partnership with the US government for at least US$80 billion of new Westinghouse reactors (2025-10-28). Gap: 21 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Westinghouse is on Carney's conflict screen (IJF lead already on map). The PMO release for the visit does not mention Westinghouse or nuclear deals; this deal is a US-government agreement, not a Canadian one.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield",
-    "ent_company_cameco",
-    "ent_company_westinghouse_electric_company_llc"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2025-10-07",
-    "end": "2025-10-28"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2025/10/08/prime-minister-carney-concludes-visit-washington-dc",
-     "title": "Prime Minister Carney concludes working visit to Washington, D.C.",
-     "publisher": "Prime Minister of Canada",
-     "date": "2025-10-08",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.cameco.com/media/news/cameco-and-brookfield-establish-transformational-partnership-with-united-states",
-     "title": "Cameco and Brookfield establish transformational partnership with United States Government",
-     "publisher": "Cameco",
-     "date": "2025-10-28",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    },
-    {
-     "url": "https://www.reuters.com/business/energy/westinghouse-electric-cameco-corp-brookfield-asset-management-80-bln-nuclear-2025-10-28/",
-     "title": "US strikes $80 billion deal for new nuclear power plants",
-     "publisher": "Reuters",
-     "date": "2025-10-28",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2025-10-07"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED",
-    "SK"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Working visit to Washington, Oval Office meeting with President Trump",
-     "amount": "",
-     "date": "2025-10-07",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2025/10/08/prime-minister-carney-concludes-visit-washington-dc",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Brookfield and Cameco (Westinghouse owners) with the US government",
-     "what": "Partnership/term sheet for at least US$80B of new Westinghouse reactors",
-     "amount": "US$80B (at least)",
-     "date": "2025-10-28",
-     "source": {
-      "url": "https://www.cameco.com/media/news/cameco-and-brookfield-establish-transformational-partnership-with-united-states",
-      "label": "cameco.com"
-     }
-    },
-    "gap_days": 21,
-    "text": "Mark Carney (Prime Minister) Working visit to Washington, Oval Office meeting with President Trump, 2025-10-07 (source: pm.gc.ca); Brookfield and Cameco (Westinghouse owners) with the US government Partnership/term sheet for at least US$80B of new Westinghouse reactors, US$80B (at least), 2025-10-28 (source: cameco.com). Gap: 21 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_india_visit_acme",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney's India visit and Brookfield's ACME green-molecules investment, 199 days apart",
-   "summary": "Prime Minister Mark Carney concluded his India visit (2026-03-02). Brookfield announced up to US$600 million for ACME's green-molecule projects in India and Oman (2026-09-17). Gap: 199 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. The release says the 'Brookfield Global Transition Fund strategy'; it does not say BGTF I (the only fund in which Carney holds carry per Beber). Do not assume BGTF I.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2026-03-02",
-    "end": "2026-09-17"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
-     "title": "Prime Minister Carney secures ambitious new partnership with India",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-03-02",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20to%20Invest%20up%20to%20%24600%20Million%20in%20ACME%E2%80%99s%20Green%20Molecule%20Platform.pdf",
-     "title": "Brookfield to Invest up to $600 Million in ACME’s Green Molecule Platform",
-     "publisher": "Brookfield",
-     "date": "2026-09-17",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2026-03-02"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Official visit to India",
-     "amount": "",
-     "date": "2026-03-02",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Brookfield (Brookfield Global Transition Fund strategy)",
-     "what": "Up to US$600M in ACME Cleantech Ventures for green ammonia/methanol in India and Oman",
-     "amount": "up to US$600M",
-     "date": "2026-09-17",
-     "source": {
-      "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20to%20Invest%20up%20to%20%24600%20Million%20in%20ACME%E2%80%99s%20Green%20Molecule%20Platform.pdf",
-      "label": "brookfield.com"
-     }
-    },
-    "gap_days": 199,
-    "text": "Mark Carney (Prime Minister) Official visit to India, 2026-03-02 (source: pm.gc.ca); Brookfield (Brookfield Global Transition Fund strategy) Up to US$600M in ACME Cleantech Ventures for green ammonia/methanol in India and Oman, up to US$600M, 2026-09-17 (source: brookfield.com). Gap: 199 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_india_visit_lumara",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney's India visit and Brookfield's Lumara India renewables platform, 150 days apart",
-   "summary": "Prime Minister Mark Carney concluded his India visit with a new partnership focused on energy (2026-03-02). Brookfield launched Lumara, a renewable platform targeting about US$600 million in India (2026-07-30). Gap: 150 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Long gap; Brookfield says it already has over US$32B invested in India. Brookfield COO Justin Beber testified Carney has no carry in the Catalytic Transition Fund.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2026-03-02",
-    "end": "2026-07-30"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
-     "title": "Prime Minister Carney secures ambitious new partnership with India",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-03-02",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20launches%20Lumara.pdf",
-     "title": "Brookfield Launches Lumara, a Renewable Energy Platform Targeting $600 Million Deployment in India",
-     "publisher": "Brookfield",
-     "date": "2026-07-30",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2026-03-02"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Official visit to India (27 Feb–2 Mar 2026); partnership on energy, talent, technology",
-     "amount": "",
-     "date": "2026-03-02",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/02/prime-minister-carney-secures-ambitious-new-partnership-india-focused",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Brookfield (Catalytic Transition Fund)",
-     "what": "Launched Lumara, targeting about US$600M across 6 GW+ of solar, wind and storage in India",
-     "amount": "about US$600M",
-     "date": "2026-07-30",
-     "source": {
-      "url": "https://www.brookfield.com/sites/default/files/documents/Brookfield%20launches%20Lumara.pdf",
-      "label": "brookfield.com"
-     }
-    },
-    "gap_days": 150,
-    "text": "Mark Carney (Prime Minister) Official visit to India (27 Feb–2 Mar 2026); partnership on energy, talent, technology, 2026-03-02 (source: pm.gc.ca); Brookfield (Catalytic Transition Fund) Launched Lumara, targeting about US$600M across 6 GW+ of solar, wind and storage in India, about US$600M, 2026-07-30 (source: brookfield.com). Gap: 150 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_japan_visit_westinghouse_japan",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney's Japan visit and US–Japan Westinghouse project roles, 8 days apart",
-   "summary": "Prime Minister Mark Carney announced a new comprehensive strategic partnership with Japan (2026-03-06). Westinghouse said the US and Japan agreed their roles in a potential nuclear project (2026-03-14). Gap: 8 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. A US–Japan arrangement; Canada is not a party. Japan Times page not opened (tracker 'reported').",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_westinghouse_electric_company_llc",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2026-03-06",
-    "end": "2026-03-14"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/06/prime-minister-carney-forges-new-comprehensive-strategic-partnership",
-     "title": "Prime Minister Carney forges new comprehensive strategic partnership (Japan)",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-03-06",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.japantimes.co.jp/business/2026/03/14/us-japan-nuclear-power-project/",
-     "title": "US-Japan nuclear power project (Westinghouse)",
-     "publisher": "The Japan Times",
-     "date": "2026-03-14",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2026-03-06"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Visit to Japan; comprehensive strategic partnership",
-     "amount": "",
-     "date": "2026-03-06",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/03/06/prime-minister-carney-forges-new-comprehensive-strategic-partnership",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Westinghouse (owned by Brookfield and Cameco); US and Japan governments",
-     "what": "US and Japan agreed roles in a potential nuclear project under Japan's US$550B US investment package",
-     "amount": "",
-     "date": "2026-03-14",
-     "source": {
-      "url": "https://www.japantimes.co.jp/business/2026/03/14/us-japan-nuclear-power-project/",
-      "label": "japantimes.co.jp"
-     }
-    },
-    "gap_days": 8,
-    "text": "Mark Carney (Prime Minister) Visit to Japan; comprehensive strategic partnership, 2026-03-06 (source: pm.gc.ca); Westinghouse (owned by Brookfield and Cameco); US and Japan governments US and Japan agreed roles in a potential nuclear project under Japan's US$550B US investment package, 2026-03-14 (source: japantimes.co.jp). Gap: 8 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_jeddah_visit_pif_bmep",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Carney's Saudi Arabia visit and PIF-anchored Brookfield Middle East fund first close, 18 days apart",
-   "summary": "Prime Minister Mark Carney visited Jeddah and met Crown Prince Mohammed bin Salman (2026-07-09). Brookfield announced an approximately US$2 billion first close of its PIF-anchored Middle East fund (2026-07-27). Gap: 18 days (Brookfield item after the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. The PMO release lists Cohere–HUMAIN and BlackBerry–Aramco Digital, not Brookfield, among the visit's commercial items. Fund close is private fundraising with a state wealth fund, not a government contract.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2026-07-09",
-    "end": "2026-07-27"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/07/09/prime-minister-carney-deepens-partnership-saudi-arabia-across-trade",
-     "title": "Prime Minister Carney deepens partnership with Saudi Arabia",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-07-09",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    },
-    {
-     "url": "https://www.pif.gov.sa/en/news-and-insights/press-releases/2026/brookfield-announces-approximately-2-billion-first-close-of-pif-anchored-middle-east-focused-fund/",
-     "title": "Brookfield Announces Approximately $2 Billion First Close of PIF-anchored Middle East-Focused Fund",
-     "publisher": "Public Investment Fund",
-     "date": "2026-07-27",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2026-07-09"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Visit to Jeddah; met Crown Prince Mohammed bin Salman; 13 commercial agreements/MOUs worth over $1B",
-     "amount": "",
-     "date": "2026-07-09",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/07/09/prime-minister-carney-deepens-partnership-saudi-arabia-across-trade",
-      "label": "pm.gc.ca"
-     }
-    },
-    "b": {
-     "who": "Brookfield; Saudi Public Investment Fund (anchor)",
-     "what": "First close of Brookfield Middle East Partners, about US$2B, targeting 50% of investments in Saudi Arabia; Brookfield committing US$500M",
-     "amount": "about US$2B",
-     "date": "2026-07-27",
-     "source": {
-      "url": "https://www.pif.gov.sa/en/news-and-insights/press-releases/2026/brookfield-announces-approximately-2-billion-first-close-of-pif-anchored-middle-east-focused-fund/",
-      "label": "pif.gov.sa"
-     }
-    },
-    "gap_days": 18,
-    "text": "Mark Carney (Prime Minister) Visit to Jeddah; met Crown Prince Mohammed bin Salman; 13 commercial agreements/MOUs worth over $1B, 2026-07-09 (source: pm.gc.ca); Brookfield; Saudi Public Investment Fund (anchor) First close of Brookfield Middle East Partners, about US$2B, targeting 50% of investments in Saudi Arabia; Brookfield committing US$500M, about US$2B, 2026-07-27 (source: pif.gov.sa). Gap: 18 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_qatar_qai_then_doha_visit",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Brookfield–Qai US$20B AI venture and Carney's Doha visit, 40 days apart",
-   "summary": "Brookfield and Qai, a Qatar Investment Authority subsidiary, formed a US$20 billion AI-infrastructure joint venture (2025-12-09). Prime Minister Mark Carney visited Doha and met the Amir and heads of the Qatar Investment Authority (2026-01-18). Gap: 40 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Here the Brookfield item came first. Both items involve the same counterparty (QIA). No source ties the two.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2025-12-09",
-    "end": "2026-01-18"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://www.qia.qa/en/Newsroom/Pages/Brookfield-and-Qai-Form-$20-Billion-Strategic-Investment-Partnership-for-AI-Infrastructure.aspx",
-     "title": "Brookfield and Qai Form $20 Billion Strategic Investment Partnership for AI Infrastructure",
-     "publisher": "Qatar Investment Authority",
-     "date": "2025-12-09",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    },
-    {
-     "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/18/prime-minister-carney-secures-new-partnership-qatar-increase-trade",
-     "title": "Prime Minister Carney secures new partnership with Qatar",
-     "publisher": "Prime Minister of Canada",
-     "date": "2026-01-18",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2025-12-09"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Brookfield; Qai (Qatar Investment Authority subsidiary)",
-     "what": "US$20B AI-infrastructure joint venture with Government of Qatar strategic support",
-     "amount": "US$20B",
-     "date": "2025-12-09",
-     "source": {
-      "url": "https://www.qia.qa/en/Newsroom/Pages/Brookfield-and-Qai-Form-$20-Billion-Strategic-Investment-Partnership-for-AI-Infrastructure.aspx",
-      "label": "qia.qa"
-     }
-    },
-    "b": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "First visit by a sitting Canadian PM to Qatar; met the Amir and heads of the Qatar Investment Authority; Qatar committed investment in Canadian projects",
-     "amount": "",
-     "date": "2026-01-18",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/news-releases/2026/01/18/prime-minister-carney-secures-new-partnership-qatar-increase-trade",
-      "label": "pm.gc.ca"
-     }
-    },
-    "gap_days": 40,
-    "text": "Brookfield; Qai (Qatar Investment Authority subsidiary) US$20B AI-infrastructure joint venture with Government of Qatar strategic support, US$20B, 2025-12-09 (source: qia.qa); Mark Carney (Prime Minister) First visit by a sitting Canadian PM to Qatar; met the Amir and heads of the Qatar Investment Authority; Qatar committed investment in Canadian projects, 2026-01-18 (source: pm.gc.ca). Gap: 40 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
-   "id": "lead_cbf_solarvest_then_malaysia_visit",
-   "pattern": "other",
-   "origin": [
-    "flagged"
-   ],
-   "flagged_by": [
-    "records"
-   ],
-   "title": "Timing pattern: Brookfield–Solarvest Malaysia renewables, then Carney meets Malaysia's PM, 35 days apart",
-   "summary": "Brookfield and Solarvest announced a 1.5 GW Malaysian renewables partnership (2025-09-22). Prime Minister Mark Carney met Malaysian Prime Minister Anwar Ibrahim (2025-10-27). Gap: 35 days (Brookfield item before the visit). A timing pattern in public records, not evidence of wrongdoing; no causation is stated or implied. Brookfield item first. Solarvest release date taken from blog/tracker and search summary; confirm on the Solarvest page.",
-   "entities": [
-    "ent_person_mark_carney",
-    "ent_company_brookfield"
-   ],
-   "link_ids": [],
-   "window": {
-    "start": "2025-09-22",
-    "end": "2025-10-27"
-   },
-   "amount_cad": null,
-   "sources": [
-    {
-     "url": "https://solarvest.com/brookfield-and-solarvest-partner-to-deliver-1-5gw-of-renewables-in-malaysia-over-next-three-to-five-years/",
-     "title": "Brookfield and Solarvest partner to deliver 1.5GW of renewables in Malaysia",
-     "publisher": "Solarvest",
-     "date": "2025-09-22",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24"
-    },
-    {
-     "url": "https://www.pm.gc.ca/en/news/readouts/2025/10/27/prime-minister-carney-meets-prime-minister-malaysia-anwar-ibrahim",
-     "title": "Prime Minister Carney meets Prime Minister of Malaysia Anwar Ibrahim",
-     "publisher": "Prime Minister of Canada",
-     "date": "2025-10-27",
-     "kind": "public_record",
-     "source_layer": "records",
-     "retrieved_date": "2026-11-24",
-     "attribution": "organization's own claim"
-    }
-   ],
-   "gap_days": null,
-   "gap_basis": "none",
-   "timing": {
-    "mode": "date",
-    "label": "Start date",
-    "text": "Start date 2025-09-22"
-   },
-   "layers": [
-    "records"
-   ],
-   "provinces": [
-    "FED"
-   ],
-   "origin_label": "Flagged by records collector",
-   "strength": 2,
-   "lead_detail": {
-    "origin": "structured",
-    "a": {
-     "who": "Brookfield (Catalytic Transition Fund); Solarvest",
-     "what": "Partnership to deliver at least 1.5 GW of renewables in Malaysia",
-     "amount": "",
-     "date": "2025-09-22",
-     "source": {
-      "url": "https://solarvest.com/brookfield-and-solarvest-partner-to-deliver-1-5gw-of-renewables-in-malaysia-over-next-three-to-five-years/",
-      "label": "solarvest.com"
-     }
-    },
-    "b": {
-     "who": "Mark Carney (Prime Minister)",
-     "what": "Met Prime Minister Anwar Ibrahim in Kuala Lumpur",
-     "amount": "",
-     "date": "2025-10-27",
-     "source": {
-      "url": "https://www.pm.gc.ca/en/news/readouts/2025/10/27/prime-minister-carney-meets-prime-minister-malaysia-anwar-ibrahim",
-      "label": "pm.gc.ca"
-     }
-    },
-    "gap_days": 35,
-    "text": "Brookfield (Catalytic Transition Fund); Solarvest Partnership to deliver at least 1.5 GW of renewables in Malaysia, 2025-09-22 (source: solarvest.com); Mark Carney (Prime Minister) Met Prime Minister Anwar Ibrahim in Kuala Lumpur, 2025-10-27 (source: pm.gc.ca). Gap: 35 days."
-   },
-   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
-  },
-  {
    "id": "lead_hillier_china_visit_allied_agreement_9_days",
    "pattern": "other",
    "origin": [
@@ -10775,6 +10886,7 @@
      "title": "Joint statement of the Canada-China Leaders' Meeting",
      "date": "2026-01-16",
      "kind": "other",
+     "id": "pm-2026-01-16-joint-statement-of-the-canada-china-leaders-meetin",
      "source_layer": "records"
     },
     {
@@ -10782,6 +10894,7 @@
      "title": "HKEX joint announcement",
      "date": "2026-01-26",
      "kind": "other",
+     "id": "www1-nd-hkex-joint-announcement",
      "source_layer": "records"
     }
    ],

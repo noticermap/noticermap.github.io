@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1353,{"💥immigration":[27771,430],"💥in":[28271,410],"💥insane":[27738,410,27931,410,27933,401]});
+window.__wiretapShard&&window.__wiretapShard(1353,{"💥evan":[27843,410,28293,420],"💥explosive":[26921,441,27052,420,27793,441,27885,430,28374,420,29005,401,29090,420],"💥explosives":[28714,441],"💥exposed":[28087,420,28189,401,28333,410]});

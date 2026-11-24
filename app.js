@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-24T14:25:57.589Z */
+/* NoticerMap — built 2026-11-24T15:07:07.298Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -2653,7 +2653,7 @@ const SOL = window.__WIRETAP_SOL__ || { title: 'Immigration and living costs, 19
 const SOL_TITLE = 'Immigration and living costs, 1990 on';
 const SOL_ROLES = (D.meta && D.meta.layer_roles) || {};
 const SOL_KEY = 'wiretap.sol.collapsed';
-const SOL_TOGGLES = !!(D.meta && D.meta.sol_toggles); // feature flag: OFF until the approved fold
+const SOL_TOGGLES = !!(D.meta && D.meta.sol_toggles); // feature flag: on after the approved 2026-11-24 fold
 const solRole = r => { const id = SOL_ROLES[r]; return SOL_TOGGLES && id && LAYERS_PRESENT.includes(id) ? id : null; };
 const solCollapsedByUser = () => { try { return sessionStorage.getItem(SOL_KEY) === '1'; } catch { return false; } };
 const solSetCollapsed = v => { try { v ? sessionStorage.setItem(SOL_KEY, '1') : sessionStorage.removeItem(SOL_KEY); } catch { /* private mode */ } };

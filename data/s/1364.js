@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1364,{"💥unreal":[27932,453,28214,410],"💥update":[28096,393]});
+window.__wiretapShard&&window.__wiretapShard(1364,{"💥pay":[28334,420],"💥pierre":[27500,410],"💥priorities":[27615,453],"💥propaganda":[27657,420],"💥public":[27838,410]});
