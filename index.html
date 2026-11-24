@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NoticerMap · Canadian influence &amp; money, mapped</title>
+<meta name="description" content="A searchable, interactive map of Canadian influence and money networks, built from Wiretap Media reporting and checked against public records.">
+<meta name="theme-color" content="#07080a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NoticerMap · Canadian influence & money, mapped">
+<meta property="og:description" content="Who funds influence in Canada? A searchable network map built from Wiretap Media reporting, with every claim badged reported or checked against public records.">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://noticermap.github.io/"><meta property="og:url" content="https://noticermap.github.io/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css?v=0920ee4fcc">
+<script>window.__WIRETAP_T0 = performance.now();</script>
+<script defer src="vendor/cytoscape.min.js?v=0920ee4fcc"></script>
+<script defer src="vendor/minisearch.umd.js?v=0920ee4fcc"></script>
+<script defer src="data/data.js?v=0920ee4fcc"></script>
+<script defer src="data/sol.js?v=0920ee4fcc"></script>
+<script defer src="app.js?v=0920ee4fcc"></script>
+</head>
+<body>
+<a class="skip" href="#stage">Skip to content</a>
+<div id="loading" class="loading" role="status" aria-live="polite"><div class="spinner" aria-hidden="true"></div><span>Loading the map…</span></div>
+<div id="sample-banner" class="sample-banner" hidden role="status">
+  <strong>EXAMPLE DATA</strong> Fictional placeholder data<span class="hide-mobile"> for testing. No real people, organizations or allegations. Real data will appear once <code>graph/entities.json</code> is populated</span>.
+</div>
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="btn-filters" aria-label="Open search and filters" aria-controls="sidebar" aria-expanded="false">☰</button>
+  <a class="brand" href="#" aria-label="NoticerMap home">NoticerMap</a>
+  <div class="tagline"><span class="tagline-text">Canadian influence &amp; money, mapped</span> <span id="built-at"></span></div>
+  <div class="top-actions"><button type="button" class="btn sm accent" id="btn-connect" data-guide="pathfinder" aria-haspopup="dialog" aria-controls="connect">How are these connected?</button><button type="button" class="btn sm" id="btn-help" data-guide="help" aria-label="Help: replay the walkthrough">? Help</button></div>
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" data-view="map" id="tab-map" aria-controls="view-map">Map</button>
+    <button role="tab" data-view="money" id="tab-money" aria-controls="view-money" data-guide="money"><span class="full">Follow the money</span><span class="short">Money</span></button>
+    <button role="tab" data-view="timeline" id="tab-timeline" aria-controls="view-timeline" data-guide="timeline"><span class="full">Timeline</span><span class="short">Time</span></button>
+    <button role="tab" data-view="networks" id="tab-networks" aria-controls="view-networks" data-guide="networks"><span class="full">Networks</span><span class="short">Nets</span></button>
+    <button role="tab" data-view="leads" id="tab-leads" aria-controls="view-leads" data-guide="leads">Leads</button>
+    <button role="tab" data-view="overlaps" id="tab-overlaps" aria-controls="view-overlaps" data-guide="overlaps"><span class="full">Overlaps</span><span class="short">Overlap</span></button>
+    <button role="tab" data-view="tours" id="tab-tours" aria-controls="view-tours" data-guide="tours">Tours</button>
+    <button role="tab" data-view="index" id="tab-index" aria-controls="view-index">Index</button>
+    <button role="tab" data-view="sources" id="tab-sources" aria-controls="view-sources">Sources</button>
+    <button role="tab" data-view="about" id="tab-about" aria-controls="view-about">About</button>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside id="sidebar" class="sidebar" aria-label="Search and filters">
+    <div class="search-wrap" role="search" data-guide="search">
+      <label for="q" class="lbl">Search everything <kbd>/</kbd></label>
+      <input id="q" type="search" placeholder="Names, groups, bills, records…" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="results">
+      <div id="results" class="results" role="listbox" aria-label="Search results"></div>
+    </div>
+    <section class="filter" data-guide="layers"><h2 class="lbl" id="h-layer">Source layers</h2><div id="f-layer" class="seg layer-seg" role="group" aria-labelledby="h-layer"></div><div id="layer-note" class="help"></div>
+      <div class="row-ctl"><label class="inline-ctl small" for="f-minl">Seen in at least</label> <select id="f-minl" aria-describedby="minl-help"></select></div>
+      <div id="minl-help" class="help">Counts the source layers that report an item themselves (an entity also counts the layers of its links).</div>
+      <label class="check"><input id="f-hl" type="checkbox"> highlight by number of layers (thicker ring)</label>
+    </section>
+    <section class="filter" data-guide="filters"><h2 class="lbl" id="h-types">Type</h2><div id="f-types" class="chips" role="group" aria-labelledby="h-types"></div></section>
+    <section class="filter"><h2 class="lbl" id="h-provs">Province / jurisdiction</h2><div id="f-provs" class="chips small" role="group" aria-labelledby="h-provs"></div></section>
+    <section class="filter"><h2 class="lbl" id="h-status">Claim status</h2><div id="f-status" class="chips" role="group" aria-labelledby="h-status"></div></section>
+    <section class="filter"><h2 class="lbl" id="h-cats">Relationship</h2><div id="f-cats" class="chips small" role="group" aria-labelledby="h-cats"></div></section>
+    <section class="filter" id="f-lobby-sec" data-guide="lobbying-filter"><h2 class="lbl" id="h-lobby">Lobbying</h2><div id="f-ltypes" class="chips small" role="group" aria-label="Lobbying link types"></div><h3 class="lbl sub" id="h-subj">Lobbying subject</h3><div id="f-subj" class="chips small" role="group" aria-labelledby="h-subj"></div><p class="help">Subject matter as the lobbying registry entry words it. Pick one or more to show only lobbying claims on those subjects.</p></section>
+    <section class="filter" aria-labelledby="h-dates">
+      <h2 class="lbl" id="h-dates">Date range <span id="date-label" class="muted"></span></h2>
+      <div id="f-hist" class="hist" aria-hidden="true"></div>
+      <div class="dual" id="f-slider">
+        <input id="f-r0" type="range" aria-label="Start date slider">
+        <input id="f-r1" type="range" aria-label="End date slider">
+      </div>
+      <div class="daterow">
+        <label>From <input id="f-from" type="text" inputmode="numeric" placeholder="YYYY[-MM[-DD]]" pattern="\d{4}(-\d{2}(-\d{2})?)?" aria-describedby="date-help"></label>
+        <label>To <input id="f-to" type="text" inputmode="numeric" placeholder="YYYY[-MM[-DD]]" pattern="\d{4}(-\d{2}(-\d{2})?)?" aria-describedby="date-help"></label>
+      </div>
+      <div id="date-help" class="help">Type a year, year-month or full date. A link is kept if its date overlaps the range (a “2023” link overlaps all of 2023).</div>
+      <label class="inline-ctl small">Date of <select id="f-basis"><option value="event">event (link date)</option><option value="reported">first reported (source date)</option></select></label>
+      <label class="check"><input id="f-undated" type="checkbox" checked> include undated <span id="undated-n" class="muted"></span></label>
+      <button id="btn-dates-clear" class="linkish" type="button">clear dates</button>
+    </section>
+    <section class="filter">
+      <h2 class="lbl">Money</h2>
+      <label class="check"><input id="f-money" type="checkbox"> money links only</label>
+      <label class="check"><input id="f-est" type="checkbox"> include estimates, budgets &amp; other amounts <span class="est">Estimate</span></label>
+    </section>
+    <section class="filter">
+      <h2 class="lbl">People</h2>
+      <label class="check"><input id="f-legal" type="checkbox"> has stated legal status <span id="legal-n" class="muted"></span></label>
+      <label class="check" title="Compared with a sourced benchmark; not a finding of wrongdoing."><input id="f-norm" type="checkbox"> Outside the norm <span id="norm-n" class="muted"></span></label>
+      <label class="check thy-global" title="Unverified theory - reported claims only, educational, no wrongdoing alleged."><input id="f-thy" type="checkbox"> Theories (unverified) <span id="thy-n" class="muted"></span></label>
+      <p id="thy-banner" class="thy-banner" hidden role="note">Unverified theory - reported claims only, educational, no wrongdoing alleged.</p>
+      <label class="check"><input id="f-evstop" type="checkbox"> Blocked / didn't happen <span id="evstop-n" class="muted"></span></label>
+      <label class="check ev-kind-f">Event kind <select id="f-evkind" aria-label="Event kind"><option value="">All kinds</option></select></label>
+    </section>
+    <div class="filter-actions">
+      <button id="btn-reset" class="btn ghost">Reset filters</button>
+      <span id="filter-count" class="muted" aria-live="polite"></span>
+    </div>
+    <section class="filter" id="sb-networks" aria-labelledby="h-nets">
+      <h2 class="lbl" id="h-nets">Networks</h2>
+      <div id="net-list"></div>
+      <details id="clu-wrap"><summary class="lbl">Auto-detected clusters <span id="clu-n" class="muted"></span></summary><p class="help">Groupings computed from link structure (Louvain modularity), not reporting. Use them as a hint only.</p><div id="clu-list"></div></details>
+    </section>
+    <section class="filter" aria-labelledby="h-export">
+      <h2 class="lbl" id="h-export">Export</h2>
+      <div class="exports">
+        <span class="muted">Current view:</span>
+        <button class="btn sm" id="x-ent-csv">Entities CSV</button><button class="btn sm" id="x-lnk-csv">Links CSV</button><button class="btn sm" id="x-json">JSON</button><button class="btn sm" id="x-ov-csv">Overlaps CSV</button>
+      </div>
+      <div class="exports"><span class="muted">Full data:</span>
+        <a class="btn sm" href="data/graph.json" download>graph.json</a><a class="btn sm" href="data/entities.csv" download>entities.csv</a><a class="btn sm" href="data/links.csv" download>links.csv</a><a class="btn sm" href="data/sources.csv" download>sources.csv</a><a class="btn sm" href="data/networks.csv" download>networks.csv</a><a class="btn sm" href="data/overlaps.csv" download>overlaps.csv</a><a class="btn sm" href="data/leads.csv" download>leads.csv</a><a class="btn sm" href="data/leads.json" download>leads.json</a><a class="btn sm" href="data/crosscheck.json" download>crosscheck.json</a>
+      </div>
+      <button class="btn sm" id="btn-embed" aria-haspopup="dialog">Embed / cite this</button>
+    </section>
+    <section class="legend"><h2 class="lbl">Key</h2><div id="legend"></div></section>
+    <div class="sb-foot muted" id="sb-updated"></div>
+    <div class="sb-links"><button type="button" class="linkish" data-disclaimer aria-haspopup="dialog">About this map · disclaimer</button></div>
+  </aside>
+
+  <main class="stage" id="stage" tabindex="-1">
+    <section id="view-map" class="view" role="tabpanel" aria-labelledby="tab-map">
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Layout">
+          <button data-layout="network" class="on">Network</button><button data-layout="rings">Rings</button><button data-layout="provinces">Province</button><button data-layout="clusters">Clusters</button>
+        </div>
+        <div class="seg" role="group" aria-label="Labels and colours">
+          <button id="btn-names" class="on" aria-pressed="true">Names</button><button id="btn-ecolor" aria-pressed="false" title="Cycle line colour: claim status → relationship type → source layer">Line: status</button>
+        </div>
+        <label class="inline-ctl" title="Hide hub nodes with more connections than this (selected and expanded nodes always stay)">Hide hubs &gt; <select id="g-maxdeg"></select></label>
+        <div class="seg" role="group" aria-label="Zoom">
+          <button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-fit" aria-label="Fit to screen">◎</button>
+        </div>
+        <button id="btn-ovl" class="btn sm" aria-pressed="false" title="Draw thin dotted grey lines for overlaps the map found (shared funders, shared people…). These are not reported claims.">Show overlap connections</button>
+        <button id="btn-keys" class="btn sm" aria-haspopup="dialog" aria-label="Keyboard shortcuts">⌨ Keys</button>
+      </div>
+      <div id="focus-bar" class="focus-bar" hidden></div>
+      <div id="cy" class="cy" role="application" tabindex="0" aria-roledescription="network graph" aria-label="Interactive network graph. Arrow keys move between nodes, Enter opens a profile, E expands connections, Escape clears. The Index view has the same data as a table." aria-describedby="cy-status"></div>
+      <div id="cy-status" class="sr-only"></div>
+      <div id="empty-map" class="empty" hidden>No entities match these filters. <button class="linkish" data-reset>Reset filters</button></div>
+      <div class="hint">Click a node for its profile · double-click to expand its connections · click a line for the claim · arrow keys to navigate</div>
+    </section>
+
+    <section id="view-money" class="view" hidden role="tabpanel" aria-labelledby="tab-money">
+      <div class="toolbar">
+        <h2 class="lbl inline">Follow the money</h2>
+        <label class="inline-ctl">Min <select id="m-min"><option value="0">any</option><option value="1000">≥ $1k</option><option value="10000">≥ $10k</option><option value="100000">≥ $100k</option><option value="1000000">≥ $1M</option><option value="100000000">≥ $100M</option></select></label>
+        <label class="inline-ctl">Show <select id="m-top"><option value="0">all flows</option><option value="25">top 25</option><option value="50">top 50</option><option value="100">top 100</option><option value="150">top 150</option></select></label>
+        <label class="check inline-ctl"><input id="m-focus" type="checkbox"> only through selected</label>
+        <label class="check inline-ctl"><input id="m-est" type="checkbox"> include estimates, budgets &amp; other</label>
+        <span id="m-summary" class="muted" aria-live="polite"></span>
+      </div>
+      <div id="m-note" class="m-note"></div>
+      <div id="sankey-wrap" class="sankey-wrap"><svg id="sankey" role="img" aria-label="Sankey diagram of money flows"></svg></div>
+      <div id="empty-money" class="empty" hidden>No money flows match these filters.</div>
+      <section id="m-mchains" class="m-chains m-mchains" hidden></section>
+      <section id="m-chains" class="m-chains" hidden></section>
+    </section>
+
+    <section id="view-timeline" class="view" hidden role="tabpanel" aria-labelledby="tab-timeline">
+      <div class="toolbar">
+        <h2 class="lbl inline">Timeline</h2>
+        <label class="inline-ctl">Lanes <select id="t-group"><option value="cat">relationship</option><option value="status">claim status</option></select></label>
+        <label class="inline-ctl">Date of <select id="t-basis"><option value="event">event</option><option value="reported">first reported</option></select></label>
+        <div class="seg" role="group" aria-label="Timeline zoom"><button id="t-zin" aria-label="Zoom in">+</button><button id="t-zout" aria-label="Zoom out">−</button><button id="t-zfit" aria-label="Show all">◎</button></div>
+        <span id="t-summary" class="muted" aria-live="polite"></span>
+      </div>
+      <div class="tl-scroll">
+        <div id="tl-wrap" class="tl-wrap"><svg id="tl" role="img" aria-label="Timeline of dated claims; use the list below for keyboard access"></svg></div>
+        <div class="tl-list-wrap"><h3 class="lbl">Chronological list</h3><ol id="tl-list" class="tl-list"></ol><button id="tl-more" class="btn sm" hidden>Show more</button></div>
+      </div>
+      <div id="empty-tl" class="empty" hidden>No dated claims match these filters.</div>
+    </section>
+
+    <section id="view-networks" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-networks">
+      <div class="toolbar"><h2 class="lbl inline">Networks</h2><span id="n-summary" class="muted" aria-live="polite"></span></div>
+      <p class="help pad">Curated networks (board interlocks, shared funders, coalitions, revolving doors…) carry their own sources and status badge. Auto-detected clusters are computed from link structure and are not findings.</p>
+      <div id="n-list" class="n-grid"></div>
+      <h3 class="lbl pad">Auto-detected clusters</h3>
+      <div id="n-clusters" class="n-grid"></div>
+    </section>
+
+    <section id="view-leads" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-leads">
+      <div class="toolbar">
+        <h2 class="lbl inline">Leads</h2>
+        <label class="inline-ctl">Layer <select id="l-layer"></select></label>
+        <label class="inline-ctl">Province <select id="l-prov"></select></label>
+        <label class="inline-ctl">From <input id="l-from" type="text" size="8" placeholder="YYYY[-MM]" aria-label="Leads from date"></label>
+        <label class="inline-ctl">To <input id="l-to" type="text" size="8" placeholder="YYYY[-MM]" aria-label="Leads to date"></label>
+        <label class="inline-ctl">Amount <select id="l-min"><option value="0">any</option><option value="10000">≥ $10k</option><option value="100000">≥ $100k</option><option value="1000000">≥ $1M</option><option value="100000000">≥ $100M</option></select></label>
+        <span id="l-summary" class="muted" aria-live="polite"></span>
+      </div>
+      <p class="lead-note callout"><strong id="lead-disclaimer"></strong> A lead lines up dated, sourced links in time order: a donation or funding followed by an award, lobbying followed by an award or a bill moving, or a move from government to a firm that then lobbied that body. Each link keeps its own status badge and sources. Leads never carry a verified badge.</p>
+      <div id="l-pats" class="chips small" role="group" aria-label="Pattern types"></div>
+      <div id="l-list" class="l-list"></div>
+    </section>
+
+    <section id="view-tours" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-tours">
+      <div class="toolbar"><h2 class="lbl inline">Guided tours</h2><span id="tr-summary" class="muted"></span></div>
+      <div id="tr-list" class="n-grid"></div>
+    </section>
+
+    <section id="view-overlaps" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-overlaps">
+      <div class="toolbar">
+        <h2 class="lbl inline">Overlaps &amp; cross-check</h2>
+        <label class="inline-ctl">Rank <select id="o-sort"><option value="strength">strongest overlaps</option><option value="partners">most cross-connected entities</option><option value="layers">cross-layer corroboration</option></select></label>
+        <span id="o-summary" class="muted" aria-live="polite"></span>
+      </div>
+      <p class="ov-note callout"><strong>Overlap found by the map, not a reported claim.</strong> Overlaps are worked out automatically from the sourced links: two entities share a funder, a recipient, a person, a network, a place or a source article, or money flows from one to the other through intermediaries. Each overlap lists the sourced links behind it, and those links keep their own badges. Overlaps never count toward money totals. Layer, province, date and status filters in the sidebar apply here too.</p>
+      <div id="o-types" class="chips small" role="group" aria-label="Overlap types"></div>
+      <div class="pathfinder" role="search" aria-labelledby="h-path">
+        <h3 class="lbl" id="h-path">Path finder: shortest chain of sourced links between two entities</h3>
+        <div class="pf-row"><input id="pf-a" list="pf-names" placeholder="From entity…" aria-label="From entity"><button id="pf-swap" class="btn sm" aria-label="Swap">⇄</button><input id="pf-b" list="pf-names" placeholder="To entity…" aria-label="To entity"><button id="pf-go" class="btn sm">Find path</button><button id="pf-clear" class="linkish" hidden>clear</button></div>
+        <label class="check small"><input type="checkbox" id="pf-mvia" data-mvia> Follow money through intermediaries</label>
+        <div id="pf-out" aria-live="polite"></div>
+      </div>
+      <div id="o-list" class="o-list"></div>
+      <div class="pad"><button id="o-more" class="btn sm" hidden>Show more</button></div>
+      <div id="o-corr"></div>
+    </section>
+
+    <section id="view-index" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-index">
+      <div class="toolbar"><h2 class="lbl inline">Index</h2><span id="i-summary" class="muted"></span><span class="spacer"></span><div id="i-pager" class="pager"></div></div>
+      <div class="table-wrap"><table id="index-table" class="index-table"><caption class="sr-only">Entities matching the current filters</caption><thead></thead><tbody></tbody></table></div>
+      <div id="i-nets" class="table-wrap"></div>
+    </section>
+
+    <section id="view-sources" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-sources">
+      <div class="toolbar">
+        <h2 class="lbl inline">Sources</h2>
+        <input id="s-q" type="search" placeholder="Search titles, publishers, record ids…" aria-label="Search sources">
+        <label class="inline-ctl">Kind <select id="s-kind"><option value="all">all</option><option value="wiretap">Wiretap</option><option value="fringeviews">FringeViews</option><option value="bloodmoney">Bl00d Money</option><option value="public_record">public records</option><option value="other">other</option></select></label>
+        <label class="inline-ctl">Layer <select id="s-layer"><option value="all">all</option><option value="wiretap">cited by Wiretap items</option><option value="fringeviews">cited by FringeViews items</option><option value="bloodmoney">cited by Bl00d Money items</option><option value="records">cited by Public records items</option></select></label>
+        <label class="inline-ctl">Sort <select id="s-sort"><option value="date">newest</option><option value="cited">most cited</option></select></label>
+        <span id="s-summary" class="muted" aria-live="polite"></span>
+      </div>
+      <ol id="s-list" class="s-list"></ol>
+      <div class="pad"><button id="s-more" class="btn sm" hidden>Show more</button></div>
+    </section>
+
+    <section id="view-about" class="view scroll" hidden role="tabpanel" aria-labelledby="tab-about">
+      <article class="about">
+        <h1>About this map</h1>
+        <div class="disc-about disc-text" id="about-disclaimer">
+        <p>This map was compiled with the help of AI research assistants from public sources: news reporting, government registries, court records and public filings. Every entry links to its source.</p>
+        <ul>
+          <li>Items marked "reported" have not been independently verified and may contain errors.</li>
+          <li>Labels shown come from the cited source, not from this project.</li>
+          <li>"Leads" show timing patterns in public records and are not evidence of wrongdoing.</li>
+          <li>Nothing here alleges that any person broke the law unless a court or official body has found so.</li>
+        </ul>
+        <p>Spot an error? Use the "Report a correction" link on any page and we'll review it promptly.</p>
+        <p class="small"><button type="button" class="linkish" data-disclaimer>Show this notice again</button></p>
+        </div>
+        <p>This is an interactive map of people, organizations, lobby groups, funders, companies and legislation connected through money and influence in Canada. It is built from the reporting of <strong>Wiretap Media</strong> and <strong>FringeViews</strong>, shown as separate source layers. Where possible, each claim is then checked against official Canadian public records such as the federal Registry of Lobbyists, provincial lobbyist registries, Elections Canada and provincial election finance records, CRA charity returns, and corporate registries.</p>
+        <h2>How to read the badges</h2>
+        <div id="about-badges" class="badge-legend"></div>
+        <p class="callout"><strong>Important:</strong> claims labelled <em>Reported by …</em> (for example <em>Reported by Wiretap</em>, <em>Reported by FringeViews</em> or <em>Reported by The Bureau</em>) come from that outlet's reporting and <strong>have not been independently verified</strong>. A connection on this map does not mean wrongdoing. <em>Not found</em> means a records check came up empty. It does not mean the claim is false, because many relationships never show up in a public registry.</p>
+        <h2>Source layers <span id="about-layer-n" class="muted"></span></h2>
+        <p>The map combines separate <strong>source layers</strong>:</p>
+        <ul id="about-layers" class="about-layers"></ul>
+        <p>Each colour is chosen to stay distinct for colour-blind readers and each chip also carries a letter. The <em>Source layers</em> toggle shows any combination; all layers are on by default. Every claim and every source in a profile shows its layer chip.</p>
+        <p><strong>Seen in N layers.</strong> An item is counted in a layer only if that layer reports the item itself. An entity also counts the layers of its own links. A public-record source attached to a Wiretap claim is <strong>evidence for that claim</strong>; it does not add the Public records layer. Use <em>Seen in at least</em> to show only items found by 2 or more layers (up to the number of layers), and <em>highlight by number of layers</em> to draw a thicker ring on those nodes. The Overlaps view can rank items by cross-layer corroboration. Being seen in several layers means several sources mention an item; it is not proof that a claim is true.</p>
+        <p><strong>Duplicates.</strong> The map does no name or alias matching of its own. The only authority on which ids are the same entity is the reviewed <code>graph/entity_map.json</code>, which mirrors the project's dedupe tool. Every link id is kept.</p>
+        <p>A <em>Reported by …</em> badge means the claim comes from <strong>that source's own reporting and has not been independently verified</strong>. The other badges show the result of a check against public records. Including a layer is not an endorsement of any outlet's conclusions.</p>
+        <h2>Leads</h2>
+        <p>The <em>Leads</em> view lists <strong>timing patterns in public data</strong>: a donation or funding followed by a contract or grant to a related party; lobbying followed by an award or by a bill moving; a person moving from government to a firm that then lobbied that body. Some are flagged by the records collector, others are detected by the map, and each card says which. Every lead is labelled <em>“Timing pattern”</em>: a timing pattern in public data is not evidence of wrongdoing. Leads never carry a verified badge; each link inside it keeps its own badge and sources. Download <a href="data/leads.csv" download>leads.csv</a> or <a href="data/leads.json" download>leads.json</a>.</p>
+        <h2>Legal status (people)</h2>
+        <p>Where a source states a person's legal status, the profile shows a neutral grey chip: <span class="legal-chip">Accused</span> <span class="legal-chip">Charged</span> <span class="legal-chip">Convicted</span> <span class="legal-chip">Acquitted</span> or <span class="legal-chip">Status unknown</span>, copied exactly as the source states it and never upgraded, with the detail, source link and date beside it. For accused or charged people the profile adds: <em>Allegations have not been proven in court.</em> An acquittal is shown just as prominently. No chip means no stated status; it says nothing either way. Legal status is never a graph colour or a ranking factor; the only filter is <em>has stated legal status</em>.</p>
+        <h2>Money, estimates, budgets and other amounts</h2>
+        <p>Amounts are in Canadian dollars. Each amount has a kind: payment, donation, contract, grant, estimate, budget or other. <span class="est">Estimate</span>, <span class="est">Budget</span> and <span class="est">Other amount</span> are <strong>not counted as money that changed hands</strong>. They are tagged and left out of money totals and of Follow the money unless you tick <em>include estimates, budgets &amp; other</em>. Links with no amount are never added up.</p>
+        <h2>Guide: tours, explanations and next steps</h2>
+        <p>The <em>Tours</em> tab plays short guided walks through the map (use ← → or the buttons; Esc exits). <em>How are these connected?</em> finds up to three shortest chains of sourced links between two entities. A claim's <em>Explain this link</em> panel uses the Map Guide's plain-language explanation where there is one, or an automatically generated sentence that is labelled as such. Values shown there are always the live map values. Press <em>Help</em> to replay the first-visit walkthrough.</p>
+        <h2>Glossary</h2>
+        <div id="about-glossary"><p class="muted small">No glossary in this build.</p></div>
+        <h2>Networks and clusters</h2>
+        <p id="about-labels"><strong>Source labels.</strong> Some sources attach their own label to an item. Profiles quote it as “Label used by &lt;source&gt;”, with a link, as a third-party claim, never as a category, colour, filter, facet or network. Labels naming a religion, ethnicity or community identity are never shown on people, and on organizations only when the organization’s own name or summary uses the same term.</p>
+        <p><strong>Networks</strong> are curated groupings, such as board interlocks, shared funders, coalitions, donor circles and revolving doors. Each one has its own sources and status badge. <strong>Auto-detected clusters</strong> are worked out from link structure alone and are always labelled as auto-detected. They are not findings.</p>
+        <h2>Overlaps (cross-check)</h2>
+        <p>The <em>Overlaps</em> view and each profile's Overlaps section list connections <strong>found by the map, not reported claims</strong>: shared funders (with totals), shared recipients, shared people (board interlocks, employment, revolving doors), the same province, membership of the same network, being named in the same source, and money paths of 2–3 hops. Each overlap links to the sourced claims behind it, and those claims keep their own badges. Overlaps have no status badge and never count toward money totals. Strength scores give less weight to hubs that connect to almost everything (for example the Government of Canada). The <em>path finder</em> shows the shortest chain of sourced links between any two entities. The full cross-check report, including likely duplicate entities and large reported payments still to verify, is at <a href="data/crosscheck.json">data/crosscheck.json</a>, and overlaps can be downloaded as <a href="data/overlaps.csv" download>overlaps.csv</a>.</p>
+        <h2>Methodology</h2>
+        <ol>
+          <li><strong>Extraction.</strong> Entities (people in their public roles, organizations, bills…) and the links between them are pulled from Wiretap articles. Every entity and link cites its source article.</li>
+          <li><strong>Records check.</strong> A checker searches the relevant public registries and attaches the record (registry name, record ID, link). It then sets a status: verified, partly verified, not found or contradicted.</li>
+          <li><strong>Dates.</strong> Links can be dated to a year, a month or a day. The date filter keeps a link if its period overlaps the range. You can filter by the event date or by when Wiretap first reported it.</li>
+          <li><strong>Scope.</strong> The map covers public figures and organizations in their public roles only. It includes no home addresses, family details, ethnicity or religion.</li>
+        </ol>
+        <h2>Keyboard</h2>
+        <div id="about-keys"></div>
+        <h2>Data, embedding and citing</h2>
+        <p>Download the full data as <a href="data/graph.json" download>graph.json</a>, <a href="data/leads.json" download>leads.json</a>, <a href="data/entities.csv" download>entities.csv</a>, <a href="data/links.csv" download>links.csv</a>, <a href="data/sources.csv" download>sources.csv</a> or <a href="data/networks.csv" download>networks.csv</a>. Every entity also has a static, shareable page. <button class="linkish" id="about-embed">Embed or cite this map</button>.</p>
+        <h2>Corrections</h2>
+        <p>Each claim links to its sources so you can check them yourself. If you spot an error, use the <em>Report a correction</em> link on the profile or claim; it names the entry (its name and id) so the correction can be matched to it.</p>
+        <p class="muted" id="about-build"></p>
+      </article>
+    </section>
+  </main>
+
+  <aside id="panel" class="panel" aria-label="Details" data-guide="profile">
+    <div class="panel-head">
+      <button id="panel-grip" class="grip only-mobile" aria-label="Expand or collapse details" aria-expanded="false"></button>
+      <h2 id="panel-kicker" class="kicker">Overview</h2>
+      <div class="panel-actions">
+        <button id="btn-print" class="icon-btn wide" title="Print this profile">Print</button>
+        <button id="btn-copy" class="icon-btn wide" title="Copy shareable link">Copy link</button>
+        <button id="btn-close" class="icon-btn" title="Close" aria-label="Close details">✕</button>
+      </div>
+    </div>
+    <div id="panel-body" class="panel-body" tabindex="-1"></div>
+  </aside>
+</div>
+<div id="connect" class="connect" role="dialog" aria-modal="false" aria-labelledby="cf-title" hidden>
+  <div class="cf-head"><h2 id="cf-title">How are these connected?</h2><button type="button" class="icon-btn" id="cf-close" aria-label="Close connection finder">✕</button></div>
+  <div class="pf-row"><input id="cf-a" list="pf-names" placeholder="First entity…" aria-label="First entity"><button id="cf-swap" class="btn sm" aria-label="Swap">⇄</button><input id="cf-b" list="pf-names" placeholder="Second entity…" aria-label="Second entity"><button id="cf-go" class="btn sm accent">Connect</button></div>
+  <label class="check small cf-mvia"><input type="checkbox" id="cf-mvia" data-mvia> Follow money through intermediaries <span class="muted">(money + corporate links only, in date order)</span></label>
+  <div id="cf-out" aria-live="polite"><p class="help">Shows up to 3 shortest chains of sourced links (direction ignored). Every link keeps its status badge.</p></div>
+</div>
+<div id="tour-card" class="tour-card" role="dialog" aria-modal="false" aria-labelledby="tc-title" hidden></div>
+<div id="disc" class="disc" role="dialog" aria-modal="true" aria-labelledby="disc-title" aria-describedby="disc-text" hidden>
+  <div class="disc-card">
+    <h2 id="disc-title">About this map</h2>
+    <div id="disc-text" class="disc-text">
+        <p>This map was compiled with the help of AI research assistants from public sources: news reporting, government registries, court records and public filings. Every entry links to its source.</p>
+        <ul>
+          <li>Items marked "reported" have not been independently verified and may contain errors.</li>
+          <li>Labels shown come from the cited source, not from this project.</li>
+          <li>"Leads" show timing patterns in public records and are not evidence of wrongdoing.</li>
+          <li>Nothing here alleges that any person broke the law unless a court or official body has found so.</li>
+        </ul>
+        <p>Spot an error? Use the "Report a correction" link on any page and we'll review it promptly.</p>
+    </div>
+    <div class="disc-actions"><button type="button" class="btn accent" id="disc-ok">I understand</button></div>
+  </div>
+</div>
+<div id="wt" class="wt" role="dialog" aria-modal="true" aria-labelledby="wt-title" hidden><div id="wt-spot" class="wt-spot" aria-hidden="true"></div><div id="wt-card" class="wt-card"></div></div>
+<datalist id="pf-names"></datalist>
+<dialog id="dlg" class="dlg" aria-labelledby="dlg-title"><form method="dialog"><h2 id="dlg-title"></h2><div id="dlg-body"></div><div class="dlg-actions"><button class="btn" value="close">Close</button></div></form></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<div id="tooltip" class="tooltip" hidden></div>
+<div id="sr-live" class="sr-only" aria-live="polite"></div>
+<noscript><p style="padding:2rem;color:#eee">This map needs JavaScript. Each entity has a static page under <a href="sitemap.xml">sitemap.xml</a>, and the raw data is at <a href="data/graph.json">data/graph.json</a>.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,1676 @@
+{
+ "generated_at": "2026-11-24T10:07:37.797Z",
+ "input": "graph/merged/entities.json",
+ "rule": "Posts, articles, videos, tweets, episodes, podcasts and report documents are sources, never nodes.",
+ "flagged_count": 53,
+ "flagged": [
+  {
+   "id": "ent_event_bill_morneau_fundraiser_in_support_of_sventruenorth_2015",
+   "name": "fundraiser in support of @SvenTrueNorth — Bill Morneau (city not stated, 2015-08-14)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_bill_morneau_fundraiser_in_support_of_sventruenorth_2015__attended__bill_morneau"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_bill_morneau_fundraiser_in_support_of_sventruenorth_2015__attended__bill_morneau (then drop the node)"
+  },
+  {
+   "id": "ent_event_cafreeland_gala_annuel_de_wiit_dc_2019",
+   "name": "gala annuel de @WIIT_DC — Chrystia Freeland (city not stated, 2019-06-13)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_cafreeland_gala_annuel_de_wiit_dc_2019__attended__chrystia_freeland"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_carney_ccbc_speech_beijing_2026_01",
+   "name": "Carney speech to the Canada China Business Council in Beijing (January 2026)",
+   "type": "event",
+   "layer": "samcooper",
+   "layers": [
+    "samcooper"
+   ],
+   "why": [
+    "summary describes the node itself as a media item"
+   ],
+   "links": [
+    "lnk_sc_ce6888a69d8c",
+    "lnk_sc_924656529169"
+   ],
+   "suggested_fix": "convert to a source on links lnk_sc_ce6888a69d8c, lnk_sc_924656529169 (then drop the node)"
+  },
+  {
+   "id": "ent_event_cibpatoronto_gala_de_cibpatoronto_2019",
+   "name": "gala de @CIBPAtoronto — Chrystia Freeland (city not stated, 2019-10-05)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_cibpatoronto_gala_de_cibpatoronto_2019__attended__chrystia_freeland",
+    "lnk_ev_cibpatoronto_gala_de_cibpatoronto_2019__hosted__cibpatoronto"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 2 link(s) to the event"
+  },
+  {
+   "id": "ent_event_deepakanandmpp_fundraiser_for_parkinsoncanada_2023",
+   "name": "fundraiser for @ParkinsonCanada — Deepak Anand (city not stated, 2023-09-10)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_deepakanandmpp_fundraiser_for_parkinsoncanada_2023__attended__deepak_anand"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_deepakanandmpp_fundraiser_for_parkinsoncanada_2023__attended__deepak_anand (then drop the node)"
+  },
+  {
+   "id": "ent_event_francoislegault_gala_des_grands_quebecois_2023_de_la_cciquebec_2023",
+   "name": "Gala des Grands Québécois 2023 de la @cciquebec — François Legault (city not stated, 2023-05-19)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_francoislegault_gala_des_grands_quebecois_2023_de_la_cciquebec_2023__attended__francois_legault"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_francoislegault_gala_des_jps_hsd_2019",
+   "name": "Gala des @JPS_HSD — François Legault (city not stated, 2019-02-14)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_francoislegault_gala_des_jps_hsd_2019__attended__francois_legault"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_gbobbysidhu_fundraiser_for_the_ontariopcparty_2016",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (city not stated, 2016-12-30)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_gbobbysidhu_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown",
+    "lnk_ev_gbobbysidhu_fundraiser_for_the_ontariopcparty_2016__hosted__gbobbysidhu"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_gbobbysidhu_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown, lnk_ev_gbobbysidhu_fundraiser_for_the_ontariopcparty_2016__hosted__gbobbysidhu (then drop the node)"
+  },
+  {
+   "id": "ent_event_harjitsajjan_gala_des_prix_smallbusinessbc_2023",
+   "name": "gala des prix @SmallBusinessBC — Harjit Sajjan (city not stated, 2023-06-03)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_harjitsajjan_gala_des_prix_smallbusinessbc_2023__attended__harjit_sajjan"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_hispaniccanada_gala_du_hispaniccanada_2024",
+   "name": "Gala du @hispaniccanada — Arif Virani (city not stated, 2024-10-25)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_hispaniccanada_gala_du_hispaniccanada_2024__attended__arif_virani",
+    "lnk_ev_hispaniccanada_gala_du_hispaniccanada_2024__hosted__hispaniccanada"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 2 link(s) to the event"
+  },
+  {
+   "id": "ent_event_isabellecharest_gala_de_la_mi_temps_de_soccerquebec_2019",
+   "name": "Gala de la Mi-Temps de @SoccerQuebec — Isabelle Charest (city not stated, 2019-11-24)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_isabellecharest_gala_de_la_mi_temps_de_soccerquebec_2019__attended__isabelle_charest"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_jimwatsonottawa_gala_du_rgacapitale_2021",
+   "name": "gala du @RGAcapitale — Jim Watson (city not stated, 2021-10-01)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_jimwatsonottawa_gala_du_rgacapitale_2021__attended__jim_watson"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_jkenney_denim_fundraiser_for_glennvandijkens_alberta_ucp_2018",
+   "name": "Denim” fundraiser for @GlennVanDijken’s @Alberta_UCP — Jason Kenney (city not stated, 2018-11-15)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_jkenney_denim_fundraiser_for_glennvandijkens_alberta_ucp_2018__attended__jason_kenney"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_jkenney_denim_fundraiser_for_glennvandijkens_alberta_ucp_2018__attended__jason_kenney (then drop the node)"
+  },
+  {
+   "id": "ent_event_jyakabuskimpp_fundraiser_for_the_ontariopcparty_2016",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Toronto, 2016-12-13)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_jyakabuskimpp_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown",
+    "lnk_ev_jyakabuskimpp_fundraiser_for_the_ontariopcparty_2016__hosted__jyakabuskimpp"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_jyakabuskimpp_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown, lnk_ev_jyakabuskimpp_fundraiser_for_the_ontariopcparty_2016__hosted__jyakabuskimpp (then drop the node)"
+  },
+  {
+   "id": "ent_event_maccamarkham_gala_annuel_de_bourses_de_maccamarkham_2024",
+   "name": "Gala annuel de bourses de @maccamarkham — Ahmed Hussen (city not stated, 2024-11-10)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_maccamarkham_gala_annuel_de_bourses_de_maccamarkham_2024__attended__ahmed_hussen",
+    "lnk_ev_maccamarkham_gala_annuel_de_bourses_de_maccamarkham_2024__hosted__maccamarkham"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 2 link(s) to the event"
+  },
+  {
+   "id": "ent_event_nsia_washington_post_background_briefing_2024",
+   "name": "NSIA Drouin and Deputy Minister Morrison brief The Washington Post on background (2024-10-13)",
+   "type": "event",
+   "layer": "records",
+   "layers": [
+    "records"
+   ],
+   "why": [
+    "id contains a media token (post)"
+   ],
+   "links": [
+    "lnk_nsc_db4483de2755",
+    "lnk_nsc_5127aaa9a5c0"
+   ],
+   "suggested_fix": "convert to a source on links lnk_nsc_db4483de2755, lnk_nsc_5127aaa9a5c0 (then drop the node)"
+  },
+  {
+   "id": "ent_event_pablorodriguez_gala_des_33es_prix_gemeaux_2018",
+   "name": "Gala des 33es @Prix_GEMEAUX — Pablo Rodriguez (city not stated, 2018-09-17)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_pablorodriguez_gala_des_33es_prix_gemeaux_2018__attended__pablo_rodriguez"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_pablorodriguez_gala_des_prixggas_2023",
+   "name": "gala des @PrixGGAS — Pablo Rodriguez (city not stated, 2023-05-28)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_pablorodriguez_gala_des_prixggas_2023__attended__pablo_rodriguez"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_patrickbrownont_chief_duraiappahs_2nd_annual_peel_police_chiefs_ga_2023",
+   "name": "Chief Duraiappah’s 2nd Annual Peel Police Chief’s Gala in support of @ChiefNish — Patrick Brown (city not stated, 2023-10-27)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_chief_duraiappahs_2nd_annual_peel_police_chiefs_ga_2023__attended__patrick_brown"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016",
+   "name": "fundraiser for the @OntarioPCParty — Michael Parsa, Patrick Brown (city not stated, 2016-12-17)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016__attended__michael_parsa",
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016__attended__michael_parsa, lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_11_30",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (city not stated, 2016-11-30)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_11_30__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_11_30__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_01",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Toronto, 2016-12-01)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_01__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_01__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_02",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (city not stated, 2016-12-02)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_02__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_02__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_08",
+   "name": "fundraiser for the @OntarioPCParty — Deepak Anand, Patrick Brown (Mississauga, 2016-12-08)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_08__attended__deepak_anand",
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_08__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_08__attended__deepak_anand, lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_08__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Mississauga, 2016-12-11)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11_3__attended__patrick_brown",
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11_3__attended__patrick_brown, lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11_2",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (city not stated, 2016-12-11)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11_2__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_11_2__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_15",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Toronto, 2016-12-15)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_15__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_15__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Richmond Hill, 2016-12-18)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18_2",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Mississauga, 2016-12-18)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18_2__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_18_2__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_19",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Toronto, 2016-12-19)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_19__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_19__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_24",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Markham, 2016-12-24)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_24__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_24__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_28",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (Markham, 2016-12-28)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_28__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_28__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_29",
+   "name": "fundraiser for the @OntarioPCParty — Patrick Brown (city not stated, 2016-12-29)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_29__attended__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_the_ontariopcparty_2016_12_29__attended__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_fundraiser_for_victimservpeel_2026",
+   "name": "fundraiser for @VictimServPeel — Patrick Brown (city not stated, 2026-10-06)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_fundraiser_for_victimservpeel_2026__spoke_at__patrick_brown"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_patrickbrownont_fundraiser_for_victimservpeel_2026__spoke_at__patrick_brown (then drop the node)"
+  },
+  {
+   "id": "ent_event_patrickbrownont_gala_of_iffsa_iffsatoronto_2024",
+   "name": "gala of IFFSA. @IFFSAToronto — Patrick Brown (city not stated, 2024-10-12)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_patrickbrownont_gala_of_iffsa_iffsatoronto_2024__spoke_at__patrick_brown"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_prabsarkaria_tps_police_chiefs_gala_in_support_of_vstoronto_2018",
+   "name": "TPS Police Chief’s Gala in support of @VSToronto — Prabmeet Sarkaria (city not stated, 2018-11-02)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_prabsarkaria_tps_police_chiefs_gala_in_support_of_vstoronto_2018__attended__prabmeet_sarkaria"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_project_veritas_google_video_removed_2019",
+   "name": "Project Veritas video on Google removed from YouTube (June 2019)",
+   "type": "event",
+   "layer": "fringeviews",
+   "layers": [
+    "fringeviews"
+   ],
+   "why": [
+    "id contains a media token (video)"
+   ],
+   "links": [
+    "lnk_fv_fdc633e6249c",
+    "lnk_fv_72a6d46988e2",
+    "lnk_fv_6def0214080b"
+   ],
+   "suggested_fix": "convert to a source on links lnk_fv_fdc633e6249c, lnk_fv_72a6d46988e2, lnk_fv_6def0214080b (then drop the node)"
+  },
+  {
+   "id": "ent_event_ralphgoodale_banquet_of_the_ukrainian_cndn_congress_reginaucc_2016",
+   "name": "banquet of the Ukrainian Cndn Congress @ReginaUCC — Ralph Goodale (Regina, 2016-10-01)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_ralphgoodale_banquet_of_the_ukrainian_cndn_congress_reginaucc_2016__attended__ralph_goodale"
+   ],
+   "suggested_fix": "convert to a source on links lnk_ev_ralphgoodale_banquet_of_the_ukrainian_cndn_congress_reginaucc_2016__attended__ralph_goodale (then drop the node)"
+  },
+  {
+   "id": "ent_event_rubysahotalib_gala_for_idrf_2017",
+   "name": "Gala for @IDRF — Ruby Sahota (city not stated, 2017-11-18)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_rubysahotalib_gala_for_idrf_2017__spoke_at__ruby_sahota"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_stevenmackinnon_gala_des_gens_daffaires_de_la_ccgatineau_2018",
+   "name": "Gala des gens d’affaires de la @CCGatineau — Steven MacKinnon (Gatineau, 2018-11-25)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_stevenmackinnon_gala_des_gens_daffaires_de_la_ccgatineau_2018__attended__steven_mackinnon"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_theicai_gala_annuel_de_theicai_2018",
+   "name": "gala annuel de @theicai — Andrew Scheer, Patrick Brown (Toronto, 2018-11-19)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_theicai_gala_annuel_de_theicai_2018__attended__andrew_scheer",
+    "lnk_ev_theicai_gala_annuel_de_theicai_2018__spoke_at__patrick_brown",
+    "lnk_ev_theicai_gala_annuel_de_theicai_2018__hosted__theicai"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 3 link(s) to the event"
+  },
+  {
+   "id": "ent_event_val_plante_gala_de_la_gouvfeminin_2019",
+   "name": "gala de La @GouvFeminin — Valérie Plante (city not stated, 2019-09-26)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_val_plante_gala_de_la_gouvfeminin_2019__attended__valerie_plante"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_val_plante_gala_de_reconnaissance_du_gouvfeminin_2017",
+   "name": "Gala de reconnaissance du @GouvFeminin — Valérie Plante (city not stated, 2017-09-14)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_val_plante_gala_de_reconnaissance_du_gouvfeminin_2017__attended__valerie_plante"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_val_plante_gala_du_cremtl_2020",
+   "name": "Gala du @cremtl — Valérie Plante (Montreal, 2020-10-08)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_val_plante_gala_du_cremtl_2020__attended__valerie_plante"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_event_yfblanchet_gala_des_patriotes_organise_par_le_rpsquebec_2024",
+   "name": "Gala des Patriotes organisé par le @RPSQuebec — Yves-François Blanchet (city not stated, 2024-05-21)",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "name looks like an @handle post / platform item"
+   ],
+   "links": [
+    "lnk_ev_yfblanchet_gala_des_patriotes_organise_par_le_rpsquebec_2024__attended__yves_francois_blanchet"
+   ],
+   "suggested_fix": "turn into an event (type \"event\" with date, place and sources); re-point its 1 link(s) to the event"
+  },
+  {
+   "id": "ent_organization_royal_commission_on_chinese_immigration",
+   "name": "Royal Commission on Chinese Immigration (1885 report)",
+   "type": "organization",
+   "layer": "immigration",
+   "layers": [
+    "immigration"
+   ],
+   "why": [
+    "summary describes the node itself as a media item"
+   ],
+   "links": [],
+   "suggested_fix": "convert to a source on the entities/links that cite it (no links found)"
+  },
+  {
+   "id": "ent_person_ian_bradbury",
+   "name": "Ian Bradbury",
+   "type": "person",
+   "layer": "samcooper",
+   "layers": [
+    "samcooper"
+   ],
+   "why": [
+    "summary describes the node itself as a media item"
+   ],
+   "links": [],
+   "suggested_fix": "convert to a source on the entities/links that cite it (no links found)"
+  },
+  {
+   "id": "ent_person_michael_lima",
+   "name": "Michael Lima",
+   "type": "person",
+   "layer": "samcooper",
+   "layers": [
+    "samcooper"
+   ],
+   "why": [
+    "summary describes the node itself as a media item"
+   ],
+   "links": [],
+   "suggested_fix": "convert to a source on the entities/links that cite it (no links found)"
+  },
+  {
+   "id": "ent_person_samira_mohyeddin",
+   "name": "Samira Mohyeddin",
+   "type": "person",
+   "layer": "breach",
+   "layers": [
+    "breach"
+   ],
+   "why": [
+    "summary describes the node itself as a media item"
+   ],
+   "links": [],
+   "suggested_fix": "convert to a source on the entities/links that cite it (no links found)"
+  },
+  {
+   "id": "ent_theory_covenantcanada_carney_maxwell_video",
+   "name": "@CovenantCanada video: Carney, Maxwell, Epstein and related insinuations (X, 2026-11-22)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "id contains a media token (video)",
+    "summary describes the node itself as a media item",
+    "unusual type \"theory\""
+   ],
+   "links": [
+    "lnk_cc2_e0a53b7ec891ae6d",
+    "lnk_cc2_eaffebb6a052c644",
+    "lnk_cc2_00a98678dc104ee1",
+    "lnk_cc2_2a17cf341e274b4c",
+    "lnk_cc2_260a77c054a73425",
+    "lnk_cc2_dbaf05254ba71fda",
+    "lnk_cc2_d2e0045be9cb1fe0",
+    "lnk_cc2_316ddd41564d783b",
+    "lnk_cc2_078ac70679be86ce"
+   ],
+   "suggested_fix": "convert to a source on links lnk_cc2_e0a53b7ec891ae6d, lnk_cc2_eaffebb6a052c644, lnk_cc2_00a98678dc104ee1, lnk_cc2_2a17cf341e274b4c, lnk_cc2_260a77c054a73425, lnk_cc2_dbaf05254ba71fda, lnk_cc2_d2e0045be9cb1fe0, lnk_cc2_316ddd41564d783b, lnk_cc2_078ac70679be86ce (then drop the node)"
+  },
+  {
+   "id": "ent_theory_covenantcanada_trudeau_pickton_video",
+   "name": "@CovenantCanada video: Trudeau–Pickton, Epstein and ports insinuations (X, 2026-11-07)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "id contains a media token (video)",
+    "summary describes the node itself as a media item",
+    "unusual type \"theory\""
+   ],
+   "links": [
+    "lnk_b1_341589cd7016ff32",
+    "lnk_b1_da7d91dbd78f8032",
+    "lnk_b1_491b556044f8f8f6",
+    "lnk_b1_09b7abd84f75d0d0",
+    "lnk_b1_e262daf46c3c5e62",
+    "lnk_b1_e63e286285c002d4"
+   ],
+   "suggested_fix": "convert to a source on links lnk_b1_341589cd7016ff32, lnk_b1_da7d91dbd78f8032, lnk_b1_491b556044f8f8f6, lnk_b1_09b7abd84f75d0d0, lnk_b1_e262daf46c3c5e62, lnk_b1_e63e286285c002d4 (then drop the node)"
+  },
+  {
+   "id": "ent_theory_promoter_andrecorbeil_credited_for_the_related_david_hawkins_video_mentioned_in_the_descr",
+   "name": "AndreCorbeil (credited for the related David Hawkins video mentioned in the description)",
+   "type": "person",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "id contains a media token (video)"
+   ],
+   "links": [
+    "lnk_25b283a61dbb6128"
+   ],
+   "suggested_fix": "convert to a source on links lnk_25b283a61dbb6128 (then drop the node)"
+  },
+  {
+   "id": "ent_theory_webb_palantir_cia_front",
+   "name": "Webb X label: Palantir as CIA front company",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "summary describes the node itself as a media item",
+    "unusual type \"theory\""
+   ],
+   "links": [
+    "lnk_807f626555fa930a",
+    "lnk_3a4c9abbba69894b"
+   ],
+   "suggested_fix": "convert to a source on links lnk_807f626555fa930a, lnk_3a4c9abbba69894b (then drop the node)"
+  }
+ ],
+ "reviewed": [
+  {
+   "id": "ent_company_national_post",
+   "name": "National Post",
+   "type": "company",
+   "layer": "fringeviews",
+   "layers": [
+    "fringeviews"
+   ],
+   "why": [
+    "id contains a media token (post)"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_cp_2026_08_23_008",
+   "name": "Let's wish Kerry-Lynne Findlay, the new leader of the BC Conservative Party, a hearty Mazal Tov!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_gp_2025_12_14_003",
+   "name": "End-of-Tour Rally: Fight the Oligarchs!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2019_05_11_016",
+   "name": "Spencer's Get Your Art On!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2019_07_11_036",
+   "name": "Victoria-Swan Lake Summer Splash!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2019_07_20_038",
+   "name": "Thank you Korleen!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2019_08_05_043",
+   "name": "Art Rocks!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2020_09_01_035",
+   "name": "Aww Shucks, Jen is Cooking!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2020_09_10_040",
+   "name": "Reach for the Top... of Beacon Hill!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2021_06_26_015",
+   "name": "Let's Get Quizzy!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2021_07_14_017",
+   "name": "Katrina's 38th for $38!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2022_04_24_008",
+   "name": "Come Out and Picnic!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2022_07_12_032",
+   "name": "Dinner's On Us!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2022_10_24_043",
+   "name": "Thank you Carole!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2023_02_21_001",
+   "name": "An Evening with Premier Eby and Lana Popham!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2023_04_29_021",
+   "name": "Happy Birthday Anne!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2024_11_22_084",
+   "name": "Celebrate Rohini Arora, MLA for Burnaby East!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2025_07_21_026",
+   "name": "Songs for the People!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2025_11_06_056",
+   "name": "Triva With MLA Beare!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2025_11_22_059",
+   "name": "Kootenay Monashee MLA Burger night!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2025_12_10_064",
+   "name": "Terry & Spencers Spirit of the Season Soiree!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2026_03_21_012",
+   "name": "Building Homes to make our community stronger!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2026_05_09_023",
+   "name": "Songs for the People with Spencer!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_bc_sff_ndp_2026_05_12_025",
+   "name": "Jeopard-EBY!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_rcmp_no_evidence_india_statement_2026",
+   "name": "RCMP Deputy Commissioner says 'no evidence' Indian officials involved in Operation Hard Ball (July 2026)",
+   "type": "event",
+   "layer": "records",
+   "layers": [
+    "records"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_event_rfe_liberal_mississauga_2023_02_28_272",
+   "name": "10 years of elected office celebration!",
+   "type": "event",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_organization_bc_green_party_candidate_robert_stupka",
+   "name": "\"BC Green Party, Candidate, Robert Stupka\"",
+   "type": "organization",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_organization_bc_ministry_of_post_secondary_education_and_future_skills",
+   "name": "Government of British Columbia – Ministry of Post-Secondary Education and Future Skills",
+   "type": "organization",
+   "layer": "records",
+   "layers": [
+    "records"
+   ],
+   "why": [
+    "id contains a media token (post)"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_organization_canada_post_corporation",
+   "name": "Canada Post Corporation",
+   "type": "organization",
+   "layer": "records",
+   "layers": [
+    "records"
+   ],
+   "why": [
+    "id contains a media token (post)"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_organization_post_secondary_employers_association",
+   "name": "Post-Secondary Employers' Association",
+   "type": "organization",
+   "layer": "records",
+   "layers": [
+    "records"
+   ],
+   "why": [
+    "id contains a media token (post)"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_organization_sonia_furstenau_adam_olsen",
+   "name": "\"Sonia Furstenau, Adam Olsen\"",
+   "type": "organization",
+   "layer": "events",
+   "layers": [
+    "events"
+   ],
+   "why": [
+    "headline-like name"
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_billionaire_pedophile_nexus_miller_nygard",
+   "name": "Epstein 'entered a pre-existing nexus of rich perverts' including Canada's Robert Miller and Peter Nygard (Ryan Dawson)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_bronfman_nxivm_epstein_circle",
+   "name": "NXIVM, the Bronfmans, Branson and Epstein as one 'sex cult' network (Ryan Dawson)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_carney_china_brookfield_nepean_seat",
+   "name": "Carney's China ties, Brookfield's New York move and the Nepean seat (Hillier)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_carney_pension_transition_fund_carried_interest",
+   "name": "Carney used public pensions and the Canada Growth Fund to enrich Brookfield and himself (Hillier)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_covid_trigger_global_takeover_carney",
+   "name": "'Guns, gags and debt': COVID as the trigger for a coordinated takeover, with Carney as 'architect' (Hillier)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_epstein_client_list_dawson",
+   "name": "Ryan Dawson's compiled 'Epstein client list' and claim that many 'perpetrators' were quietly jailed or paid out",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_epstein_israeli_intelligence_asset",
+   "name": "Epstein worked for Israeli intelligence, and 'Israel saved' him from the Florida case (Ryan Dawson)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_epstein_mega_group_financier_network",
+   "name": "Epstein as part of a Wexner-Bronfman 'MEGA group' financing network (Ryan Dawson)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_eurasia_shadow_cabinet_polling_election",
+   "name": "Eurasia Group 'shadow cabinet', pollsters and an engineered 2025 election (Hillier)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_freeland_abstract_family_influence",
+   "name": "Hillier: abstract Freeland relationship-influence allegation",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_freeland_investment_allegation",
+   "name": "Hillier: Freeland investment allegation",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_anita_anand",
+   "name": "Hillier/letter allegation — Anita Anand",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_arif_virani",
+   "name": "Hillier/letter allegation — Arif Virani",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_bill_blair",
+   "name": "Hillier/letter allegation — Bill Blair",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_chrystia_freeland",
+   "name": "Hillier/letter allegation — Chrystia Freeland",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_david_mcguinty",
+   "name": "Hillier/letter allegation — David McGuinty",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_dominic_leblanc",
+   "name": "Hillier/letter allegation — Dominic LeBlanc",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_marco_mendicino",
+   "name": "Hillier/letter allegation — Marco Mendicino",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_melanie_joly",
+   "name": "Hillier/letter allegation — Mélanie Joly",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_hillier_nine_ministers_steven_mackinnon",
+   "name": "Hillier/letter allegation — Steven MacKinnon",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_krnews_carney_most_corrupt_pm",
+   "name": "KR News: 'Most corrupt Prime Minister in Canadian history' (David Krayden, 2026-03-22)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_melanie_sask_brookfield_moves_first",
+   "name": "'Remarkable Coincidences On A Schedule' (Melanie in Saskatchewan, 2026-03-18)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_singh_traitors_nsicop_2024",
+   "name": "Theory: NSICOP's classified report shows MPs knowingly helped foreign states ('traitors')",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_trudeau_ritual_abuse_mkultra",
+   "name": "Justin Trudeau 'ritual abuse' / CIA MKUltra mind-control theory (Rumble video v219w1u)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_webb_canada_pure_drug_licence",
+   "name": "ONUB: Richler allegation on Canada Pure Drug Company licence",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_webb_carney_hsbc_boe",
+   "name": "Webb claim: Mark Carney as BoE governor failed to pursue HSBC over cartel money laundering",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_webb_digital_id_repackage",
+   "name": "Webb on Glenn Beck: digital ID repackaged via private vendors / interoperable standards",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_webb_edgar_bronfman_bony_mogilevich",
+   "name": "Webb narrative: Edgar Bronfman / Bank of New York / Mogilevich financial interests",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_webb_permindex_montreal_funding",
+   "name": "ONUB narrative: Montreal funds via Permindex for Operation Mattei",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_westinghouse_nuclear_conflict_carney_brookfield",
+   "name": "'Nuclear conflict of interest': Brookfield's Westinghouse deal, Ukraine aid and Freeland (Hillier)",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  }
+ ]
+}
