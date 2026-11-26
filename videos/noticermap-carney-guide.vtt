@@ -1,0 +1,336 @@
+WEBVTT
+
+NOTE Music: "The Escalation" by Kevin MacLeod (incompetech.com), CC BY 3.0.
+
+1
+00:00:00.704 --> 00:00:04.835
+NoticerMap. Every feature, with Mark Carney as the example.
+
+2
+00:00:05.892 --> 00:00:11.282
+Start with the Tours button: guided walks through the map, node by node, with sources.
+
+3
+00:00:11.736 --> 00:00:17.723
+The Tours page lists every guided walk, each with its number of steps and a Start tour button.
+
+4
+00:00:21.196 --> 00:00:27.766
+The notice opens on a first visit, and the About this map link at the bottom of the sidebar reopens it.
+
+5
+00:00:27.766 --> 00:00:36.250
+It says what the map is: compiled with the help of AI research assistants from public sources, with every entry linked to its source.
+
+6
+00:00:37.707 --> 00:00:51.332
+And what it is not: items marked reported are not independently verified, leads are not evidence of wrongdoing, and nothing alleges that anyone broke the law unless a court or official body has found so.
+
+7
+00:00:52.790 --> 00:00:55.172
+Click I understand to accept the notice.
+
+8
+00:00:57.128 --> 00:01:01.750
+Back at the top, the How to use button, under the logo, starts the walkthrough.
+
+9
+00:01:03.208 --> 00:01:06.296
+It has thirteen steps. Step one is Search:
+
+10
+00:01:06.296 --> 00:01:10.561
+type a name, group, bill or record number, or press slash.
+
+11
+00:01:12.022 --> 00:01:15.896
+Next. Step two, Search filters, explains each filter.
+
+12
+00:01:15.896 --> 00:01:19.331
+Step three, Source layers, explains the layers.
+
+13
+00:01:19.331 --> 00:01:22.255
+Skip closes the walkthrough at any time.
+
+14
+00:01:25.350 --> 00:01:32.553
+Along the top: Map, Tours, Networks, Follow the money, Timeline, Leads, Overlaps, Index, Sources, About.
+
+15
+00:01:33.009 --> 00:01:37.144
+Search and filters on the left. Interactive map in the middle.
+
+16
+00:01:37.144 --> 00:01:38.612
+Profiles on the right.
+
+17
+00:01:39.069 --> 00:01:47.958
+Search everything: networks, lobby groups, NGOs, names, places, dates, aliases, bills and records. Press slash. Type Carney.
+
+18
+00:01:48.414 --> 00:01:52.823
+Results show their source layers. For example, open Mark Carney.
+
+19
+00:01:54.051 --> 00:01:58.737
+Here Carney is the centre node. Lines are the claims linked to Carney.
+
+20
+00:01:59.202 --> 00:02:02.201
+Click any node for its profile. Mark Carney:
+
+21
+00:02:02.201 --> 00:02:09.290
+Prime Minister of Canada, and former Governor of the Bank of Canada and Governor of the Bank of England.
+
+22
+00:02:09.290 --> 00:02:13.516
+Badges name the source layers. Here there are 105 connections:
+
+23
+00:02:13.516 --> 00:02:18.629
+39 verified in public records, 1 partly verified, 65 reported by an outlet.
+
+24
+00:02:19.090 --> 00:02:21.948
+Scroll for sources, money and every claim.
+
+25
+00:02:21.948 --> 00:02:25.962
+A reported badge means only that the source outlet said it.
+
+26
+00:02:25.962 --> 00:02:27.936
+There are five labels in all.
+
+27
+00:02:28.393 --> 00:02:31.653
+Layouts: Network, Rings, Province, Clusters.
+
+28
+00:02:31.653 --> 00:02:37.730
+Names toggles labels. Line colour switches between status, relationship and layer.
+
+29
+00:02:51.395 --> 00:02:58.428
+Hide hubs thins crowded nodes. Scroll to zoom, drag to pan, double-click a node to expand it.
+
+30
+00:03:03.471 --> 00:03:10.482
+Now the filters. The walkthrough has a Search filters step that explains each one, with a More filters section.
+
+31
+00:03:17.542 --> 00:03:23.849
+Topics first. Click Carney: 113 entities and 197 claims.
+
+32
+00:03:24.878 --> 00:03:28.928
+Filters stack. Across groups, an item must pass every one.
+
+33
+00:03:28.928 --> 00:03:31.932
+Inside a group, any chip left on is enough.
+
+34
+00:03:32.387 --> 00:03:37.372
+Claim status: click Verified. 71 entities, 79 claims.
+
+35
+00:03:38.788 --> 00:03:41.713
+Add Type: Person. 5 entities, 3 claims.
+
+36
+00:03:41.713 --> 00:03:44.114
+Every filter narrows the result.
+
+37
+00:03:44.646 --> 00:03:48.927
+To widen, click another chip. Organization joins back in.
+
+38
+00:03:49.381 --> 00:03:53.696
+Province keeps jurisdictions. Relationship groups claims:
+
+39
+00:03:53.696 --> 00:03:59.678
+money, influence, role and more. Lobbying limits lobbied and lobbied-on claims.
+
+40
+00:04:00.133 --> 00:04:09.257
+Also: date range, money only, legal status, and Outside the norm, a comparison to a sourced benchmark, not a finding of wrongdoing.
+
+41
+00:04:09.257 --> 00:04:12.392
+Seen in at least asks for two or more layers.
+
+42
+00:04:12.847 --> 00:04:15.962
+Search finds matches without narrowing the map.
+
+43
+00:04:15.962 --> 00:04:19.410
+Hits your filters hide are marked hidden by filters.
+
+44
+00:04:19.867 --> 00:04:22.441
+Reset filters clears everything at once.
+
+45
+00:04:27.820 --> 00:04:35.109
+Source layers choose whose reporting you see, including Immigration, and People and boards.
+
+46
+00:04:35.109 --> 00:04:39.034
+Turn off Public records: 57 entities, 112 claims.
+
+47
+00:04:41.274 --> 00:04:44.077
+Theories are separate, and off by default.
+
+48
+00:04:44.077 --> 00:04:48.349
+Tick Theories, under People, to include them, marked unverified.
+
+49
+00:04:48.806 --> 00:04:55.007
+The Theories layer holds claims and connections from sources not yet backed by public records.
+
+50
+00:04:56.062 --> 00:05:02.113
+Tick it. A notice says: unverified, reported claims only, no wrongdoing alleged.
+
+51
+00:05:03.170 --> 00:05:07.330
+For Carney, 14 theory items join the map:
+
+52
+00:05:07.330 --> 00:05:13.723
+113 entities become 127. Claims and money totals do not change.
+
+53
+00:05:14.835 --> 00:05:21.676
+His profile lists the theories that name him, each marked unverified, with a records check beside it.
+
+54
+00:05:22.732 --> 00:05:29.914
+Why it matters: you can see what is claimed, check it against the records, and spot leads to investigate.
+
+55
+00:05:29.914 --> 00:05:33.882
+Over time, a theory can be tested, confirmed or ruled out.
+
+56
+00:05:34.938 --> 00:05:38.408
+Untick it, and the map returns to the documented links.
+
+57
+00:05:43.098 --> 00:05:53.048
+Networks lists 33 curated groupings, such as board interlocks and shared funders, each with its own sources and status badge.
+
+58
+00:05:53.048 --> 00:05:57.427
+The 679 auto-detected clusters are hints, not findings.
+
+59
+00:05:59.887 --> 00:06:02.437
+Follow the money. The Carney selection:
+
+60
+00:06:02.437 --> 00:06:05.576
+two recorded flows, twenty-one thousand dollars.
+
+61
+00:06:06.032 --> 00:06:09.768
+Choose Mark Carney, tick only through selected:
+
+62
+00:06:09.768 --> 00:06:16.049
+one flow, 1,750 dollars, a donation from Bruce Flatt, labelled partly verified.
+
+63
+00:06:16.049 --> 00:06:19.230
+Estimates stay out unless you tick them.
+
+64
+00:06:19.689 --> 00:06:28.087
+Timeline: 182 dated claims, in lanes by relationship or status, by event date or first reported.
+
+65
+00:06:33.763 --> 00:06:36.833
+Leads are timing patterns in public data:
+
+66
+00:06:36.833 --> 00:06:40.427
+a question to check, not evidence of wrongdoing.
+
+67
+00:06:40.427 --> 00:06:42.524
+Timing alone shows no cause.
+
+68
+00:06:42.980 --> 00:06:48.411
+For Carney: Davos, and a Brookfield pact review at Davos, two days apart.
+
+69
+00:06:48.411 --> 00:06:50.866
+Leads are not fully verified yet.
+
+70
+00:06:51.324 --> 00:06:56.793
+Overlaps are links the map found: shared funders, people, places, sources.
+
+71
+00:06:56.793 --> 00:07:01.301
+84 match the Carney selection. Never counted in money totals.
+
+72
+00:07:01.762 --> 00:07:04.640
+Index lists matching entities, sortable.
+
+73
+00:07:04.640 --> 00:07:10.181
+Sources, listed with search. About explains the badges, method and downloads.
+
+74
+00:07:22.628 --> 00:07:27.756
+How are these connected shows up to three shortest chains of sourced links.
+
+75
+00:07:27.756 --> 00:07:35.826
+Carney to Freeland: this shows one chain runs through the Government of Canada, both links verified in public records.
+
+76
+00:07:41.421 --> 00:07:51.462
+Note windows, top right. Drag a node into the note window to paste the information from a search result or profile title, or use Copy to note.
+
+77
+00:07:54.413 --> 00:08:00.784
+Notes stay in this browser only. You can Export as markdown, text or JSON files.
+
+78
+00:08:02.389 --> 00:08:08.142
+Every entity has its own page: each connection, with date, amount, source and status.
+
+79
+00:08:14.603 --> 00:08:20.198
+If you see a mistake or have a suggestion, report a correction on any claim:
+
+80
+00:08:20.198 --> 00:08:22.553
+email, or a public GitHub issue.
+
+81
+00:08:48.731 --> 00:08:52.969
+If you get a little lost, the How to use button will replay the walkthrough.
+
+82
+00:08:56.032 --> 00:09:03.663
+Enjoy this investigative open source tool to help people expose the truth that is being kept from we the people.
+
+83
+00:09:03.663 --> 00:09:10.681
+May we the people all enjoy health, happiness and prosperity against the odds of these darkening times.
+

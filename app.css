@@ -18,12 +18,12 @@ code{font-family:var(--mono);font-size:.92em;background:#1a1d22;padding:0 .3em;b
 @font-face{font-family:"Share Tech Mono";src:url("fonts/ShareTechMono-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 .topbar{height:auto;min-height:var(--top);flex:0 0 auto;display:flex;align-items:center;gap:18px;padding:6px 16px;border-bottom:1px solid var(--line);background:var(--bg);overflow:visible}
 .brand-block{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;z-index:2;flex:0 0 auto}
-.brand{position:relative;isolation:isolate;z-index:1;font-family:"Share Tech Mono",VT323,ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;font-size:22px;letter-spacing:.12em;color:#1E3FD8;white-space:nowrap;text-shadow:0 0 2px #fff,0 0 6px rgba(255,255,255,.8),0 0 14px rgba(255,255,255,.5),0 0 24px rgba(255,255,255,.3)}
-.brand::before{content:"";position:absolute;left:50%;top:50%;width:min(200px,70vw);height:min(96px,24vw);max-width:240px;transform:translate(-50%,-50%);z-index:-1;pointer-events:none;background:repeating-conic-gradient(from 7deg,rgba(255,255,255,0) 0deg,rgba(255,255,255,.12) 0.7deg,rgba(255,255,255,.36) 2deg,rgba(255,255,255,.12) 3.3deg,rgba(255,255,255,0) 4deg,rgba(255,255,255,0) 8deg);-webkit-mask-image:radial-gradient(ellipse 78% 64% at center,rgba(0,0,0,.48) 0%,rgba(0,0,0,.7) 22%,rgba(0,0,0,.36) 46%,rgba(0,0,0,0) 76%);mask-image:radial-gradient(ellipse 78% 64% at center,rgba(0,0,0,.48) 0%,rgba(0,0,0,.7) 22%,rgba(0,0,0,.36) 46%,rgba(0,0,0,0) 76%);-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.brand{position:relative;isolation:isolate;z-index:1;font-family:"Share Tech Mono",VT323,ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;font-size:15px;letter-spacing:.14em;color:#416AFF;white-space:nowrap;text-shadow:none}
+.brand::before{content:"";position:absolute;inset:-18px -30px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(255,255,255,.26) 0%,rgba(255,255,255,.12) 42%,rgba(255,255,255,0) 72%);filter:blur(20px)}
 .btn-howto{appearance:none;background:none;border:0;padding:0;margin:0;font:10px/1.2 var(--mono);letter-spacing:.04em;color:var(--fg2);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .btn-howto:hover,.btn-howto:focus{color:var(--fg);outline:none}
-.btn-howto:focus-visible{outline:1px solid #1E3FD8;outline-offset:2px}
-a.brand,a.brand:hover,a.brand:focus{color:#1E3FD8;text-decoration:none}
+.btn-howto:focus-visible{outline:1px solid #416AFF;outline-offset:2px}
+a.brand,a.brand:hover,a.brand:focus{color:#416AFF;text-decoration:none}
 .tagline{font:11px/1.25 var(--mono);color:var(--fg3);text-transform:uppercase;letter-spacing:.04em;white-space:normal;overflow:visible;flex:1 1 11rem;min-width:8rem;max-width:22rem}.tagline-text{display:block}.tagline #built-at{display:block;letter-spacing:.04em;color:var(--fg3)}
 .tabs{display:flex;gap:2px;margin-left:auto}
 .tabs button{white-space:nowrap;background:none;border:0;border-bottom:2px solid transparent;padding:16px 10px 14px;font:12px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--fg2)}
@@ -152,7 +152,7 @@ select{background:var(--bg2);border:1px solid var(--line2);color:var(--fg);font:
 .only-mobile{display:none}
 @media (max-width:1180px){:root{--sidebar:250px;--panel:330px}.tagline{display:none}}
 @media (max-width:900px){
-  :root{--top:64px}
+  :root{--top:48px}
   .only-mobile{display:inline-flex}
   .topbar{gap:10px;padding:0 10px}
   
@@ -166,8 +166,7 @@ select{background:var(--bg2);border:1px solid var(--line2);color:var(--fg);font:
   .panel-head{cursor:pointer}
   .hint{display:none}
   .hide-mobile{display:none}
-  .brand{font-size:18px;letter-spacing:.06em;text-shadow:0 0 2px #fff,0 0 5px rgba(255,255,255,.75),0 0 10px rgba(255,255,255,.45),0 0 16px rgba(255,255,255,.25)}
-  .brand::before{width:min(152px,60vw);height:68px}
+  .brand{font-size:13px;letter-spacing:.08em}
   .stats{grid-template-columns:repeat(3,1fr)}
 }
 
@@ -505,6 +504,65 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
 .thy-promoters, .thy-related { margin: 0.25rem 0 0.75rem; padding-left: 1.1rem; }
 .thy-global { border-top: 1px dashed #3a3d46; padding-top: 0.35rem; margin-top: 0.25rem; }
 
+/* bright Theories layer toggle in the top header; off by default */
+.thy-launch{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  flex:0 0 auto;align-self:center;z-index:6;margin:0 0 0 6px;
+  box-sizing:border-box;min-height:36px;min-width:36px;padding:6px 11px;
+  font:700 12.5px/1 var(--mono);letter-spacing:.04em;white-space:nowrap;
+  color:#f5d90a;background:#161208;border:2px solid #f5d90a;border-radius:999px;
+  cursor:pointer;box-shadow:0 0 0 1px #f5d90a55,0 0 14px #f5d90a55;
+}
+.thy-launch:hover{filter:brightness(1.12)}
+.thy-launch:focus{outline:none}
+.thy-launch:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px #f5d90a}
+.thy-launch.on{color:#07080a;background:#f5d90a;border-color:#ffe96a;box-shadow:0 0 0 1px #ffe96a,0 0 18px #f5d90acc}
+.thy-launch.on:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px #07080a,0 0 18px #f5d90acc}
+.thy-launch .short,.thy-launch .tiny{display:none}
+.thy-launch-lab{pointer-events:none}
+/* flex item after Noticing, just left of the pinned + Note reserved space (notes.css padding-right) */
+@media (min-width:901px){
+  .topbar.has-thy-launch{position:relative}
+  .topbar.has-thy-launch:not(.has-notes-launch){padding-right:124px}
+  .thy-launch{flex:0 0 auto;margin:0 0 0 4px}
+}
+/* compact "Theories" label below 1700px (covers 1440, 1280 and 390); aria-label keeps "Theories: off/on" */
+@media (max-width:1699px){
+  .thy-launch .full{display:none}
+  .thy-launch .short{display:inline}
+  .thy-launch{padding:6px 10px}
+}
+@media (max-width:900px){
+  .thy-launch .short{display:none}
+  .thy-launch .tiny{display:inline}
+}
+/* hide the tagline earlier so Theories + Noticing + + Note fit at 1440 and 1280 */
+@media (max-width:1500px){
+  .topbar.has-thy-launch .tagline{display:none}
+}
+/* at 1280, drop the Noticing word and tighten the row so it does not spill into + Note.
+   Higher specificity than notes.css (loaded later) which forces .btn-corr-nav .short to display. */
+@media (max-width:1360px){
+  .topbar.has-thy-launch.has-notes-launch .btn-corr-nav .full,
+  .topbar.has-thy-launch.has-notes-launch .btn-corr-nav .short,
+  .topbar.has-thy-launch .btn-corr-nav .full,
+  .topbar.has-thy-launch .btn-corr-nav .short{display:none}
+  .topbar.has-thy-launch .tabs button{padding-left:7px;padding-right:7px}
+}
+@media (min-width:901px) and (max-width:1360px){
+  .topbar.has-thy-launch{gap:12px}
+}
+@media (max-width:900px){
+  .thy-launch{position:static;transform:none;order:1;margin:0 0 0 4px;padding:5px 8px;font-size:12px}
+}
+/* already icon-only Noticing at 1360; keep the 390 row tight */
+@media (max-width:520px){
+  .topbar.has-thy-launch .btn-corr-nav .full,
+  .topbar.has-thy-launch .btn-corr-nav .short{display:none}
+}
+@media print{.thy-launch{display:none!important}}
+
+
 .unlinked-note{margin:0.4rem 0;padding:0.4rem 0.55rem;border:1px dashed #7A7F87;color:#c8c8c4;background:#12141a;font-size:0.85rem}
 
 .thy-findings{list-style:none;margin:.2rem 0 .4rem;padding:0}
@@ -554,7 +612,24 @@ body.page-404 .not-found .btn{margin-top:8px}
 .corr-menu-row > summary.corr-link{font-size:10.5px}
 @media (max-width:520px){
   .btn-corr-nav{padding:16px 8px 14px}
-  .btn-corr-nav .full,.btn-corr-nav .short{display:none}
   .btn-corr-nav .ic{font-size:16px}
 }
+/* icon-only when there is no room for the word "Noticing"; title/aria-label still name it */
+@media (max-width:340px){
+  .btn-corr-nav .full,.btn-corr-nav .short{display:none}
+}
 @media print{.corr-nav-wrap,.corr-menu{display:none!important}}
+
+.noticing-dlg{max-width:420px}
+.noticing-dlg form{margin:0}
+.noticing-lead{margin:0 0 10px;color:var(--fg2);font-size:13px;line-height:1.45}
+.noticing-entry{margin:0 0 10px;font:12px var(--mono);color:var(--fg)}
+.noticing-dlg .lbl{margin-top:4px}
+.noticing-dlg select{display:block;width:100%;margin:0 0 8px;padding:8px 10px;background:var(--bg);color:var(--fg);border:1px solid var(--line2);border-radius:4px;font:13px/1.35 var(--sans)}
+.noticing-dlg select:focus-visible{outline:2px solid #56B4E9;outline-offset:2px}
+.noticing-send{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+.noticing-send .btn{margin:0}
+.noticing-privacy{margin:10px 0 0;font:12px/1.45 var(--sans);color:var(--fg2)}
+@media (max-width:900px){
+  .noticing-dlg{width:min(92vw,420px);max-width:none}
+}

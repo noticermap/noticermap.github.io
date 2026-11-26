@@ -15,12 +15,12 @@
 <meta name="twitter:description" content="A searchable, sourced map of Canadian influence and money networks. Every claim is cited.">
 <link rel="canonical" href="https://noticermap.github.io/"><meta property="og:url" content="https://noticermap.github.io/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="app.css?v=6b24dd9952">
+<link rel="stylesheet" href="app.css?v=5943d9693d">
 <script>window.__WIRETAP_T0 = performance.now();</script>
-<script defer src="vendor/cytoscape.min.js?v=6b24dd9952"></script>
-<script defer src="data/core.js?v=6b24dd9952"></script>
-<script defer src="data/sol.js?v=6b24dd9952"></script>
-<script defer src="app.js?v=6b24dd9952"></script>
+<script defer src="vendor/cytoscape.min.js?v=5943d9693d"></script>
+<script defer src="data/core.js?v=5943d9693d"></script>
+<script defer src="data/sol.js?v=5943d9693d"></script>
+<script defer src="app.js?v=5943d9693d"></script>
 </head>
 <body>
 <a class="skip" href="#stage">Skip to content</a>
@@ -28,7 +28,7 @@
 <div id="sample-banner" class="sample-banner" hidden role="status">
   <strong>EXAMPLE DATA</strong> Fictional placeholder data<span class="hide-mobile"> for testing. No real people, organizations or allegations. Real data will appear once <code>graph/entities.json</code> is populated</span>.
 </div>
-<header class="topbar">
+<header class="topbar has-thy-launch">
   <button class="icon-btn only-mobile" id="btn-filters" aria-label="Open search and filters" aria-controls="sidebar" aria-expanded="false">☰</button>
   <div class="brand-block">
     <a class="brand" href="#" aria-label="NoticerMap home">NoticerMap</a>
@@ -49,13 +49,18 @@
     <button role="tab" data-view="about" id="tab-about" aria-controls="view-about">About</button>
   </nav>
   <div class="corr-nav-wrap">
-    <button type="button" class="btn-corr-nav" id="btn-corr-nav" aria-haspopup="menu" aria-expanded="false" aria-controls="corr-nav-menu" title="Report a correction">
+    <button type="button" class="btn-corr-nav" id="btn-corr-nav" data-guide="noticing" aria-haspopup="dialog" aria-expanded="false" aria-controls="noticing-dlg" title="Noticing" aria-label="Noticing">
       <span class="ic" aria-hidden="true">✎</span>
-      <span class="full">Report a correction</span>
-      <span class="short">Correct</span>
+      <span class="full">Noticing</span>
+      <span class="short">Noticing</span>
     </button>
     <div id="corr-nav-menu" class="corr-choices corr-nav-menu" hidden role="menu"></div>
   </div>
+  <button type="button" class="thy-launch" id="btn-thy" aria-pressed="false" aria-label="Theories: off" title="Theories (unverified) layer. Off by default. Reported claims only; no wrongdoing alleged.">
+    <span class="thy-launch-lab full">Theories: off</span>
+    <span class="thy-launch-lab short" aria-hidden="true">Theories</span>
+    <span class="thy-launch-lab tiny" aria-hidden="true">Thy</span>
+  </button>
 </header>
 
 <div class="layout">
@@ -313,7 +318,7 @@
         <h2>Data, embedding and citing</h2>
         <p>Download the full data as <a href="data/graph.json" download>graph.json</a>, <a href="data/leads.json" download>leads.json</a>, <a href="data/entities.csv" download>entities.csv</a>, <a href="data/links.csv" download>links.csv</a>, <a href="data/sources.csv" download>sources.csv</a> or <a href="data/networks.csv" download>networks.csv</a>. Every entity also has a static, shareable page. <button class="linkish" id="about-embed">Embed or cite this map</button>.</p>
         <h2>Corrections</h2>
-        <p>Each claim links to its sources so you can check them yourself. If you spot an error, use <em>Report a correction</em> in the top menu, on a profile, or on a claim. It opens Email or a public GitHub issue, pre-filled with the entry name, id and page.</p>
+        <p>Each claim links to its sources so you can check them yourself. If you spot an error, use <em>Noticing</em> in the top menu, or <em>Report a correction</em> on a profile or a claim. It opens Email or a public GitHub issue, pre-filled with the entry name, id and page.</p>
         <p class="muted" id="about-build"></p>
       </article>
     </section>
@@ -357,7 +362,44 @@
   </div>
 </div>
 <div id="wt" class="wt" role="dialog" aria-modal="true" aria-labelledby="wt-title" hidden><div id="wt-spot" class="wt-spot" aria-hidden="true"></div><div id="wt-card" class="wt-card"></div></div>
+<div id="fv-video" class="fv-video" role="dialog" aria-modal="true" aria-labelledby="fv-video-title" hidden>
+  <div class="fv-video-card">
+    <div class="fv-video-top">
+      <h2 id="fv-video-title">How to use NoticerMap</h2>
+      <button type="button" class="btn sm" data-fv-close aria-label="Close video">Close</button>
+    </div>
+    <div class="fv-video-stage">
+      <video id="fv-video-el" playsinline preload="none"></video>
+      <button type="button" class="fv-video-sound" data-fv-sound hidden aria-label="Tap for sound">Tap for sound</button>
+      <button type="button" class="fv-video-play" data-fv-play hidden aria-label="Play video">Play</button>
+    </div>
+    <p class="fv-video-note">Music: “The Escalation” by Kevin MacLeod (incompetech.com), CC BY 3.0.</p>
+    <div class="fv-video-nav"><button type="button" class="btn sm" data-fv-skip hidden aria-label="Skip video">Skip</button></div>
+  </div>
+</div>
 <datalist id="pf-names"></datalist>
+
+<dialog id="noticing-dlg" class="dlg noticing-dlg" aria-labelledby="noticing-title">
+  <form method="dialog">
+    <h2 id="noticing-title">Noticing</h2>
+    <p class="noticing-lead">Tell us about a data gap, a bug in the tools, or a source you'd like to share.</p>
+    <p id="noticing-entry" class="noticing-entry" hidden></p>
+    <label class="lbl" for="noticing-topic">What are you sharing?</label>
+    <select id="noticing-topic">
+      <option value="data">A gap or something wrong or out of date in the map data</option>
+      <option value="bug">A bug or glitch in the map's features or tools</option>
+      <option value="share">Sources or network information I'd like to share</option>
+    </select>
+    <p id="noticing-blurb" class="help"></p>
+    <div class="noticing-send">
+      <a class="btn accent" id="noticing-email" href="#">Email</a>
+      <a class="btn" id="noticing-github" href="#" target="_blank" rel="noopener">GitHub issue</a>
+    </div>
+    <p class="small muted" id="noticing-gh-note"></p>
+    <p class="noticing-privacy">Don't include personal addresses, contact or family details, or information about minors; tips are reviewed and need a source before anything is added to the map.</p>
+    <div class="dlg-actions"><button class="btn" value="close">Close</button></div>
+  </form>
+</dialog>
 <dialog id="dlg" class="dlg" aria-labelledby="dlg-title"><form method="dialog"><h2 id="dlg-title"></h2><div id="dlg-body"></div><div class="dlg-actions"><button class="btn" value="close">Close</button></div></form></dialog>
 <div id="toast" class="toast" role="status" hidden></div>
 <div id="tooltip" class="tooltip" hidden></div>

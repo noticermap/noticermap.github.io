@@ -1,6 +1,6 @@
 {
  "meta": {
-  "built_at": "2026-11-24T23:22:08.382Z",
+  "built_at": "2026-11-26T03:05:18.899Z",
   "last_updated": "2026-11-24T14:37:04.837Z",
   "latest_source": "2026-11-24",
   "is_sample": false,
@@ -185,7 +185,7 @@
      "kept": 3160
     }
    },
-   "ms": 270,
+   "ms": 243,
    "corroborated": 899
   },
   "intermediaries": {
@@ -210,7 +210,7 @@
    "breach"
   ],
   "layout": {
-   "ms": 23,
+   "ms": 24,
    "cached": 11060,
    "iters": 0
   },

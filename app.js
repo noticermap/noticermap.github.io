@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-24T23:22:08.382Z */
+/* NoticerMap — built 2026-11-26T03:05:18.899Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -573,7 +573,7 @@ function renderFilters() {
     renderLobbyFilters(true);
   }
   renderLobbyFilters();
-  $('#f-minl').value = String(S.minl); $('#f-legal').checked = S.legalf; if ($('#f-norm')) $('#f-norm').checked = !!S.normf; if ($('#f-thy')) { $('#f-thy').checked = !!S.thy; $('#thy-banner').hidden = !S.thy; } $('#f-evstop').checked = S.evstop; $('#f-evkind').value = S.evkind || ''; $('#f-hl').checked = S.hl;
+  $('#f-minl').value = String(S.minl); $('#f-legal').checked = S.legalf; if ($('#f-norm')) $('#f-norm').checked = !!S.normf; if ($('#f-thy')) { $('#f-thy').checked = !!S.thy; $('#thy-banner').hidden = !S.thy; } if (typeof syncTheoriesLayerDom === 'function') syncTheoriesLayerDom(); $('#f-evstop').checked = S.evstop; $('#f-evkind').value = S.evkind || ''; $('#f-hl').checked = S.hl;
   $$('#f-layer [data-layer]').forEach(b => { const on = S.layers.has(b.dataset.layer); b.setAttribute('aria-pressed', on); b.classList.toggle('on', on); });
   if ($('#f-topics')) { $$('#f-topics [data-topic]').forEach(b => { const on = S.topic === b.dataset.topic; b.setAttribute('aria-selected', on); b.classList.toggle('on', on); }); const note = $('#topic-note'); if (note) note.textContent = (S.topic && TOPIC_LABELS[S.topic] && typeof topicMembers === 'function') ? `Showing the ${TOPIC_LABELS[S.topic]} selection (${topicMembers(S.topic).entities.size} entities). Click the tab again to show the whole map. Source layers still apply. Theories stay under the Theories toggle.` : 'Focus the map on one topic. Click again to show the whole map. These selections update as new folds are added.'; }
   // update in place so elements under the pointer are never replaced mid-click
@@ -643,7 +643,7 @@ $('#f-cats').addEventListener('click', e => { const b = e.target.closest('[data-
 $('#f-minl').addEventListener('change', e => { S.minl = +e.target.value || 1; update(); announce(S.minl > 1 ? `Showing items seen in at least ${S.minl} layers` : 'Showing items from any number of layers'); });
 $('#f-legal').addEventListener('change', e => { S.legalf = e.target.checked; update(); });
 $('#f-norm').addEventListener('change', e => { S.normf = e.target.checked; update(); announce(S.normf ? 'Showing records compared with a sourced benchmark and marked Outside the norm. Not a finding of wrongdoing.' : 'Showing all records'); });
-$('#f-thy')?.addEventListener('change', e => { S.thy = e.target.checked; if ($('#thy-banner')) $('#thy-banner').hidden = !S.thy; prevVisibleKey = ''; if (typeof syncTheoryGraph === 'function') syncTheoryGraph(); update(true); announce(S.thy ? 'Showing the Theories (unverified) layer. Reported claims only; no wrongdoing alleged.' : 'Hiding the Theories layer'); });
+$('#f-thy')?.addEventListener('change', e => { if (typeof setTheoriesLayer === 'function') { setTheoriesLayer(e.target.checked); return; } S.thy = e.target.checked; if ($('#thy-banner')) $('#thy-banner').hidden = !S.thy; prevVisibleKey = ''; if (typeof syncTheoryGraph === 'function') syncTheoryGraph(); update(true); announce(S.thy ? 'Showing the Theories (unverified) layer. Reported claims only; no wrongdoing alleged.' : 'Hiding the Theories layer'); });
 $('#f-evkind').addEventListener('change', e => { S.evkind = e.target.value; update(); announce(S.evkind ? `Showing ${evKindLabel(S.evkind)} events and what links to them` : 'Showing all event kinds'); });
 $('#f-evstop').addEventListener('change', e => { S.evstop = e.target.checked; update(); announce(S.evstop ? "Showing events that were blocked or didn't happen, and what links to them" : 'Showing all events'); });
 $('#f-hl').addEventListener('change', e => { S.hl = e.target.checked; update(); });
@@ -2925,6 +2925,39 @@ function placeTheorySwitches() {
   box.innerHTML = parts.join('');
 }
 
+
+function theoriesLayerLabel(on) { return on ? 'Theories: on' : 'Theories: off'; }
+function syncTheoriesLayerDom() {
+  const on = !!S.thy;
+  const cb = $('#f-thy');
+  if (cb && cb.checked !== on) cb.checked = on;
+  const banner = $('#thy-banner');
+  if (banner) banner.hidden = !on;
+  const btn = $('#btn-thy');
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  btn.setAttribute('aria-label', theoriesLayerLabel(on));
+  btn.title = on
+    ? 'Theories (unverified) layer is on. Reported claims only; no wrongdoing alleged. Click to hide.'
+    : 'Theories (unverified) layer. Off by default. Reported claims only; no wrongdoing alleged.';
+  btn.classList.toggle('on', on);
+  const full = btn.querySelector('.full');
+  if (full) full.textContent = theoriesLayerLabel(on);
+}
+function setTheoriesLayer(on) {
+  on = !!on;
+  if (S.thy === on) { syncTheoriesLayerDom(); return; }
+  S.thy = on;
+  prevVisibleKey = '';
+  syncTheoriesLayerDom();
+  if (typeof syncTheoryGraph === 'function') syncTheoryGraph();
+  if (typeof update === 'function') update(true);
+  // renderFilters re-syncs the checkbox; re-assert the header button in case update raced
+  syncTheoriesLayerDom();
+  announce(on ? 'Showing the Theories (unverified) layer. Reported claims only; no wrongdoing alleged.' : 'Hiding the Theories layer');
+}
+function toggleTheoriesLayer() { setTheoriesLayer(!S.thy); }
+
 function bindTheoryUi() {
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-thy-switch]'); if (!b) return;
@@ -2944,6 +2977,8 @@ function bindTheoryUi() {
     cy.on('mouseout', 'node', ev => { if (thyHoverId === ev.target.id()) thyHoverId = null; markThySwHot(); });
     cy.on('select unselect', 'node', () => markThySwHot());
   }
+  $('#btn-thy')?.addEventListener('click', () => toggleTheoriesLayer());
+  syncTheoriesLayerDom();
 }
 
 // overlap guard used by tests: expanded theory nodes must not share a position with another visible node
@@ -2961,7 +2996,7 @@ function theoryOverlapCount() {
   return hits;
 }
 
-window.__wiretapTheory = { recordsChecksHtml, personChecksHtml, rcScopeText, isTheoryEnt, isTheoryLnk, theoriesVisible, setTheorySwitch, toggleTheorySwitch, syncTheoryGraph, syncTheorySwitchDom, theoryOverlapCount, THEORY_WARN, hasTheorySwitch, theoryIdsOf };
+window.__wiretapTheory = { recordsChecksHtml, personChecksHtml, rcScopeText, isTheoryEnt, isTheoryLnk, theoriesVisible, setTheorySwitch, toggleTheorySwitch, syncTheoryGraph, syncTheorySwitchDom, theoryOverlapCount, THEORY_WARN, hasTheorySwitch, theoryIdsOf, setTheoriesLayer, toggleTheoriesLayer, syncTheoriesLayerDom };
 
 // ---- 70-export.js
 /* export: filtered CSV / JSON downloads, embed / cite dialog */
@@ -3080,6 +3115,244 @@ function solMarkCrossings() {
 document.getElementById('q')?.addEventListener('input', debounce(() => { if (S.q !== solPrev.q) { if (solSearchHit(S.q)) solAutoOpen('immigration search'); solPrev.q = S.q; } }, 120));
 window.__wiretapSol = { SOL, roles: () => ({ immigration: solRole('immigration'), people_boards: solRole('people_boards') }), isOpen: () => solOpen, collapsedByUser: solCollapsedByUser, crossing: solCrossing, render: solRender };
 
+// ---- 74-fv-video.js
+/* First-visit walkthrough video: play unmuted from a user gesture (disclaimer accept or Watch again);
+   muted 'Tap for sound' fallback if play() is rejected or there is no gesture; poster-only under reduced motion. */
+// Keep these in sync with lib/first-visit-video.mjs. Swap FIRST_VISIT_VIDEO_ID (and the files in videos/) to change the clip.
+const FIRST_VISIT_VIDEO_ID = 'noticermap-carney-guide';
+const FIRST_VISIT_VIDEO_FINAL_ID = FIRST_VISIT_VIDEO_ID;
+const FIRST_VISIT_VIDEO_DIR = 'videos/';
+const FV_VIDEO_SEEN_KEY = 'wiretap-map:fv-video-seen';
+const FV_VIDEO_TITLE = 'How to use NoticerMap';
+const FV_VIDEO_ASSETS = (() => { const base = FIRST_VISIT_VIDEO_DIR + FIRST_VISIT_VIDEO_ID; return { poster: base + '-poster.jpg', webm: base + '.webm', mp4: base + '.mp4', captions: base + '.vtt', chapters: base + '.chapters.vtt' }; })();
+let fvVideoAfter = null, fvVideoOffered = false, fvVideoCssReady = null;
+
+const fvVideoEl = () => $('#fv-video');
+const fvVideoPlayer = () => $('#fv-video-el');
+const fvVideoIsOpen = () => { const el = fvVideoEl(); return !!(el && !el.hidden); };
+const fvVideoForced = () => /(?:^|[?&#])fvvideo(?:=1)?(?:&|#|$)/.test(location.search + location.hash);
+const fvVideoReducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+const fvVideoSeen = () => { try { return localStorage.getItem(FV_VIDEO_SEEN_KEY) === '1'; } catch { return false; } };
+const fvVideoNowalk = () => /(^|&)nowalk(=|&|$)/.test(location.hash.slice(1));
+function markFvVideoSeen() { try { localStorage.setItem(FV_VIDEO_SEEN_KEY, '1'); } catch { } }
+function fvVideoShouldOffer(force, { honorNowalk = true } = {}) {
+  if (fvVideoIsOpen() || fvVideoOffered) return false;
+  if (!force && fvVideoSeen()) return false;
+  if (!force && honorNowalk && fvVideoNowalk()) return false;
+  return true;
+}
+
+function fvVideoFocusables() {
+  const root = fvVideoEl(); if (!root || root.hidden) return [];
+  return $$('#fv-video button, #fv-video video, #fv-video a[href]').filter(el => !el.hidden && !el.disabled && el.getAttribute('aria-hidden') !== 'true' && (el.offsetParent || el === fvVideoPlayer()));
+}
+function fvVideoTrap(e) {
+  if (e.key !== 'Tab') return;
+  const f = fvVideoFocusables(); if (!f.length) return;
+  const i = f.indexOf(document.activeElement);
+  if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+  else if (i < 0) { e.preventDefault(); f[0].focus(); }
+}
+function fvVideoSetInert(on) {
+  const root = fvVideoEl();
+  for (const el of document.body.children) {
+    if (el === root || /^(SCRIPT|DATALIST|STYLE|LINK)$/.test(el.tagName)) continue;
+    if (on) { if (!el.inert) { el.inert = true; el.dataset.fvInert = ''; } }
+    else if (el.dataset.fvInert != null) { el.inert = false; delete el.dataset.fvInert; }
+  }
+}
+
+function ensureFvVideoCss() {
+  if (fvVideoCssReady) return fvVideoCssReady;
+  const href = 'fv-video.css' + (typeof chunkV === 'function' ? chunkV() : '');
+  fvVideoCssReady = new Promise(res => {
+    if ([...document.querySelectorAll('link[rel=stylesheet]')].some(l => (l.getAttribute('href') || '').split('?')[0] === 'fv-video.css')) return res();
+    const l = document.createElement('link');
+    l.rel = 'stylesheet'; l.href = href; l.dataset.fvCss = '';
+    l.onload = () => res(); l.onerror = () => res();
+    document.head.append(l);
+  });
+  return fvVideoCssReady;
+}
+function preloadFvVideoPoster() {
+  if (document.querySelector('link[data-fv-poster]')) return;
+  const l = document.createElement('link');
+  l.rel = 'preload'; l.as = 'image'; l.href = FV_VIDEO_ASSETS.poster; l.dataset.fvPoster = '';
+  document.head.append(l);
+}
+
+function fvVideoSourcesAttached(video) {
+  return !!(video && video.querySelector('source[src]'));
+}
+function attachFvVideoSources(video) {
+  if (!video || fvVideoSourcesAttached(video)) return;
+  video.preload = 'none';
+  video.setAttribute('preload', 'none');
+  video.poster = FV_VIDEO_ASSETS.poster;
+  video.setAttribute('aria-label', FV_VIDEO_TITLE);
+  const webm = document.createElement('source'); webm.src = FV_VIDEO_ASSETS.webm; webm.type = 'video/webm';
+  const mp4 = document.createElement('source'); mp4.src = FV_VIDEO_ASSETS.mp4; mp4.type = 'video/mp4';
+  const cap = document.createElement('track'); cap.kind = 'captions'; cap.srclang = 'en'; cap.label = 'English'; cap.src = FV_VIDEO_ASSETS.captions; cap.default = true;
+  const ch = document.createElement('track'); ch.kind = 'chapters'; ch.srclang = 'en'; ch.label = 'Chapters'; ch.src = FV_VIDEO_ASSETS.chapters;
+  video.append(webm, mp4, cap, ch);
+  video.load();
+}
+function showFvCaptions(video) {
+  try {
+    for (const t of video.textTracks) {
+      if (t.kind === 'captions' || t.kind === 'subtitles') t.mode = 'showing';
+    }
+  } catch { }
+}
+function fvVideoButtons({ sound = false, play = false, skip = false } = {}) {
+  const s = $('[data-fv-sound]'), p = $('[data-fv-play]'), k = $('[data-fv-skip]');
+  if (s) s.hidden = !sound;
+  if (p) p.hidden = !play;
+  if (k) k.hidden = !skip;
+}
+function fvVideoSkipShown() { return !!($('[data-fv-skip]') && !$('[data-fv-skip]').hidden); }
+
+// Muted autoplay + 'Tap for sound'. Used when there is no user gesture, or when unmuted play() rejects.
+function startFvVideoMutedFallback(video) {
+  video.playsInline = true;
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute('muted', '');
+  const skip = fvVideoSkipShown();
+  const p = video.play();
+  if (p && typeof p.then === 'function') {
+    p.then(() => { video.controls = true; fvVideoButtons({ sound: true, play: false, skip }); }).catch(() => { video.controls = false; fvVideoButtons({ sound: false, play: true, skip }); });
+  } else {
+    fvVideoButtons({ sound: true, play: false, skip });
+  }
+}
+
+// Call play() unmuted with no await before it, so this stays inside a click/keydown gesture.
+function playFvVideoUnmuted(video) {
+  video.playsInline = true;
+  video.muted = false;
+  video.defaultMuted = false;
+  video.removeAttribute('muted');
+  video.controls = true;
+  const skip = fvVideoSkipShown();
+  const p = video.play();
+  if (p && typeof p.then === 'function') {
+    p.then(() => { fvVideoButtons({ sound: false, play: false, skip }); showFvCaptions(video); })
+      .catch(() => { startFvVideoMutedFallback(video); });
+  }
+  return p;
+}
+
+// Opens the player and, when withSound is set, calls play() unmuted synchronously. Call play() in the same turn, with no pause before it.
+function openFvVideo(opts = {}) {
+  const root = fvVideoEl(), video = fvVideoPlayer();
+  if (!root || !video) return;
+  const { withSound = false, after = null, firstVisit = false, reducedMotion = false } = opts;
+  fvVideoAfter = after || null;
+  ensureFvVideoCss(); // fire-and-forget: do not wait for this before play()
+  preloadFvVideoPoster();
+  root.hidden = false;
+  document.body.classList.add('fv-video-open');
+  fvVideoSetInert(true);
+  $('[data-fv-skip]').hidden = !firstVisit;
+  video.controls = false;
+  video.preload = 'none';
+  video.setAttribute('preload', 'none');
+  if (!video.getAttribute('playsinline')) video.setAttribute('playsinline', '');
+  attachFvVideoSources(video);
+  showFvCaptions(video);
+  video.addEventListener('loadeddata', () => showFvCaptions(video), { once: true });
+  if (reducedMotion) {
+    try { video.pause(); } catch { }
+    fvVideoButtons({ sound: false, play: true, skip: firstVisit });
+  } else if (withSound) {
+    playFvVideoUnmuted(video);
+  } else {
+    startFvVideoMutedFallback(video);
+  }
+  setTimeout(() => { ($('[data-fv-sound]:not([hidden])') || $('[data-fv-play]:not([hidden])') || $('[data-fv-close]') || video)?.focus(); }, 20);
+}
+
+function detachFvVideoSources(video) {
+  if (!video) return;
+  try { video.pause(); } catch { }
+  video.removeAttribute('src');
+  video.removeAttribute('poster');
+  video.querySelectorAll('source, track').forEach(n => n.remove());
+  try { video.load(); } catch { }
+}
+function closeFvVideo() {
+  const root = fvVideoEl(), video = fvVideoPlayer();
+  if (!root || root.hidden) return;
+  detachFvVideoSources(video);
+  markFvVideoSeen();
+  root.hidden = true;
+  document.body.classList.remove('fv-video-open');
+  fvVideoSetInert(false);
+  fvVideoButtons({ sound: false, play: false, skip: false });
+  const after = fvVideoAfter; fvVideoAfter = null;
+  if (after) setTimeout(after, 40);
+  else ($('#btn-howto') || $('#btn-help') || document.body).focus?.();
+}
+
+// No user gesture (disclaimer already accepted, or a programmatic/forced open): muted fallback.
+function maybeOfferFirstVisitVideo(after) {
+  if (fvVideoIsOpen()) return true;
+  const force = fvVideoForced();
+  // Automation skips the unsolicited open, same as the walkthrough, unless ?fvvideo=1.
+  if (!force && navigator.webdriver) return false;
+  if (!fvVideoShouldOffer(force)) return false;
+  fvVideoOffered = true;
+  const reduced = fvVideoReducedMotion();
+  openFvVideo({ withSound: false, after, firstVisit: true, reducedMotion: reduced });
+  return true;
+}
+
+// Must run inside the disclaimer's accept/close click or keydown: open, attach, play() unmuted, no await.
+function offerFirstVisitVideoFromGesture(after) {
+  if (fvVideoIsOpen()) return true;
+  const force = fvVideoForced();
+  if (!fvVideoShouldOffer(force, { honorNowalk: false })) return false;
+  fvVideoOffered = true;
+  const reduced = fvVideoReducedMotion();
+  openFvVideo({ withSound: !reduced, after, firstVisit: true, reducedMotion: reduced });
+  return true;
+}
+
+$('#fv-video')?.addEventListener('click', e => {
+  if (e.target.closest('[data-fv-close],[data-fv-skip]')) { e.preventDefault(); return closeFvVideo(); }
+  if (e.target.closest('[data-fv-sound]')) {
+    const v = fvVideoPlayer(); if (!v) return;
+    v.muted = false; v.defaultMuted = false; v.removeAttribute('muted');
+    v.controls = true;
+    fvVideoButtons({ sound: false, play: false, skip: fvVideoSkipShown() });
+    if (v.paused) v.play().catch(() => { startFvVideoMutedFallback(v); });
+    v.focus();
+    return;
+  }
+  if (e.target.closest('[data-fv-play]')) {
+    const v = fvVideoPlayer(); if (!v) return;
+    playFvVideoUnmuted(v);
+  }
+});
+$('#fv-video')?.addEventListener('keydown', e => {
+  e.stopPropagation();
+  if (e.key === 'Escape') { e.preventDefault(); closeFvVideo(); return; }
+  fvVideoTrap(e);
+});
+document.addEventListener('keydown', e => {
+  if (!fvVideoIsOpen()) return;
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeFvVideo(); return; }
+  if (e.key === 'Tab') fvVideoTrap(e);
+}, true);
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fv-again]'); if (!b) return;
+  e.preventDefault();
+  const reduced = fvVideoReducedMotion();
+  openFvVideo({ withSound: !reduced, firstVisit: false, reducedMotion: reduced });
+});
+
 // ---- 75-guide.js
 /* guide: tours (step playback), connection finder, first-visit walkthrough, glossary. All optional: works with no guide files. */
 const tourById = id => (GUIDE.tours || []).find(t => t.id === id);
@@ -3181,7 +3454,7 @@ $('#view-tours')?.addEventListener('click', onTourGo);
 $('#f-tours')?.addEventListener('click', onTourGo);
 
 // ---- spotlight a [data-guide] element (used by tours with `target` and by the walkthrough)
-const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types', rings: '[data-layout="rings"]', clusters: '[data-layout="clusters"]', hubs: '#g-maxdeg', 'search-help': '#sidebar', tours: '#f-tours', help: '#btn-howto', filters: '#sidebar' }; // events: the Events type chip (map), else the Type filter
+const GUIDE_FALLBACK = { explain: '#cy', profile: '#panel', events: '#f-types', rings: '[data-layout="rings"]', clusters: '[data-layout="clusters"]', hubs: '#g-maxdeg', 'search-help': '#sidebar', tours: '#f-tours', help: '#btn-howto', filters: '#sidebar', noticing: '#btn-corr-nav' }; // events: the Events type chip (map), else the Type filter
 function guideEl(target) {
   if (!target) return null;
   const cands = [...document.querySelectorAll(`[data-guide="${CSS.escape(target)}"]`)].filter(el => el.offsetParent !== null || el === document.body);
@@ -3288,7 +3561,19 @@ function searchHelpWalkStep(s) {
   if (!SEARCH_HELP_VIDEO_READY) { delete out.video; delete out.captions; }
   return out;
 }
-function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitLayoutSteps(ensureFirstVisitSearchHelp(w.steps.map(s => isSearchHelpStep(s) ? searchHelpWalkStep(s) : s))) }; }
+const FIRST_VISIT_NOTICING_TITLE = 'Noticing';
+const FIRST_VISIT_NOTICING_TEXT = "Noticing, at the top right, opens a short form. Pick a data gap or something wrong or out of date, a bug or glitch in the tools (search, filters, graph, tours, notes and so on), or a source or network tip with a source link, then send it by Email or as a public GitHub issue. Don't include personal addresses, contact or family details, or information about minors; tips are reviewed and need a source, and GitHub issues are public.";
+function ensureFirstVisitNoticingStep(steps) {
+  const list = Array.isArray(steps) ? steps : [];
+  const isN = s => s && (String(s.target || '').toLowerCase() === 'noticing' || /^Noticing$/i.test(s.title || ''));
+  const had = list.find(isN);
+  const rest = list.filter(s => !isN(s));
+  const step = { ...(had || {}), target: 'noticing', title: FIRST_VISIT_NOTICING_TITLE, text: FIRST_VISIT_NOTICING_TEXT };
+  const h = rest.findIndex(s => s && (String(s.target || '').toLowerCase() === 'help' || /^(Help|How to use)$/i.test(s.title || '')));
+  const at = h >= 0 && h === rest.length - 1 ? h : rest.length;
+  return [...rest.slice(0, at), step, ...rest.slice(at)];
+}
+function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitNoticingStep(ensureFirstVisitLayoutSteps(ensureFirstVisitSearchHelp(w.steps.map(s => isSearchHelpStep(s) ? searchHelpWalkStep(s) : s)))) }; }
 function walkSteps() { const raw = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return normalizeWalkthrough(raw); }
 function openWalk(i = 0) { if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
 function closeWalk(silent) { if ($('#wt').hidden) return; $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) ($('#btn-howto') || $('#btn-help'))?.focus(); }
@@ -3303,7 +3588,8 @@ function renderWalk() {
   const more = st.moreText ? `<details class="wt-details"><summary>${esc(st.moreTitle || 'More')}</summary>${String(st.moreText).split(/\n\s*\n/).map(s => `<p>${esc(s)}</p>`).join('')}</details>` : '';
   const body = (st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary>${paras}</details>` : paras) + more + media;
   card.innerHTML = `<div class="tc-top"><span class="kindtag">${esc(WALK.title || 'Welcome')}</span><span class="muted small">${walkI + 1} / ${n}</span></div><h2 id="wt-title">${esc(st.title || '')}</h2>${body}
-    <div class="tc-nav"><button type="button" class="linkish" data-wt-skip>Skip</button><span></span><button type="button" class="btn sm" data-wt-prev ${walkI === 0 ? 'disabled' : ''}>← Back</button>${walkI < n - 1 ? '<button type="button" class="btn sm accent" data-wt-next>Next →</button>' : '<button type="button" class="btn sm accent" data-wt-skip>Done</button>'}</div>`;
+    <div class="tc-nav"><button type="button" class="linkish" data-wt-skip>Skip</button><span></span><button type="button" class="btn sm" data-wt-prev ${walkI === 0 ? 'disabled' : ''}>← Back</button>${walkI < n - 1 ? '<button type="button" class="btn sm accent" data-wt-next>Next →</button>' : '<button type="button" class="btn sm accent" data-wt-skip>Done</button>'}</div>
+    <div class="fv-again-wrap"><button type="button" class="linkish" data-fv-again>Watch the video again</button></div>`;
   // place the card near the target, inside the viewport
   const vw = window.innerWidth, vh = window.innerHeight; const cw = Math.min(360, vw - 24);
   card.style.width = cw + 'px';
@@ -3316,13 +3602,14 @@ $('#wt').addEventListener('click', e => {
   if (e.target.closest('[data-wt-prev]')) { walkI = Math.max(0, walkI - 1); return renderWalk(); }
   if (e.target.closest('[data-wt-skip]')) return closeWalk();
 });
-$('#wt').addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); closeWalk(); } else if (e.key === 'ArrowRight') { e.preventDefault(); $('#wt [data-wt-next]')?.click(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); $('#wt [data-wt-prev]')?.click(); } });
+$('#wt').addEventListener('keydown', e => { if (typeof fvVideoIsOpen === 'function' && fvVideoIsOpen()) return; if (e.key === 'Escape') { e.preventDefault(); closeWalk(); } else if (e.key === 'ArrowRight') { e.preventDefault(); $('#wt [data-wt-next]')?.click(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); $('#wt [data-wt-prev]')?.click(); } });
 function replayWalk() { if (!EXTRA.loaded.guide) loadExtra('guide').then(() => openWalk(0)); else openWalk(0); }
 $('#btn-help')?.addEventListener('click', replayWalk);
 $('#btn-howto')?.addEventListener('click', replayWalk);
 window.addEventListener('resize', debounce(() => { if (!$('#wt').hidden) renderWalk(); }, 120));
 function maybeFirstVisit() {
   if (!$('#disc').hidden) { discAfter = maybeFirstVisit; return; } // the disclaimer comes first
+  if (typeof maybeOfferFirstVisitVideo === 'function' && maybeOfferFirstVisitVideo(maybeFirstVisit)) return; // video autoplays once, then the walkthrough
   let done = false; try { done = localStorage.getItem(WALK_KEY) === '1'; } catch { done = true; }
   if (done || navigator.webdriver || S.tour || /(^|&)nowalk(=|&|$)/.test(location.hash.slice(1))) return;
   openWalk(0);
@@ -3387,6 +3674,37 @@ const NAME_MAX = 80;
 const ID_MAX = 64;
 const HREF_MAX = 1800;
 const GENERAL_SUBJECT = 'Correction: <short description>';
+const NOTICE_PRIVACY = "Don't include personal addresses, contact or family details, or information about minors; tips are reviewed and need a source before anything is added to the map.";
+const NOTICE_TOPICS = {
+  data: {
+    id: 'data',
+    label: 'A gap or something wrong or out of date in the map data',
+    shortLabel: 'Map data',
+    subjectPrefix: 'Correction',
+    generalSubject: GENERAL_SUBJECT,
+    fields: ["What's wrong:", 'Correct information:', 'Source link:'],
+    blurb: 'For a claim, profile or other map data that is wrong or out of date, or a gap.'
+  },
+  bug: {
+    id: 'bug',
+    label: "A bug or glitch in the map's features or tools",
+    shortLabel: 'Bug or glitch',
+    subjectPrefix: 'Bug',
+    generalSubject: 'Bug: <short description>',
+    fields: ['What I was doing (search, filters, graph, tours, notes, …):', 'What happened:', 'Device or browser:'],
+    blurb: 'For search, filters, the graph, tours, notes and other tools.'
+  },
+  share: {
+    id: 'share',
+    label: 'Sources or network information I would like to share',
+    shortLabel: 'Source or tip',
+    subjectPrefix: 'Share',
+    generalSubject: 'Share: <short description>',
+    fields: ['What I would like to share (new connections, documents, links):', 'Source link:'],
+    blurb: 'For new connections, documents or links, with a source link.'
+  }
+};
+function noticeTopic(id) { return NOTICE_TOPICS[id] || NOTICE_TOPICS.data; }
 const ELLIPSIS = '\u2026';
 
 function fileSafeId(id) {
@@ -3422,15 +3740,17 @@ function claimPageUrl(siteUrl, rec) {
 
 function correctionSubject(opts) {
   opts = opts || {};
+  const t = noticeTopic(opts.topic);
   const name = opts.name, id = opts.id, kind = opts.kind;
-  if (!name && !id) return GENERAL_SUBJECT;
+  if (!name && !id) return t.generalSubject;
   const label = shortText(name || kind || 'entry', NAME_MAX);
   const ident = id ? shortText(id, ID_MAX) : '';
-  return ident ? 'Correction: ' + label + ' (' + ident + ')' : 'Correction: ' + label;
+  return ident ? t.subjectPrefix + ': ' + label + ' (' + ident + ')' : t.subjectPrefix + ': ' + label;
 }
 
 function correctionBody(opts) {
   opts = opts || {};
+  const t = noticeTopic(opts.topic);
   const lines = [];
   if (opts.kind === 'claim') {
     lines.push('Claim id: ' + (opts.id || ''));
@@ -3444,12 +3764,8 @@ function correctionBody(opts) {
     lines.push('Entry: ' + (opts.name || '') + ' (' + (opts.id || '') + ')');
     lines.push('');
   }
-  lines.push("What's wrong:");
-  lines.push('');
-  lines.push('Correct information:');
-  lines.push('');
-  lines.push('Source link:');
-  lines.push('');
+  if (opts.topic && opts.topic !== 'data') lines.push('Sharing: ' + t.shortLabel, '');
+  for (let i = 0; i < t.fields.length; i++) { lines.push(t.fields[i]); lines.push(''); }
   lines.push('Page: ' + (opts.pageUrl || ''));
   return lines.join('\n');
 }
@@ -3571,50 +3887,75 @@ function reportCorrectionHtml(kind, rec, extra) {
   return correctionMenuHtml({ kind: 'general', pageUrl: currentPageUrl() });
 }
 
-function fillCorrNavMenu() {
-  const menu = document.getElementById('corr-nav-menu');
-  if (!menu) return;
+function refreshNoticingLinks() {
+  const sel = document.getElementById('noticing-topic');
+  const blurb = document.getElementById('noticing-blurb');
+  const mail = document.getElementById('noticing-email');
+  const gh = document.getElementById('noticing-github');
+  const topic = (sel && sel.value) || 'data';
+  const t = noticeTopic(topic);
+  if (blurb) blurb.textContent = t.blurb;
+  const opts = Object.assign({}, selectedCorrectionOpts(), { topic: topic });
+  if (mail) mail.setAttribute('href', mailtoHref(opts));
+  if (gh) gh.setAttribute('href', githubIssueHref(opts));
+}
+
+function openNoticingDialog() {
+  const dlg = document.getElementById('noticing-dlg');
+  const btn = document.getElementById('btn-corr-nav');
+  const sel = document.getElementById('noticing-topic');
+  const entry = document.getElementById('noticing-entry');
+  const note = document.getElementById('noticing-gh-note');
+  if (!dlg) return;
+  if (note) note.textContent = CORRECTIONS_GITHUB_NOTE;
   const opts = selectedCorrectionOpts();
-  const escape = typeof esc === 'function' ? esc : function (s) { return String(s); };
-  const mail = mailtoHref(opts);
-  const gh = githubIssueHref(opts);
-  menu.innerHTML = '<a class="corr-choice" role="menuitem" href="' + escape(mail) + '">Email</a><a class="corr-choice" role="menuitem" href="' + escape(gh) + '" target="_blank" rel="noopener">GitHub issue</a><p class="small muted">' + escape(CORRECTIONS_GITHUB_NOTE) + '</p>';
-}
-
-function closeCorrNavMenu() {
-  const btn = document.getElementById('btn-corr-nav');
-  const menu = document.getElementById('corr-nav-menu');
-  if (menu) menu.hidden = true;
-  if (btn) btn.setAttribute('aria-expanded', 'false');
-}
-
-function toggleCorrNavMenu(force) {
-  const btn = document.getElementById('btn-corr-nav');
-  const menu = document.getElementById('corr-nav-menu');
-  if (!btn || !menu) return;
-  const open = force != null ? force : menu.hidden;
-  if (open) {
-    fillCorrNavMenu();
-    menu.hidden = false;
-    btn.setAttribute('aria-expanded', 'true');
-  } else {
-    closeCorrNavMenu();
+  if (entry) {
+    if (opts.name) {
+      entry.hidden = false;
+      entry.textContent = 'About: ' + opts.name + (opts.id ? ' (' + opts.id + ')' : '');
+    } else {
+      entry.hidden = true;
+      entry.textContent = '';
+    }
   }
+  if (sel && !sel.value) sel.value = 'data';
+  refreshNoticingLinks();
+  if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+  if (sel) setTimeout(function () { sel.focus(); }, 20);
+}
+
+function closeNoticingDialog() {
+  const dlg = document.getElementById('noticing-dlg');
+  const btn = document.getElementById('btn-corr-nav');
+  if (dlg && dlg.open && dlg.close) dlg.close();
+  else if (dlg) dlg.removeAttribute('open');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
 }
 
 document.addEventListener('click', function (e) {
   const btn = e.target.closest && e.target.closest('#btn-corr-nav');
   if (btn) {
     e.preventDefault();
-    toggleCorrNavMenu();
+    const dlg = document.getElementById('noticing-dlg');
+    if (dlg && dlg.open) closeNoticingDialog();
+    else openNoticingDialog();
     return;
   }
-  if (e.target.closest && e.target.closest('#corr-nav-menu')) return;
-  closeCorrNavMenu();
 });
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeCorrNavMenu();
-});
+// scripts load at the end of body, so the dialog is already in the DOM
+(function initNoticingDialog() {
+  const sel = document.getElementById('noticing-topic');
+  const dlg = document.getElementById('noticing-dlg');
+  if (sel) sel.addEventListener('change', refreshNoticingLinks);
+  if (dlg) {
+    dlg.addEventListener('close', function () {
+      const btn = document.getElementById('btn-corr-nav');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) closeNoticingDialog(); });
+  }
+})();
 
 // ---- 77-disclaimer.js
 /* 'About this map' disclaimer (shown once, before the first-visit walkthrough) and 'Report a correction' links */
@@ -3635,8 +3976,12 @@ function closeDisclaimer() {
   d.hidden = true; document.body.classList.remove('disc-open');
   for (const el of document.querySelectorAll('[data-disc-inert]')) { el.inert = false; delete el.dataset.discInert; }
   try { localStorage.setItem(DISC_KEY, '1'); } catch { }
-  const r = discReturn; discReturn = null; if (r && r.isConnected && r !== document.body) r.focus();
-  const after = discAfter; discAfter = null; if (after) setTimeout(after, 50);
+  const r = discReturn; discReturn = null;
+  const after = discAfter; discAfter = null;
+  // Stay on this click/keydown turn so unmuted play() counts as a user gesture.
+  if (typeof offerFirstVisitVideoFromGesture === 'function' && offerFirstVisitVideoFromGesture(after)) return;
+  if (r && r.isConnected && r !== document.body) r.focus();
+  if (after) setTimeout(after, 50);
 }
 // first visit: after boot, unless already acknowledged (automation skips it like the walkthrough; ?disclaimer=1 forces it)
 function maybeDisclaimer() {
@@ -3683,7 +4028,7 @@ const NOTES_CORE = (() => {
   const DEFAULT_TITLE = 'Note';
   const WALK_STEP = {
     target: 'notes', title: 'Floating notes',
-    text: "Press Notes at the top right to open a note. Drag a map point, search result or profile title into it, or use 'Copy to note' in a profile (that is how it works on phones). You can type your own text too. Drag the title bar to move a note, pull its corner to resize it, and keep as many notes as you like. Notes are saved only in this browser: nothing is sent anywhere, and clearing your browser data erases them. Use Export to back them up and Import to bring them back."
+    text: "Press + Note, the red button at the top right, to open a private note. Drag a map point, search result or profile title into it, or use 'Copy to note' in a profile (that is how it works on phones). You can type your own text too. Drag the title bar to move a note, pull its corner to resize it, and keep as many notes as you like. Notes are saved only in this browser: nothing is sent anywhere, and clearing your browser data erases them. Use Export to back them up and Import to bring them back."
   };
   // control characters except tab and newline are dropped; line endings become \n
   const clean = (s, max) => { let t = String(s == null ? '' : s).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ''); return max && t.length > max ? t.slice(0, max) : t; };
@@ -3780,7 +4125,12 @@ const NOTES_CORE = (() => {
     const at = h >= 0 && h === steps.length - 1 ? h : steps.length;
     return { ...w, steps: [...steps.slice(0, at), step, ...steps.slice(at)] };
   }
-  return { KEY, FORMAT, VERSION, LIMITS, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe };
+  const launchLabel = (n) => (Number(n) > 0 ? `+ Note (${Number(n)})` : '+ Note');
+  const launchAria = (n) => {
+    const c = Number(n) || 0;
+    return c ? `+ Note: ${c} saved in this browser` : '+ Note: no notes saved in this browser';
+  };
+  return { KEY, FORMAT, VERSION, LIMITS, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe, launchLabel, launchAria };
 })();
 
 // ---- 85-notes.js
@@ -3816,11 +4166,17 @@ const NOTES = (() => {
   const dock = el('div', { id: 'notes-dock', class: 'notes-dock', role: 'toolbar', 'aria-label': 'Minimized notes' }); dock.hidden = true; document.body.appendChild(dock);
   const ghost = el('div', { class: 'notes-ghost', 'aria-hidden': 'true' }); ghost.hidden = true; document.body.appendChild(ghost);
   const file = el('input', { type: 'file', accept: '.json,application/json', hidden: '', 'aria-hidden': 'true', tabindex: '-1' }); document.body.appendChild(file);
-  const launcher = el('button', { type: 'button', class: 'btn sm notes-launch', id: 'btn-notes', 'data-guide': 'notes', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Floating notes: saved only in this browser' });
-  const ta = $('.top-actions'); if (ta) ta.appendChild(launcher); else $('.topbar')?.appendChild(launcher);
+  const launcher = el('button', { type: 'button', class: 'notes-launch', id: 'btn-notes', 'data-guide': 'notes', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Floating notes: saved only in this browser' });
+  // far top-right of the header (after the last nav item and the correction control)
+  const bar = $('.topbar'); if (bar) { bar.appendChild(launcher); bar.classList.add('has-notes-launch'); } else $('.top-actions')?.appendChild(launcher);
   const toNote = el('button', { type: 'button', class: 'icon-btn wide', id: 'btn-to-note', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Copy this item into a note' }, 'Copy to note'); toNote.hidden = true;
   { const pa = $('#panel .panel-actions'); const cp = $('#btn-copy'); if (pa) pa.insertBefore(toNote, cp && cp.parentNode === pa ? cp : pa.firstChild); }
-  const refreshLauncher = () => { launcher.textContent = st.notes.length ? `Notes (${st.notes.length})` : 'Notes'; launcher.setAttribute('aria-label', `Notes: ${st.notes.length} saved in this browser`); };
+  const refreshLauncher = () => {
+    const n = st.notes.length;
+    launcher.replaceChildren(el('span', { class: 'notes-launch-label' }, '+ Note'));
+    if (n) launcher.append(' ', el('span', { class: 'notes-launch-count', 'aria-hidden': 'true' }, String(n)));
+    launcher.setAttribute('aria-label', C.launchAria(n));
+  };
 
   // ---- menus (role=menu, arrow keys, Esc returns focus)
   function closeMenu(focusBack = true) { if (!menu) return; const { box, anchor } = menu; menu = null; box.remove(); anchor.setAttribute('aria-expanded', 'false'); if (focusBack) anchor.focus(); }
@@ -4111,7 +4467,7 @@ $('#btn-copy').addEventListener('click', async () => { const url = location.href
 $('#btn-print').addEventListener('click', () => window.print());
 $('#panel-grip').addEventListener('click', () => { const full = document.body.classList.toggle('panel-full'); $('#panel-grip').setAttribute('aria-expanded', full); });
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || $('#dlg').open) return;
+  if (e.key !== 'Escape' || $('#dlg').open || $('#noticing-dlg')?.open) return;
   if (document.activeElement === $('#q')) return;
   if (document.body.classList.contains('sb-open')) return closeSidebarMobile();
   if (S.expand.length) { S.expand = []; prevVisibleKey = ''; return update(true); }
@@ -4163,6 +4519,6 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   if (cy) { cy.one('render', mark); requestAnimationFrame(() => requestAnimationFrame(mark)); } else mark();
 })();
 // test / debugging hook (read-only accessors)
-window.__wiretap = { sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null };
+window.__wiretap = { sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, openFvVideo, closeFvVideo, fvVideoAssets: () => FV_VIDEO_ASSETS, fvVideoSeenKey: FV_VIDEO_SEEN_KEY, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null, setTheoriesLayer: typeof setTheoriesLayer === 'function' ? setTheoriesLayer : null };
 
 })();
