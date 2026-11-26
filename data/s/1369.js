@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1369,{"💥veteran":[28072,441]});
+window.__wiretapShard&&window.__wiretapShard(1369,{"💥scandal":[27062,430,27925,430,28709,393,28804,410,28880,401,29013,430],"💥scandalous":[27002,420],"💥seguin":[28792,401],"💥suspicious":[27419,410]});

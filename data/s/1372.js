@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1372,{"🚨":[28002,420,28010,401,28054,410,28055,410,28081,401,31992,514]});
+window.__wiretapShard&&window.__wiretapShard(1372,{"💥veteran":[28110,441]});

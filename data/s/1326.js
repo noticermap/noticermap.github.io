@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1326,{"чинний":[3192,163,28913,430]});
+window.__wiretapShard&&window.__wiretapShard(1326,{"пишний":[4993,168,27383,401]});

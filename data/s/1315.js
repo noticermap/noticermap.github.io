@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1315,{"голова":[26125,177],"готовий":[27345,401]});
+window.__wiretapShard&&window.__wiretapShard(1315,{"банк":[4144,187]});

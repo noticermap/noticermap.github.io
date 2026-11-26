@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-26T03:05:18.899Z */
+/* NoticerMap — built 2026-11-26T12:39:49.465Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -188,7 +188,7 @@ function fromHash() {
     types: list('types', d.types) || d.types, provs: list('prov', d.provs) || d.provs, statuses: list('status', d.statuses) || d.statuses, cats: list('cats', d.cats) || d.cats,
     from: okDate(p.get('from')), to: okDate(p.get('to')), basis: p.get('basis') === 'reported' ? 'reported' : 'event',
     undated: p.get('undated') !== '0', money: p.get('money') === '1', est: p.get('est') === '1',
-    layout: ['network', 'rings', 'provinces', 'clusters'].includes(p.get('layout')) ? p.get('layout') : 'network',
+    layout: ['network', 'types', 'layers', 'provinces', 'clusters', 'rings'].includes(p.get('layout')) ? p.get('layout') : 'network',
     min: +p.get('min') || 0, mfocus: p.get('focus') === '1', topic: (['immigration', 'carney'].includes(p.get('topic')) ? p.get('topic') : ''), top: p.has('top') ? +p.get('top') || 0 : d.top,
     maxdeg: +p.get('maxdeg') || 0, expand: (p.get('expand') || '').split(',').filter(id => ENT.has(id)),
     ecolor: ['type', 'layer'].includes(p.get('ecolor')) ? p.get('ecolor') : 'status',
@@ -495,6 +495,219 @@ function applyTopicFilter(ents, links) {
   return { ents, links };
 }
 
+// ---- 04-scroll-memory.js
+/* scroll-memory: first open of a detail view is at the top; returning to the
+   same view+id restores the last scroll position from sessionStorage. */
+const SM_STORE_KEY = 'noticermap:scroll-mem';
+try { if (history && 'scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { }
+
+const _sm = { map: null, active: new Map(), writeTick: 0, observers: new Map() };
+
+function smStore() {
+  if (_sm.map) return _sm.map;
+  try {
+    const raw = sessionStorage.getItem(SM_STORE_KEY);
+    const o = raw ? JSON.parse(raw) : {};
+    _sm.map = o && typeof o === 'object' && !Array.isArray(o) ? o : {};
+  } catch (e) { _sm.map = {}; }
+  return _sm.map;
+}
+function smPersist(immediate) {
+  const write = () => {
+    _sm.writeTick = 0;
+    try { sessionStorage.setItem(SM_STORE_KEY, JSON.stringify(smStore())); } catch (e) { }
+  };
+  if (immediate) { if (_sm.writeTick && typeof cancelAnimationFrame === 'function') try { cancelAnimationFrame(_sm.writeTick); } catch (e) { } _sm.writeTick = 0; write(); return; }
+  if (_sm.writeTick) return;
+  _sm.writeTick = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(write) : setTimeout(write, 0);
+}
+function scrollMemKey(view, id) {
+  const v = String(view == null ? '' : view).trim();
+  if (!v) return '';
+  const i = id == null || id === '' ? '' : String(id);
+  return i ? v + ':' + i : v;
+}
+function scrollMemGet(key) {
+  if (!key) return null;
+  const y = smStore()[key];
+  return typeof y === 'number' && isFinite(y) && y >= 0 ? y : null;
+}
+function scrollMemPosition(key) {
+  const y = scrollMemGet(key);
+  return y == null ? 0 : y;
+}
+function smIsWindow(el) { return el === window || el === document || el === document.documentElement || el === document.body; }
+function smGetY(el) {
+  if (!el) return 0;
+  if (smIsWindow(el)) return window.scrollY || document.documentElement.scrollTop || 0;
+  return el.scrollTop || 0;
+}
+function smSetY(el, y) {
+  const n = Math.max(0, Math.round(Number(y) || 0));
+  if (!el) return;
+  if (smIsWindow(el)) window.scrollTo(0, n);
+  else el.scrollTop = n;
+}
+function smMax(el) {
+  if (!el) return 0;
+  if (smIsWindow(el)) return Math.max(0, (document.documentElement.scrollHeight || 0) - (window.innerHeight || 0));
+  return Math.max(0, (el.scrollHeight || 0) - (el.clientHeight || 0));
+}
+function smHidden(el) {
+  if (!el || smIsWindow(el)) return false;
+  return !!(el.hidden || (el.offsetParent === null && el !== document.body && el !== document.documentElement));
+}
+function smReadyToRecord(el, key, y) {
+  const stored = scrollMemGet(key) || 0;
+  const restore = (_sm.active.get(el) || {}).restoreY || 0;
+  const target = Math.max(stored, restore);
+  if (target > 0 && y + 1 < target && smMax(el) + 1 < target) return false;
+  if (smHidden(el) && y === 0 && target > 0) return false;
+  return true;
+}
+function scrollMemRemember(el) {
+  const cur = el && _sm.active.get(el);
+  if (!cur || !cur.key) return;
+  const y = smGetY(el);
+  if (!smReadyToRecord(el, cur.key, y)) return;
+  smStore()[cur.key] = y;
+  smPersist();
+  if (Math.abs(y - (cur.restoreY || 0)) > 1 && smMax(el) >= (cur.restoreY || 0)) cur.restoreY = y;
+}
+function scrollMemLeave(el, key) {
+  const k = key || (el && (_sm.active.get(el) || {}).key);
+  if (el && k) {
+    const y = smGetY(el);
+    if (smReadyToRecord(el, k, y)) { smStore()[k] = y; smPersist(true); }
+  }
+  if (el) _sm.active.delete(el);
+}
+function smApply(el, key) {
+  const cur = _sm.active.get(el);
+  if (!cur || cur.key !== key) return;
+  smSetY(el, cur.restoreY);
+}
+function scrollMemEnter(el, key) {
+  if (!el || !key) return;
+  const prev = _sm.active.get(el);
+  if (prev && prev.key && prev.key !== key) scrollMemLeave(el, prev.key);
+  const y = scrollMemPosition(key);
+  _sm.active.set(el, { key, restoreY: y });
+  smApply(el, key);
+  const again = () => smApply(el, key);
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => { again(); requestAnimationFrame(again); });
+  else setTimeout(again, 0);
+}
+function scrollMemBind(el) {
+  if (!el || el._smBound) return el;
+  el._smBound = true;
+  const target = smIsWindow(el) ? window : el;
+  target.addEventListener('scroll', () => scrollMemRemember(el), { passive: true });
+  if (typeof ResizeObserver === 'function' && !smIsWindow(el)) {
+    const ro = new ResizeObserver(() => {
+      const cur = _sm.active.get(el);
+      if (!cur || !(cur.restoreY > 0)) return;
+      if (smGetY(el) + 1 < cur.restoreY) smSetY(el, cur.restoreY);
+    });
+    try { ro.observe(el); _sm.observers.set(el, ro); } catch (e) { }
+  }
+  return el;
+}
+
+function scrollMemPanelKey(sel) {
+  const s = sel || (typeof S !== 'undefined' ? S : null) || {};
+  if (s.link) return scrollMemKey('claim', s.link);
+  if (s.node) return scrollMemKey('profile', s.node);
+  if (s.net) return scrollMemKey('network', s.net);
+  if (s.ov != null && s.ov !== '') return scrollMemKey('overlap', s.ov);
+  if (s.lead) return scrollMemKey('lead', s.lead);
+  return scrollMemKey('overview');
+}
+function scrollMemViewEl(view) {
+  if (typeof document === 'undefined' || !view || view === 'map') return null;
+  if (view === 'timeline') return document.querySelector('#view-timeline .tl-scroll') || document.getElementById('view-timeline');
+  return document.getElementById('view-' + view);
+}
+function scrollMemViewKeyFor(view) {
+  if (view === 'index' && typeof iPage === 'number') return scrollMemKey('view-index', iPage);
+  if (view === 'money' && typeof S !== 'undefined' && S.mfocus && S.node) return scrollMemKey('view-money', S.node);
+  return scrollMemKey('view-' + (view || 'map'));
+}
+function scrollMemAfterPanel() {
+  const body = typeof $ === 'function' ? $('#panel-body') : document.getElementById('panel-body');
+  if (!body) return;
+  scrollMemBind(body);
+  scrollMemEnter(body, scrollMemPanelKey());
+}
+function scrollMemBeforePanel() {
+  const body = typeof $ === 'function' ? $('#panel-body') : document.getElementById('panel-body');
+  if (body) scrollMemRemember(body);
+}
+function scrollMemLeaveView(view) {
+  const el = scrollMemViewEl(view);
+  if (el) { scrollMemBind(el); scrollMemLeave(el, scrollMemViewKeyFor(view)); }
+}
+function scrollMemEnterView(view) {
+  const el = scrollMemViewEl(view);
+  if (!el) return;
+  scrollMemBind(el);
+  scrollMemEnter(el, scrollMemViewKeyFor(view));
+}
+function scrollMemAfterViewRender(view) {
+  const v = view || (typeof S !== 'undefined' ? S.view : null);
+  if (!v || v === 'map') return;
+  scrollMemEnterView(v);
+}
+function scrollMemWindowKey() {
+  const path = (location.pathname || '/').replace(/\/+$/, '') || '/';
+  const hash = location.hash || '';
+  if (/\.html$/i.test(path) && /(?:^|\/)e\//.test(path)) return scrollMemKey('e', path + hash);
+  return scrollMemKey('page', path + hash);
+}
+function scrollMemInitStatic() {
+  const key = scrollMemWindowKey();
+  const y = scrollMemPosition(key);
+  const el = document.scrollingElement || document.documentElement;
+  scrollMemBind(window);
+  _sm.active.set(window, { key, restoreY: y });
+  if (el && el !== window) _sm.active.set(el, { key, restoreY: y });
+  const apply = () => {
+    const cur = _sm.active.get(window);
+    window.scrollTo(0, cur ? cur.restoreY : y);
+  };
+  apply();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+  window.addEventListener('load', apply);
+  window.addEventListener('resize', apply);
+  if (typeof ResizeObserver === 'function') {
+    try { new ResizeObserver(apply).observe(document.documentElement); if (document.body) new ResizeObserver(apply).observe(document.body); } catch (e) { }
+  }
+  window.addEventListener('pagehide', () => {
+    const curY = window.scrollY || 0;
+    if (smReadyToRecord(window, key, curY)) { smStore()[key] = curY; smPersist(true); }
+  });
+}
+function scrollMemFlush() {
+  _sm.active.forEach((cur, el) => {
+    if (!cur || !cur.key) return;
+    const y = smIsWindow(el) ? (window.scrollY || 0) : smGetY(el);
+    if (smReadyToRecord(el, cur.key, y)) smStore()[cur.key] = y;
+  });
+  smPersist(true);
+}
+function scrollMemInitApp() {
+  window.addEventListener('pagehide', scrollMemFlush);
+  window.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') scrollMemFlush(); });
+  const sidebar = typeof $ === 'function' ? $('#sidebar') : document.getElementById('sidebar');
+  if (sidebar) { scrollMemBind(sidebar); scrollMemEnter(sidebar, scrollMemKey('sidebar')); }
+}
+
+if (typeof document !== 'undefined') {
+  const bootStatic = () => !!(document.body && document.body.classList.contains('static-page') && (scrollMemInitStatic(), true));
+  if (document.body) bootStatic();
+  else document.addEventListener('DOMContentLoaded', bootStatic);
+}
+
 // ---- 05-extras.js
 /* lazy data: overlaps, leads, search index, sources, guide, explanations. Each data/<name>.js registers itself
    (window.__WIRETAP_EXTRA__[name]) and calls window.__wiretapExtra(name). Script tags work over file:// too. */
@@ -678,7 +891,9 @@ function renderLegend() {
     `<div class="legend-row"><span class="est">Estimate</span><span class="muted">estimates, budgets and other amounts are not money moved; excluded from totals by default</span></div>` +
     `<div class="legend-row"><span class="seen seen-2">Seen in 2 layers</span><span class="muted">reported independently by N source layers</span></div>` +
     `<div class="legend-row"><svg width="34" height="8" aria-hidden="true"><line x1="0" y1="4" x2="34" y2="4" stroke="#9aa0a6" stroke-width="1.2" stroke-dasharray="1 3"/></svg><span class="muted">Overlap (optional): found by the map, not a claim</span></div>` +
-    `<div class="legend-row muted">Line width ∝ amount · node size ∝ connections</div>`;
+    `<div class="legend-row muted">Line width ∝ amount · money lines are straight, arrow = direction the money went · other relationships curve · node size ∝ connections</div>` +
+    `<div class="legend-row muted">Nodes show a photo or logo where one was matched (credits on the Image credits page, under About); otherwise a circle in the type colour</div>` +
+    `<div class="legend-row muted"><span style="color:#f5d90a">⚠ gold dashed</span> = Theories (unverified, no wrongdoing alleged): dim while Theories is off, bright when it is on</div>`;
   { const DESC = { wiretap: 'Wiretap Media reporting', fringeviews: 'commentary by FringeViews, Polly St. George; mostly unverified', bloodmoney: 'items mapped by the Bl00d Money project', samcooper: 'reporting by Sam Cooper / The Bureau (@scoopercooper); many articles are paywalled, so often only the headline and free preview were read', records: 'items whose own source is official records, added by the records checker and the records collector', theories: 'Unverified theory - reported claims only, educational, no wrongdoing alleged. Off by default; use the Theories toggle or a per-node switch.' };
     fillSourceSelects();
     $('#about-layer-n').textContent = `(${LAYER_KEYS.length})`; $('#about-layers').innerHTML = LAYER_KEYS.map(k => `<li data-about-layer="${esc(k)}">${layerChip(k)} ${esc(DESC[k] || layerInfo(k).outlet || '')}</li>`).join(''); }
@@ -902,9 +1117,15 @@ initPanelResize();
 // ---- 20-graph.js
 /* graph: cytoscape map, layouts, highlighting, keyboard navigation, focus/expand */
 let cy = null, curLayout = null, prevVisibleKey = '', kbd = null;
-const nodeSize = e => 18 + Math.min(46, Math.sqrt(e.degree) * 6 + (e.money_in + e.money_out > 0 ? Math.log10(e.money_in + e.money_out + 1) * 2.5 : 0));
-const fontSize = e => Math.round(9 + Math.min(10, Math.sqrt(e.degree) * 1.4));
-const edgeWidth = l => l.amount_cad > 0 ? Math.min(11, 1.5 + Math.log10(l.amount_cad) * 1.1) : 1.2;
+const nodeSize0 = e => 18 + Math.min(46, Math.sqrt(e.degree) * 6 + (e.money_in + e.money_out > 0 ? Math.log10(e.money_in + e.money_out + 1) * 2.5 : 0));
+// picture nodes (photo or logo) are at least 44 across so a face or logo reads; same as nodeSizeOf in lib/layout.mjs
+const nodeSize = e => e.im ? Math.max(44, nodeSize0(e) + 6) : nodeSize0(e);
+const fontSize = e => Math.round(10 + Math.min(12, Math.sqrt(e.degree) * 1.6)); // keep in sync with fontSizeOf in lib/layout.mjs
+// wrap width (layout units) that fits the complete name on two lines (three past 96 characters): labels wrap, never truncate
+const wrapWidth = (name, fs) => Math.round(Math.max(150, Math.min(Math.ceil(String(name || '').length / 2), 48) * fs * 0.6 + fs * 2));
+const LBL_MAX_PX = 22; // zoomed far in, labels stop growing past this screen size (class lcap) so more of them fit
+// thin lines by default (money lines thicken with the sourced amount); the selection, hover and paths draw them wider
+const edgeWidth = l => l.amount_cad > 0 ? Math.min(8, 1.2 + Math.log10(l.amount_cad) * 0.85) : 0.9;
 const edgeColor = l => S.ecolor === 'type' ? LINK_CATS[catOf(l)].color : S.ecolor === 'layer' ? (seenOf(l).length > 1 ? '#FFFFFF' : layerInfo(seenOf(l)[0] || 'wiretap').color) : STATUS[l.status].color;
 // WebGL only on a hardware GPU: on a software rasteriser (SwiftShader, llvmpipe) the canvas renderer is faster.
 const USE_WEBGL = BIG && !/[?&]webgl=0/.test(location.search) && (() => { try { const gl = document.createElement('canvas').getContext('webgl2'); if (!gl) return false; if (/[?&]webgl=1/.test(location.search)) return true; const x = gl.getExtension('WEBGL_debug_renderer_info'); const r = x ? String(gl.getParameter(x.UNMASKED_RENDERER_WEBGL)) : ''; return !/swiftshader|llvmpipe|software|basic render/i.test(r); } catch { return false; } })();
@@ -922,21 +1143,159 @@ function fitFast(ids, pad = 30) {
 let DEFER_EDGES = false;
 const isThyL = l => (typeof isTheoryLnk === 'function' ? isTheoryLnk(l) : l.type === 'named_in_theory');
 const isThyE = e => (typeof isTheoryEnt === 'function' ? isTheoryEnt(e) : (e.theory || e.type === 'theory'));
-const edgeEl = l => { const t = LT(l.type), st = STATUS[l.status] || STATUS.reported; const a0 = t.directed === false ? 'none' : (t.arrow || 'triangle'); return { group: 'edges', classes: [isEst(l) ? 'est' : '', l.status === 'contradicted' ? 'contra' : '', 'seen' + Math.min(4, seenOf(l).length), st.dash ? 'dashed' : '', t.directed === false ? 'undirected' : '', LITE && renderGraph._hl ? 'hl' : ''].filter(Boolean).join(' '), data: { id: 'L:' + l.id, lid: l.id, source: l.from, target: l.to, color: LITE ? edgeColor(l) : STATUS[l.status].color, dash: st.dash || [1, 0], width: edgeWidth(l), arrow: BIG ? (initGraph._near ? a0 : 'none') : (t.arrow || 'triangle'), arrow0: a0, label: l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '' } }; };
+// Lines (Obsidian Canvas style): money lines are straight with an arrow for the direction the money went; other
+// relationships curve gently. Parallel lines between the same two nodes fan out so each one stays visible and clickable.
+let PAR = null;
+function parOf(l) {
+  if (!PAR) { PAR = new Map(); const by = new Map(); for (const x of D.links) { if (isThyL(x)) continue; const k = x.from < x.to ? x.from + '\u0000' + x.to : x.to + '\u0000' + x.from; (by.get(k) || by.set(k, []).get(k)).push(x); } for (const a of by.values()) { a.sort((p, q) => (isMoneyL(q) - isMoneyL(p)) || (p.id < q.id ? -1 : 1)); a.forEach((x, i) => PAR.set(x.id, [i, a.length])); } }
+  return PAR.get(l.id) || [0, 1];
+}
+const isMoneyL = l => LT(l.type).cat === 'money' || isFlow(l) ? 1 : 0;
+function curveOf(l) { // control-point distance (layout units, signed relative to the from→to direction)
+  const [i, n] = parOf(l), money = isMoneyL(l); const sgn = l.from < l.to ? 1 : -1;
+  const d = n === 1 ? (money ? 0 : 22) : (i - (n - 1) / 2) * 34;
+  return d * sgn;
+}
+const edgeEl = l => { const t = LT(l.type), st = STATUS[l.status] || STATUS.reported; const a0 = t.directed === false ? 'none' : (t.arrow || 'triangle'); const money = isMoneyL(l); return { group: 'edges', classes: [money ? 'money' : '', isEst(l) ? 'est' : '', l.status === 'contradicted' ? 'contra' : '', 'seen' + Math.min(4, seenOf(l).length), st.dash ? 'dashed' : '', t.directed === false ? 'undirected' : '', LITE && renderGraph._hl ? 'hl' : ''].filter(Boolean).join(' '), data: { id: 'L:' + l.id, lid: l.id, source: l.from, target: l.to, color: LITE ? edgeColor(l) : STATUS[l.status].color, dash: st.dash || [1, 0], width: edgeWidth(l), cpd: curveOf(l), arrow: money && a0 !== 'none' ? a0 : BIG ? (initGraph._near ? a0 : 'none') : (t.arrow || 'triangle'), arrow0: a0, label: l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '', rl: String(t.label || l.type).toLowerCase() + (l.amount_cad > 0 ? ' · ' + fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '') } }; };
 const edgeElements = () => D.links.filter(l => !isThyL(l)).map(edgeEl);
-const nodeEl = e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) && !initGraph._near ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : '') + (LITE && renderGraph._hl ? ' hl' : '') + (LOD.nolabel ? ' nolabel' : ''), data: { id: e.id, label: e.name, color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), type: e.type, province: e.province || '—' }, position: e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 } });
+const nodeEl = e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) && !initGraph._near ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : '') + (LITE && renderGraph._hl ? ' hl' : '') + (LOD.nolabel ? ' nolabel' : '') + (LC.init ? ' lc' : '') + (e.im ? (e.imk === 'l' ? ' pic logo' : ' pic') : '') + (FZ && FZ.has(e.id) ? ' fz' : ''), data: { id: e.id, zi: Math.min(40, Math.floor(Math.sqrt(e.degree) * 2)) + (e.im ? 1 : 0), label: shortLabel(e.name), full: e.name, ...(e.im ? { im: e.im } : {}), color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), tmw: wrapWidth(shortLabel(e.name), fontSize(e)), type: e.type, province: e.province || '—' }, position: posOf(e) });
+// ---- Label culling: labels are placed greedily in screen space (forced first, then by priority) and a label that
+// would overlap one already placed is hidden (class lc). The selection, its neighbours, search hits, paths, leads,
+// tours and network members are always labelled. A few hubs in view get a readable screen-size label when the map is
+// zoomed out too far for their normal label (class lboost). ?lcull=0 turns it off.
+const LBL_MIN_FS = 8; // = node 'min-zoomed-font-size': smaller rendered labels are not drawn at all (was 11 on big graphs: leaf labels then only appeared past zoom 1.1)
+// focused views (a topic, a network, a small filtered selection laid out on its own): every node of the selection is
+// labelled down to 8 px (class fz), and the view opens at a zoom where the smallest label is at least 8.5 px
+const LBL_FOCUS_FS = 8, FOCUS_READ_PX = 8.5; let FZ = null; // ids of the focused selection (null: none)
+const LC = { on: !/[?&]lcull=0/.test(location.search), init: false, t: 0, runs: 0, ms: 0, shown: 0, culled: 0, boosted: 0, forced: 0 };
+const LC_FORCE = ['sel', 'nb', 'netm', 'path', 'lead', 'tour']; // styles with min-zoomed-font-size 0: always drawn, always labelled
+const LC_KEEP = ['hit', 'kbd', 'expanded']; // labelled whenever their font is readable
+// <label-cull>
+// Greedy label collision culling in screen space. items: [{ id, x, y, w, h, pri, force }] where (x, y) is the centre of
+// the label box in screen px. Forced items are always kept (and reserve their space); the rest are taken by priority
+// (ties by id, so the result is stable) and dropped when their padded box overlaps a kept one or lies outside the
+// screen (with inside: true, also when it is only partly on screen). Returns the Set of ids that keep their label.
+function cullLabels(items, o = {}) {
+  const pad = o.pad ?? 2, cell = o.cell || 64, W = o.width ?? Infinity, H = o.height ?? Infinity, max = o.max ?? Infinity;
+  const list = items.slice().sort((a, b) => ((b.force ? 1 : 0) - (a.force ? 1 : 0)) || ((b.pri || 0) - (a.pri || 0)) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const grid = new Map(), keep = new Set(); let n = 0; keep.alt = new Map();
+  // an item may offer alternative spots (it.alts: [{ x, y, inside }], tried in order; the first that fits is kept and
+  // its index recorded in keep.alt), e.g. a label slid back inside the screen, then above its node, then as it is
+  for (const it of list) {
+    if (!it.force && n >= max) continue;
+    const cands = it.alts && it.alts.length ? it.alts : [it];
+    for (let ci = 0; ci < cands.length; ci++) {
+      const c = cands[ci], inside = c.inside ?? o.inside;
+      const x1 = c.x - it.w / 2 - pad, x2 = c.x + it.w / 2 + pad, y1 = c.y - it.h / 2 - pad, y2 = c.y + it.h / 2 + pad;
+      const forced = it.force || c.force;
+      if (!forced) { if (x2 < 0 || y2 < 0 || x1 > W || y1 > H) continue; if (inside && (x1 + pad < 0 || y1 + pad < 0 || x2 - pad > W || y2 - pad > H)) continue; } // inside: no label cut off by the screen edge
+      const gx1 = Math.floor(x1 / cell), gx2 = Math.floor(x2 / cell), gy1 = Math.floor(y1 / cell), gy2 = Math.floor(y2 / cell);
+      let hit = false;
+      if (!forced) for (let gx = gx1; gx <= gx2 && !hit; gx++) for (let gy = gy1; gy <= gy2 && !hit; gy++) { const a = grid.get(gx + ':' + gy); if (a) for (const r of a) if (r[0] < x2 && r[2] > x1 && r[1] < y2 && r[3] > y1) { hit = true; break; } }
+      if (hit) continue;
+      const r = [x1, y1, x2, y2];
+      for (let gx = gx1; gx <= gx2; gx++) for (let gy = gy1; gy <= gy2; gy++) { const k = gx + ':' + gy; const a = grid.get(k); if (a) a.push(r); else grid.set(k, [r]); }
+      keep.add(it.id); if (it.alts) keep.alt.set(it.id, ci); if (!it.force) n++;
+      break;
+    }
+  }
+  return keep;
+}
+// </label-cull>
+// label box of a node in screen px (monospace ≈ 0.6 em per character; text-max-width 150 with an ellipsis; label sits under the node)
+function labelBox(n, z, pan, fsPx, maxW) {
+  const p = n.position(), d = n.data(), len = String(d.label || '').length, full = len * fsPx * 0.6;
+  const lines = full > maxW ? Math.ceil(full / (maxW * 0.92)) : 1; // word wrap: lines are a little shorter than the max width
+  const w = Math.min(maxW, full) + 6, h = fsPx * 1.15 * lines + 4; // + outline / background
+  return { x: p.x * z + pan.x, y: (p.y + (d.size || 0) / 2) * z + pan.y + Math.max(2, 4 * z) + h / 2, w, h };
+}
+function labelCull() {
+  LC.t = 0;
+  if (!cy || !LC.on || S.view !== 'map') return;
+  if (TIMING.first_paint_ms == null) { scheduleLabelCull(150); return; } // never compete with the first frame
+  const t0 = performance.now(), z = cy.zoom(), pan = cy.pan(), W = cy.width(), H = cy.height(), M = 80;
+  const off = [], on = [], bOn = [], bOff = [], capOn = [], capOff = [], items = [], byId = new Map(), shift = [];
+  if (LOD.nolabel) { cy.batch(() => cy.nodes('.lc, .lboost, .lcap').removeClass('lc lboost lcap')); LC.init = false; return; }
+  const boostN = BIG ? (isMobile() ? 10 : 24) : 0, boostPx = LBL_MIN_FS + 1, cand = [];
+  cy.nodes().forEach(n => {
+    if (n.hasClass('thy-node')) return;
+    const id = n.id(); if (renderGraph._vis && renderGraph._vis.get(id) === false) return;
+    const p = n.position(), sx = p.x * z + pan.x, sy = p.y * z + pan.y;
+    if (sx < -M - 150 || sy < -M || sx > W + M + 150 || sy > H + M) { if (n.hasClass('lboost')) bOff.push(n); return; } // off screen: leave it as it is
+    const force = LC_FORCE.some(c => n.hasClass(c)), faded = n.hasClass('faded');
+    const fsW = n.data('fs') || 10, fsPx = fsW * z;
+    const minor = n.hasClass('minor') && !force && !LC_KEEP.some(c => n.hasClass(c));
+    const minFs = n.hasClass('fz') ? LBL_FOCUS_FS : LBL_MIN_FS;
+    if (!force && (fsPx < minFs || minor)) { // not drawn at normal size: maybe a boosted hub label
+      if (n.hasClass('lcap')) capOff.push(n);
+      if (boostN && !faded && fsPx < minFs && !n.hasClass('fz')) cand.push(n); // focused selections use their own label size, never a boosted one else if (n.hasClass('lboost')) bOff.push(n);
+      return;
+    }
+    if (n.hasClass('lboost')) bOff.push(n);
+    // cap: font held at LBL_MAX_PX, and the wrap width kept inside the screen (narrow phones get more lines, never a cut-off name)
+    const px = Math.min(fsPx, LBL_MAX_PX), mwPx = Math.min((n.data('tmw') || 150) * px / (n.data('fs') || 10), W * 0.85), cap = px < fsPx || mwPx < (n.data('tmw') || 150) * z - 0.5;
+    if (cap) { capOn.push(n); n.scratch('_cap', [px / z, mwPx / z]); } else if (n.hasClass('lcap')) capOff.push(n);
+    const b = labelBox(n, z, pan, px, mwPx);
+    // keep the label inside the screen: slide it sideways (at most half its width, so it stays under its node) and,
+    // at the bottom edge, put it above the node instead of below
+    // spots tried in order: under the node (slid back inside the screen if needed), above it (slid likewise), and
+    // finally as it is, partly off screen, so a node in view never loses its label to the screen edge
+    let alts = null;
+    { const m = 3, slide = (x) => x - b.w / 2 < m ? Math.min(m - (x - b.w / 2), b.w / 2 + m) : x + b.w / 2 > W - m ? -Math.min(x + b.w / 2 - (W - m), b.w / 2 + m) : 0;
+      const sxp = slide(b.x), yUp = p.y * z + pan.y - (n.data('size') || 0) / 2 * z - Math.max(2, 4 * z) - b.h / 2;
+      const out = sxp !== 0 || b.y + b.h / 2 > H - m || b.y - b.h / 2 < m;
+      if (out) { alts = [{ x: b.x + sxp, y: b.y, mx: sxp / z, up: false }, { x: b.x + sxp, y: yUp, mx: sxp / z, up: true }, { x: b.x, y: b.y, mx: 0, up: false, inside: false }];
+        // a node wholly on screen always keeps a label: last resort, the spot that stays on screen even if it touches another
+        const r = (n.data('size') || 0) / 2 * z, sy0 = p.y * z + pan.y; if (sx - r >= 0 && sx + r <= W && sy0 - r >= 0 && sy0 + r <= H) alts.push(b.y + b.h / 2 > H - m ? { x: b.x + sxp, y: yUp, mx: sxp / z, up: true, force: true } : { x: b.x + sxp, y: b.y, mx: sxp / z, up: false, force: true }); }
+      shift.push(n); n.scratch('_lsh', [0, false]); }
+    const it = { id, ...b, alts, pri: (faded ? -1e6 : 0) - (alts ? 5e5 : 0) + (LC_KEEP.some(c => n.hasClass(c)) ? 1e5 : 0) + (ENT.get(id)?.degree || 0), force };
+    items.push(it); byId.set(id, n);
+  });
+  // boosted hub labels: the best-connected candidates in view, at a readable screen size
+  cand.sort((a, b) => (ENT.get(b.id())?.degree || 0) - (ENT.get(a.id())?.degree || 0));
+  const boosted = new Set();
+  for (const n of cand) {
+    if (boosted.size < boostN) { const id = n.id(), p = n.position(), sx = p.x * z + pan.x, sy = p.y * z + pan.y; if (sx >= 0 && sy >= 0 && sx <= W && sy <= H) { boosted.add(id); const bw = Math.min(wrapWidth(n.data('label'), boostPx), W * 0.85); const b = labelBox(n, z, pan, boostPx, bw); n.scratch('_bw', bw); items.push({ id, ...b, pri: ENT.get(id)?.degree || 0, force: false }); byId.set(id, n); continue; } }
+    if (n.hasClass('lboost')) bOff.push(n);
+  }
+  const keep = cullLabels(items, { width: W, height: H, pad: 3, inside: true });
+  for (const it of items) if (it.alts && keep.alt.has(it.id)) { const a = it.alts[keep.alt.get(it.id)]; byId.get(it.id).scratch('_lsh', [a.mx, a.up]); }
+  let shown = 0, culled = 0, nb = 0;
+  for (const it of items) {
+    const n = byId.get(it.id), k = keep.has(it.id), isB = boosted.has(it.id);
+    if (k) { shown++; if (n.hasClass('lc')) on.push(n); } else { culled++; if (!n.hasClass('lc')) off.push(n); }
+    if (isB && k) { nb++; bOn.push(n); } else if (n.hasClass('lboost')) bOff.push(n);
+  }
+  cy.batch(() => {
+    for (const n of off) n.addClass('lc');
+    for (const n of on) n.removeClass('lc');
+    for (const n of bOff) n.removeClass('lboost');
+    for (const n of capOff) n.removeClass('lcap');
+    for (const n of capOn) { const c = n.scratch('_cap'); n.data({ lfs: c[0], lmw: c[1] }); if (!n.hasClass('lcap')) n.addClass('lcap'); }
+    for (const n of shift) { const [mx, up] = n.scratch('_lsh') || [0, false]; if (Math.abs(mx) > 0.01) { if (Math.abs((n.data('lmx') || 0) - mx) > 0.01) n.data('lmx', mx); if (!n.hasClass('lsx')) n.addClass('lsx'); } else if (n.hasClass('lsx')) n.removeClass('lsx'); if (up !== n.hasClass('lup')) n.toggleClass('lup', up); }
+    for (const n of bOn) { n.data({ lfs: boostPx / z, lmw: (n.scratch('_bw') || 150) / z, lmy: 3 / z }); if (!n.hasClass('lboost')) n.addClass('lboost'); n.removeClass('lc'); }
+  });
+  LC.init = true; LC.runs++; LC.ms = Math.round((performance.now() - t0) * 10) / 10; LC.shown = shown; LC.culled = culled; LC.boosted = nb; LC.forced = items.filter(i => i.force).length;
+}
+function scheduleLabelCull(ms = 40) { if (!LC.on) return; clearTimeout(LC.t); LC.t = setTimeout(labelCull, ms); }
+window.__wiretapLabels = () => ({ on: LC.on, runs: LC.runs, ms: LC.ms, shown: LC.shown, culled: LC.culled, boosted: LC.boosted, forced: LC.forced, zoom: cy ? cy.zoom() : null });
 // ---- Level of detail (phones and desktop on a large graph): the graph holds an overview (the best-connected nodes),
 // what is in view once zoomed in (a spatial grid over the build-time layout, best-connected first, up to NODE_MAX),
 // and everything the selection, expanded nodes, a network, lead, tour, path or overlap needs. Nodes that leave the
 // view are dropped again. Phones use a tight cap; desktop uses a larger one so mid-zoom stays dense. ?lite=0 disables it.
-const LOD = { grid: null, cell: 300, res: new Set(), overview: [], NODE_MAX: 1400, OVERVIEW_N: 350, ZOOM_FILL: 0.1, nolabel: false, adds: 0, removes: 0, deferFill: true };
+// cell and ZOOM_FILL are in layout units: the v2 layout (lib/layout.mjs) is ~2x wider than v1 (cell 300, ZOOM_FILL 0.1)
+const LOD = { grid: null, cell: 600, res: new Set(), overview: [], NODE_MAX: 1400, OVERVIEW_N: 350, ZOOM_FILL: 0.05, nolabel: false, adds: 0, removes: 0, deferFill: true };
 function lodInit() {
   if (LITE) { LOD.NODE_MAX = 1400; LOD.OVERVIEW_N = 350; }
   else { LOD.NODE_MAX = 5000; LOD.OVERVIEW_N = 800; }
   const g = new Map(), c = LOD.cell;
-  for (const e of D.entities) { if (isThyE(e) || !e.pos) continue; const k = Math.floor(e.pos[0] / c) + ',' + Math.floor(e.pos[1] / c); (g.get(k) || g.set(k, []).get(k)).push(e); }
+  for (const e of D.entities) { if (isThyE(e) || (!e.pos && !(GL.pos && GL.pos.has(e.id)))) continue; const p = posOf(e); const k = Math.floor(p.x / c) + ',' + Math.floor(p.y / c); (g.get(k) || g.set(k, []).get(k)).push(e); }
   for (const a of g.values()) a.sort((x, y) => y.degree - x.degree);
   LOD.grid = g; LOD.overview = D.entities.filter(e => !isThyE(e)).sort((a, b) => b.degree - a.degree).slice(0, LOD.OVERVIEW_N).map(e => e.id);
+  if (GL.groups && GL.groups.length > 1) { // group layouts: every frame shows its best-connected members at overview zoom (round robin)
+    const N = LITE ? LOD.OVERVIEW_N : Math.min(2000, Math.round(LOD.NODE_MAX * 0.4));
+    const ov = [], q = GL.groups.map(gr => gr.items); for (let i = 0; ov.length < N; i++) { let any = false; for (const it of q) if (i < it.length) { any = true; ov.push(it[i].id); if (ov.length >= N) break; } if (!any) break; }
+    LOD.overview = ov; }
 }
 function lodPins() {
   const p = new Set(); const add = id => { if (id && ENT.has(id) && !isThyE(ENT.get(id))) p.add(id); };
@@ -959,7 +1318,7 @@ function lodWanted() {
   if (LOD.deferFill) { for (const id of LOD.overview) if (ok(id)) want.add(id); return want; }
   if (F && F.ents.size <= LOD.NODE_MAX) { for (const id of F.ents) if (!isThyE(ENT.get(id))) want.add(id); return want; }
   for (const id of LOD.overview) if (ok(id)) want.add(id);
-  if (!cy || S.layout !== 'network') { if (cy && S.layout !== 'network') for (const id of LOD.res) want.add(id); return want; }
+  if (!cy) return want; // every layout fills in what is in view: Network from the build-time positions, the group layouts from GL.pos
   if (cy.zoom() < LOD.ZOOM_FILL) return want;
   const ext = cy.extent(), c = LOD.cell, w = ext.x2 - ext.x1, h = ext.y2 - ext.y1;
   const x1 = Math.floor((ext.x1 - w * 0.2) / c), x2 = Math.floor((ext.x2 + w * 0.2) / c), y1 = Math.floor((ext.y1 - h * 0.2) / c), y2 = Math.floor((ext.y2 + h * 0.2) / c);
@@ -980,7 +1339,7 @@ function lodSync() {
       cy.add(add.map(id => nodeEl(ENT.get(id)))); for (const id of add) res.add(id);
       const seen = new Set(), eds = [];
       for (const id of add) for (const l of byNode.get(id) || []) { if (seen.has(l.id) || isThyL(l)) continue; const o = l.from === id ? l.to : l.from; if (!res.has(o)) continue; seen.add(l.id); if (!cy.hasElementWithId('L:' + l.id)) eds.push(edgeEl(l)); }
-      if (eds.length) cy.add(eds);
+      if (eds.length) { const added = cy.add(eds); if (GL.kind !== 'network') added.addClass('gdim'); }
     }
   });
   LOD.adds += add.length; LOD.removes += rm.length;
@@ -997,52 +1356,87 @@ function initGraph() {
   const small = !BIG;
   cy = cytoscape({
     container: $('#cy'), layout: { name: 'preset', fit: false }, ...(USE_WEBGL ? { renderer: { name: 'canvas', webgl: true } } : {}), minZoom: 0.03, maxZoom: 5, boxSelectionEnabled: false, autoungrabify: BIG,
-    hideEdgesOnViewport: BIG, textureOnViewport: BIG, pixelRatio: BIG ? 1 : 'auto', motionBlur: false,
+    hideEdgesOnViewport: BIG, textureOnViewport: BIG, pixelRatio: BIG ? Math.min(2, Math.max(1, window.devicePixelRatio || 1)) : 'auto', motionBlur: false, // backing store at device pixels: sharp labels on high-DPI screens (was 1 on big graphs)
     elements: [
       ...(LOD_ON ? [] : D.entities.filter(e => !isThyE(e)).map(nodeEl)),
       ...(DEFER_EDGES || LOD_ON ? [] : edgeElements()),
     ],
     style: [
-      { selector: 'node', style: { 'background-color': 'data(color)', shape: 'data(shape)', width: 'data(size)', height: 'data(size)', label: 'data(label)', color: '#e2e2de', 'font-family': 'ui-monospace, Menlo, Consolas, monospace', 'font-size': 'data(fs)', 'min-zoomed-font-size': BIG ? 12 : 8, 'text-valign': 'bottom', 'text-margin-y': 4, 'text-wrap': 'ellipsis', 'text-max-width': 150, 'text-outline-color': '#07080a', 'text-outline-width': 2.5, 'border-width': 1.5, 'border-color': '#07080a' } },
+      { selector: 'node', style: { 'background-color': 'data(color)', shape: 'ellipse', width: 'data(size)', height: 'data(size)', label: 'data(label)', color: '#e2e2de', 'font-family': 'ui-monospace, Menlo, Consolas, monospace', 'font-size': 'data(fs)', 'min-zoomed-font-size': LBL_MIN_FS, 'text-valign': 'bottom', 'text-margin-y': 4, 'text-wrap': 'wrap', 'text-max-width': 'data(tmw)', 'line-height': 1.15, 'text-outline-color': '#07080a', 'text-outline-width': 3, 'text-outline-opacity': 0.95, 'text-background-color': '#07080a', 'text-background-opacity': 0.55, 'text-background-padding': 1, 'text-background-shape': 'roundrectangle', 'z-index': 'data(zi)', 'border-width': 1.5, 'border-color': '#07080a' } },
+      // picture nodes: the photo or logo is the node, inside a ring in the type colour; until it loads (or with no
+      // picture) the node is a plain circle in the type colour
+      { selector: 'node.pic', style: { 'border-color': 'data(color)', 'border-width': 3, 'background-color': '#1b1f26' } },
+      { selector: 'node.pic.logo', style: { 'background-color': '#ffffff' } },
+      { selector: 'node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null' } },
+      { selector: 'node.pic.logo.imgon', style: { 'background-fit': 'none', 'background-width': '74%', 'background-height': 'auto', 'background-position-y': '50%' } },
+      { selector: 'node.fz', style: { 'min-zoomed-font-size': LBL_FOCUS_FS } },
       { selector: 'node.nolabel', style: { label: '' } },
       { selector: 'node.ev-stopped', style: { 'background-opacity': 0.12, 'border-color': 'data(color)', 'border-width': 2.5, 'border-style': 'dashed' } }, // hollow dashed star: blocked / didn't happen
       { selector: 'node.minor', style: { label: '' } },
+      { selector: 'node.lc', style: { label: '' } }, // label culled: it would overlap a higher-priority label (see labelCull)
       { selector: 'node.minor.sel, node.minor.nb, node.minor.hit, node.minor.path, node.minor.lead, node.minor.tour, node.minor.netm, node.minor.kbd', style: { label: 'data(label)' } },
+      { selector: 'node.lc.sel, node.lc.nb, node.lc.path, node.lc.lead, node.lc.tour, node.lc.netm', style: { label: 'data(label)' } }, // the selection and its neighbours are always labelled
+      { selector: 'node.lboost', style: { label: 'data(label)', 'font-size': 'data(lfs)', 'text-max-width': 'data(lmw)', 'text-margin-y': 'data(lmy)', 'min-zoomed-font-size': 0 } }, // hub label at a readable screen size when zoomed out
+      { selector: 'node.lsx', style: { 'text-margin-x': 'data(lmx)' } }, // label slid sideways to stay on screen
+      { selector: 'node.lup', style: { 'text-valign': 'top', 'text-margin-y': -4 } }, // label above the node at the bottom edge
+      { selector: 'node.lcap', style: { 'font-size': 'data(lfs)', 'text-max-width': 'data(lmw)' } }, // zoomed far in: label held at LBL_MAX_PX on screen
 ...Array.from({ length: Math.max(0, NLAYERS - 1) }, (_, i) => i + 2).flatMap(n => [ // one tier per layer count (2…number of layers)
         { selector: `node.hl.seen${n}`, style: { 'border-color': '#FFFFFF', 'border-width': 1 + 3 * (n - 1), 'border-style': 'double' } },
         { selector: `edge.hl.seen${n}`, style: { width: e => e.data('width') + 1.5 * (n - 1), opacity: Math.min(1, 0.85 + 0.05 * n) } }]),
-      { selector: 'edge', style: { width: 'data(width)', 'line-color': 'data(color)', 'target-arrow-shape': 'data(arrow)', 'target-arrow-color': 'data(color)', 'arrow-scale': 0.8, 'curve-style': small ? 'bezier' : 'straight', opacity: small ? 0.55 : 0.35, label: '', 'font-size': 9, color: '#F0E442', 'text-outline-color': '#07080a', 'text-outline-width': 2, 'font-family': 'ui-monospace, Menlo, monospace', 'min-zoomed-font-size': 7 } },
+      { selector: 'edge', style: { width: 'data(width)', 'line-color': 'data(color)', 'target-arrow-shape': 'data(arrow)', 'target-arrow-color': 'data(color)', 'arrow-scale': 0.75, 'source-distance-from-node': 2, 'target-distance-from-node': 2, 'line-cap': 'round', 'curve-style': 'unbundled-bezier', 'control-point-distances': 'data(cpd)', 'control-point-weights': 0.5, opacity: small ? 0.55 : 0.35, label: '', 'font-size': 9, color: '#F0E442', 'text-outline-color': '#07080a', 'text-outline-width': 2, 'font-family': 'ui-monospace, Menlo, monospace', 'min-zoomed-font-size': 7 } },
+      { selector: 'edge.money', style: { opacity: small ? 0.75 : 0.55, 'arrow-scale': 1.05 } }, // money: straight, arrow = direction, width = sourced amount
+      { selector: 'edge.gdim', style: { opacity: 0.1 } }, // group layouts: lines run between frames, kept faint until a node is selected
       { selector: 'edge.dashed', style: { 'line-style': 'dashed', 'line-dash-pattern': 'data(dash)' } },
       { selector: 'edge.undirected', style: { 'target-arrow-shape': 'none' } },
       { selector: 'edge.contra', style: { 'mid-target-arrow-shape': 'tee', 'mid-target-arrow-color': 'data(color)', 'arrow-scale': 1.1 } },
       { selector: 'edge.est', style: { 'mid-target-arrow-shape': 'diamond', 'mid-target-arrow-fill': 'hollow', 'mid-target-arrow-color': '#F0E442', opacity: 0.4 } },
       { selector: 'edge.showamt', style: { label: 'data(label)' } },
-      { selector: '.faded', style: { opacity: 0.07, 'text-opacity': 0.12 } },
+      // hover: the node's lines and neighbours light up, everything keeps its place; long names show in full
+      { selector: 'edge.hov', style: { opacity: 1, width: e => e.data('width') + 1.2, 'z-index': 70, label: '' } },
+      { selector: 'edge.hov.hovl', style: { label: 'data(rl)' } }, // relationship pills on hover only for nodes with up to 40 lines (a hub's would bury the names)
+      { selector: 'node.hov', style: { label: 'data(full)', 'min-zoomed-font-size': 0, 'z-index': 98, 'text-background-opacity': 0.85 } },
+      { selector: 'node.hovn', style: { label: 'data(label)', 'min-zoomed-font-size': 0 } },
+      { selector: '.faded', style: { opacity: 0.07, 'text-opacity': 0.12, 'text-background-opacity': 0.04 } },
       { selector: 'node.hit', style: { 'border-color': '#F0E442', 'border-width': 3.5 } },
       { selector: 'node.kbd', style: { 'overlay-color': '#56B4E9', 'overlay-opacity': 0.25, 'overlay-padding': 6 } },
-      { selector: 'node.sel', style: { 'border-color': '#ffffff', 'border-width': 4, 'z-index': 99, 'min-zoomed-font-size': 0 } },
+      { selector: 'node.sel', style: { 'border-color': '#ffffff', 'border-width': 4, 'z-index': 99, 'min-zoomed-font-size': 0, label: 'data(full)' } },
+      { selector: 'node.kbd', style: { label: 'data(full)' } },
       { selector: 'node.sol-xing', style: { 'outline-color': '#4477AA', 'outline-width': 4, 'outline-offset': 3, 'outline-opacity': 1 } },
       { selector: 'edge.sol-xing', style: { 'line-style': 'dashed', 'line-dash-pattern': [8, 4], 'underlay-color': '#4477AA', 'underlay-padding': 4, 'underlay-opacity': 0.6 } },
       { selector: 'node.nb', style: { opacity: 1, 'min-zoomed-font-size': 0 } },
       { selector: 'node.expanded', style: { 'border-color': '#56B4E9', 'border-width': 4, 'border-style': 'double' } },
-      { selector: 'edge.sel', style: { opacity: 1, width: e => e.data('width') + 2, 'z-index': 99, label: 'data(label)' } },
-      { selector: 'edge.nb', style: { opacity: 0.95, label: 'data(label)' } },
+      { selector: 'edge.sel', style: { opacity: 1, width: e => e.data('width') + 2, 'z-index': 99, label: 'data(rl)' } },
+      { selector: 'edge.nb', style: { opacity: 0.95, label: 'data(rl)' } },
       { selector: 'node.netm', style: { 'border-color': '#CC79A7', 'border-width': 4, opacity: 1, 'min-zoomed-font-size': 0, 'z-index': 50 } },
       { selector: 'edge.ovl', style: { width: 1, 'line-color': '#9aa0a6', 'line-style': 'dotted', 'target-arrow-shape': 'none', 'curve-style': 'straight', opacity: 0.55, label: '', 'z-index': 1 } },
       { selector: 'edge.ovl.faded', style: { opacity: 0.04 } },
       { selector: 'node.path', style: { 'border-color': '#56B4E9', 'border-width': 4, opacity: 1, 'min-zoomed-font-size': 0, 'z-index': 80 } },
-      { selector: 'edge.path', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#56B4E9', 'target-arrow-color': '#56B4E9', 'z-index': 80, label: 'data(label)' } },
+      { selector: 'edge.path', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#56B4E9', 'target-arrow-color': '#56B4E9', 'z-index': 80, label: 'data(rl)' } },
       { selector: 'node.lead', style: { 'border-color': '#F0E442', 'border-width': 4, opacity: 1, 'min-zoomed-font-size': 0, 'z-index': 85 } },
-      { selector: 'edge.lead', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#F0E442', 'target-arrow-color': '#F0E442', 'z-index': 85, label: 'data(label)' } },
+      { selector: 'edge.lead', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#F0E442', 'target-arrow-color': '#F0E442', 'z-index': 85, label: 'data(rl)' } },
       { selector: 'node.tour', style: { 'border-color': '#56B4E9', 'border-width': 5, opacity: 1, 'min-zoomed-font-size': 0, 'z-index': 90 } },
-      { selector: 'edge.tour', style: { opacity: 1, width: e => e.data('width') + 3, 'line-color': '#56B4E9', 'target-arrow-color': '#56B4E9', 'z-index': 90, label: 'data(label)' } },
-      { selector: 'edge.netl', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#CC79A7', 'target-arrow-color': '#CC79A7', label: 'data(label)', 'z-index': 50 } },
+      { selector: 'edge.tour', style: { opacity: 1, width: e => e.data('width') + 3, 'line-color': '#56B4E9', 'target-arrow-color': '#56B4E9', 'z-index': 90, label: 'data(rl)' } },
+      { selector: 'edge.netl', style: { opacity: 1, width: e => e.data('width') + 2.5, 'line-color': '#CC79A7', 'target-arrow-color': '#CC79A7', label: 'data(rl)', 'z-index': 50 } },
       ...(BIG ? [{ selector: 'edge.sel, edge.nb, edge.path, edge.lead, edge.tour, edge.netl', style: { 'target-arrow-shape': 'data(arrow0)' } }] : []),
-      { selector: 'node.thy-node', style: { 'background-color': 'data(color)', 'background-opacity': 0.18, 'border-color': 'data(color)', 'border-width': 2.5, 'border-style': 'dashed', shape: 'vee', width: 'data(size)', height: 'data(size)', 'font-size': 'data(fs)', 'min-zoomed-font-size': 0, 'text-valign': 'top', 'text-margin-y': -10, 'text-max-width': 120, 'text-wrap': 'ellipsis', 'z-index': 40 } },
-      { selector: 'edge.thy-edge', style: { 'line-style': 'dashed', 'line-dash-pattern': [6, 4], 'line-color': 'data(color)', 'target-arrow-shape': 'none', opacity: 0.85, width: 1.4, label: 'data(label)', 'font-size': 8, color: '#b0b0b0' } },
+      // Canvas-style relationship labels: a small pill on the line ("donated to · $1.2M") for the lines in focus only
+      { selector: 'edge.hov, edge.sel, edge.nb, edge.path, edge.lead, edge.tour, edge.netl', style: { color: '#e8e8e4', 'font-size': 9, 'text-background-color': '#1b1f26', 'text-background-opacity': 0.92, 'text-background-shape': 'roundrectangle', 'text-background-padding': 2, 'text-border-color': '#3a404a', 'text-border-width': 1, 'text-border-opacity': 1, 'text-outline-width': 0, 'min-zoomed-font-size': 6 } },
+      // Theories (unverified): gold like the Theories button, dashed, ⚠ in the label. Dim while the layer is off,
+      // bright while it is on (or while a node's own theory switch is on). Never a picture.
+      { selector: 'node.thy-node', style: { 'background-color': '#f5d90a', 'background-opacity': 0.14, 'background-image': 'none', 'border-color': '#f5d90a', 'border-width': 2.5, 'border-style': 'dashed', shape: 'vee', width: 'data(size)', height: 'data(size)', 'font-size': 'data(fs)', color: '#f5d90a', 'min-zoomed-font-size': 0, 'text-valign': 'bottom', 'text-margin-y': 4, 'text-max-width': 'data(tmw)', 'text-wrap': 'wrap', label: 'data(label)', 'z-index': 40 } },
+      { selector: 'node.thy-node.pic', style: { shape: 'ellipse', 'background-color': '#1b1f26', 'background-opacity': 1 } },
+      { selector: 'node.thy-node.pic.logo', style: { 'background-color': '#ffffff' } },
+      { selector: 'node.thy-node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null' } },
+      { selector: 'node.thy-node.pic.logo.imgon', style: { 'background-fit': 'none', 'background-width': '74%', 'background-height': 'auto', 'background-position-y': '50%' } },
+      { selector: 'node.thy-node.thy-dim', style: { opacity: 0.5, 'border-opacity': 0.8, 'text-opacity': 0.85, 'z-index': 5 } },
+      { selector: 'node.thy-node.thy-hot', style: { opacity: 1, 'background-opacity': 0.3, 'border-width': 3, 'text-opacity': 1, 'text-outline-color': '#07080a', 'text-outline-width': 3 } },
+      { selector: 'edge.thy-edge', style: { 'line-style': 'dashed', 'line-dash-pattern': [6, 4], 'line-color': '#f5d90a', 'target-arrow-shape': 'none', 'curve-style': 'unbundled-bezier', 'control-point-distances': 'data(cpd)', width: 1.2, label: '', 'font-size': 8, color: '#f5d90a' } },
+      { selector: 'edge.thy-edge.thy-dim', style: { opacity: 0.22, width: 1 } },
+      { selector: 'edge.thy-edge.thy-hot', style: { opacity: 0.95, width: 1.8 } },
+      { selector: 'edge.thy-edge.hov, edge.thy-edge.sel', style: { opacity: 1, label: 'data(rl)' } },
     ],
   });
   if (LOD_ON) { lodInit(); lodSync(); cy.on('viewport', debounce(() => { if (S.view === 'map' && lodSync()) renderGraph(); }, 180)); }
+  cy.on('viewport', () => { scheduleLabelCull(140); syncFrames(); schedulePics(160); });
   cy.on('tap', 'node', ev => { kbd = ev.target.id(); select({ node: ev.target.id() }); });
   cy.on('dbltap', 'node', ev => toggleExpand(ev.target.id()));
   cy.on('tap', 'edge', ev => ev.target.hasClass('ovl') ? select({ ov: ev.target.data('ov') }) : select({ link: ev.target.data('lid') }));
@@ -1053,38 +1447,78 @@ function initGraph() {
     if (t.isNode()) { const e = ENT.get(t.id()); html = `<b>${esc(e.name)}</b><br><span class="muted">${esc(TYPE[e.type].label)}${e.province ? ' · ' + esc(e.province) : ''} · ${e.degree} links</span>${e.money_in || e.money_out ? `<br><span class="gold">in ${fmtCAD(e.money_in) || '$0'} · out ${fmtCAD(e.money_out) || '$0'}</span>` : ''}`; }
     else if (t.hasClass('ovl')) { const o = ovAt(t.data('ov')); html = `<b>${esc(name(o.a))} ↔ ${esc(name(o.b))}</b><br>${esc(OV_TYPES[o.type]?.label || o.type)}${o.kinds && o.kinds.length ? ' (' + esc(o.kinds.join(', ')) + ')' : ''}<br><span class="muted">${esc(OV_NOTE)}</span>`; }
     if (t.isNode()) { const e = ENT.get(t.id()); html += `<br>${seenBadge(e)}${legalChips(e, true)}`; }
-    if (t.hasClass('ovl')) {} else if (t.isNode()) {} else { const l = LNK.get(t.data('lid')); html = `${esc(name(l.from))} → <i>${esc(LT(l.type).label)}</i> → ${esc(name(l.to))}${l.amount_cad ? `<br><span class="gold">${fmtCADfull(l.amount_cad)}</span> ${estTag(l)}` : ''}<br>${lbadge(l)} ${itemLayers(l).map(k => layerChip(k)).join('')} ${seenBadge(l, true)}`; }
+    if (t.hasClass('ovl')) {} else if (t.isNode()) {} else if (t.hasClass('thy-edge') || !LNK.get(t.data('lid'))) { const a = ENT.get(t.data('source')), b = ENT.get(t.data('target')); html = `${esc(a ? a.name : '')} — <i>named in theory</i> — ${esc(b ? b.name : '')}<br><span class="gold">${esc(THEORY_WARN())}</span>`; } else { const l = LNK.get(t.data('lid')); html = `${esc(name(l.from))} → <i>${esc(LT(l.type).label)}</i> → ${esc(name(l.to))}${l.amount_cad ? `<br><span class="gold">${fmtCADfull(l.amount_cad)}</span> ${estTag(l)}` : ''}<br>${lbadge(l)} ${itemLayers(l).map(k => layerChip(k)).join('')} ${seenBadge(l, true)}`; }
     tip.innerHTML = html; tip.hidden = false;
+    if (t.isNode()) hoverOn(t);
   });
   cy.on('mousemove', ev => { if (tip.hidden || !ev.originalEvent) return; tip.style.left = Math.min(window.innerWidth - 330, ev.originalEvent.clientX + 14) + 'px'; tip.style.top = ev.originalEvent.clientY + 12 + 'px'; });
-  cy.on('mouseout', 'node, edge', () => (tip.hidden = true));
+  cy.on('mouseout', 'node, edge', () => { tip.hidden = true; hoverOff(); });
   cy.on('pan zoom', () => (tip.hidden = true));
   cy.on('zoom', debounce(() => { if (!BIG) cy.edges().toggleClass('showamt', cy.zoom() > 1.3); }, 80));
   if (BIG) cy.on('zoom', debounce(() => { if (cy.zoom() > 0.6 && !initGraph._near) { initGraph._near = true; cy.batch(() => { cy.$('node.minor').removeClass('minor'); cy.edges().forEach(e => { if (e.data('arrow0')) e.data('arrow', e.data('arrow0')); }); }); } }, 150));
   const opts = [0, 3, 5, 10, 15, 20, 30, 50, 100, 200].filter(v => v < MAXDEG);
   $('#g-maxdeg').innerHTML = opts.map(v => `<option value="${v}">${v ? v + ' links' : 'off'}</option>`).join('');
 }
-function gridPositions(groupOf, label) {
-  const vis = cy.nodes(':visible'); const groups = [...new Set(vis.map(groupOf))].sort();
-  const size = {}; vis.forEach(n => (size[groupOf(n)] = (size[groupOf(n)] || 0) + 1));
-  groups.sort((a, b) => size[b] - size[a]);
-  const cols = Math.ceil(Math.sqrt(groups.length)); const pos = {}, k = {};
-  const cell = Math.max(380, Math.sqrt(Math.max(...Object.values(size), 1)) * 60);
-  // order nodes in each group by degree so hubs sit in the middle of their spiral
-  vis.sort((a, b) => ENT.get(b.id()).degree - ENT.get(a.id()).degree).forEach(n => { const g = groupOf(n), i = groups.indexOf(g); const j = k[g] = (k[g] || 0) + 1; const cx = (i % cols) * cell, cyy = Math.floor(i / cols) * cell; const a = j * 2.399, r = 26 * Math.sqrt(j); pos[n.id()] = { x: cx + Math.cos(a) * r, y: cyy + Math.sin(a) * r }; });
-  return { name: 'preset', positions: n => pos[n.id()] || { x: 0, y: 0 }, animate: false, padding: 30 };
+// hover highlight: the hovered node, its lines and its neighbours (capped so a hub with thousands of lines stays cheap)
+let HOV = null;
+function hoverOn(n) { hoverOff(); const es = n.connectedEdges(); if (es.length > 1500) { n.addClass('hov'); HOV = n; return; } cy.batch(() => { n.addClass('hov'); es.addClass(es.length <= 40 ? 'hov hovl' : 'hov'); es.connectedNodes().not(n).addClass('hovn'); }); HOV = n.union(es).union(es.connectedNodes()); }
+function hoverOff() { if (!HOV) return; const h = HOV; HOV = null; cy.batch(() => h.removeClass('hov hovn hovl')); }
+// Every view opens at a zoom where the smallest label of the selection is readable (FOCUS_READ_PX): when the fitted
+// view would be smaller than that, it opens at the readable zoom on the selection's best-connected node instead
+// (Fit, the 0 key and zooming out still show the whole map). Every node in view then carries its label.
+function readableView() {
+  if (!cy || !F) return;
+  let minFs = Infinity, hub = null, hd = -1;
+  for (const id of F.ents) { const e = ENT.get(id); if (!e || isThyE(e)) continue; const f = fontSize(e); if (f < minFs) minFs = f; if ((e.degree || 0) > hd) { hd = e.degree || 0; hub = e; } }
+  if (!hub) return;
+  const zr = FOCUS_READ_PX / minFs; if (cy.zoom() >= zr - 1e-6) return;
+  const p = posOf(hub);
+  cy.viewport({ zoom: zr, pan: { x: cy.width() / 2 - zr * p.x, y: cy.height() / 2 - zr * p.y } });
+  if (BIG && zr > 0.6 && !initGraph._near) { initGraph._near = true; cy.batch(() => { cy.$('node.minor').removeClass('minor'); cy.edges().forEach(e => { if (e.data('arrow0')) e.data('arrow', e.data('arrow0')); }); }); }
 }
-function layoutOpts(kind) {
-  if (kind === 'rings') return { name: 'concentric', concentric: n => 10 - TYPE_ORDER.indexOf(n.data('type')), levelWidth: () => 1, minNodeSpacing: BIG ? 4 : 16, animate: false, padding: 30 };
-  if (kind === 'provinces') return gridPositions(n => n.data('province'));
-  if (kind === 'clusters') return gridPositions(n => ENT.get(n.id()).cluster || 'zz_unclustered');
-  return { name: 'preset', positions: n => { const p = ENT.get(n.id()).pos; return p ? { x: p[0], y: p[1] } : { x: 0, y: 0 }; }, animate: false, padding: 30 };
+// fit a focused selection; when that would make its smallest labels unreadable, open at a readable zoom instead,
+// centred on the selection's best-connected node (pan to see the rest: every node in view is labelled)
+function focusFit() {
+  const vis = cy.nodes(':visible').filter(n => !n.hasClass('thy-node')); if (!vis.length) return;
+  cy.fit(vis, 40);
+  let minFs = Infinity; for (const id of (FZ || [])) { const e = ENT.get(id); if (e && !isThyE(e)) minFs = Math.min(minFs, fontSize(e)); } // the whole selection, drawn yet or not
+  if (!isFinite(minFs)) vis.forEach(n => { minFs = Math.min(minFs, n.data('fs') || 10); });
+  const zr = FOCUS_READ_PX / minFs; if (cy.zoom() >= zr) return;
+  const hub = vis.max(n => ENT.get(n.id())?.degree || 0).ele; const p = hub.position();
+  // centre between the hub and the selection centre so the hub's neighbourhood fills the screen
+  const bb = vis.boundingBox(), cx = (p.x * 2 + (bb.x1 + bb.x2) / 2) / 3, cyy = (p.y * 2 + (bb.y1 + bb.y2) / 2) / 3;
+  cy.viewport({ zoom: zr, pan: { x: cy.width() / 2 - zr * cx, y: cy.height() / 2 - zr * cyy } });
 }
 function runLayout() {
-  // the default layout uses the build-time positions already given to every node: just set the viewport
-  if (S.layout === 'network' && !S.expand.length && !runLayout._moved && fitFast(F.ents)) { curLayout = S.layout; return; }
-  const els = cy.elements(':visible'); if (!els.length) return; els.layout(layoutOpts(S.layout)).run(); curLayout = S.layout; cy.fit(els, 30);
-  if (S.layout !== 'network') runLayout._moved = true; else runLayout._moved = false;
+  const t0 = performance.now();
+  if (!(S.layout === 'network' || !LAYOUTS.includes(S.layout)) || !wantLocalLayout()) { FZ = null; const fz = cy.nodes('.fz'); if (fz.length) cy.batch(() => fz.removeClass('fz')); }
+  if ((S.layout === 'network' || !LAYOUTS.includes(S.layout)) && wantLocalLayout()) {
+    const was = GL.kind; if (was !== 'network' && was !== 'local') cy.batch(() => cy.edges('.gdim').removeClass('gdim'));
+    applyLocalLayout(); if (LOD_ON) { lodInit(); lodSync(); }
+    cy.batch(() => cy.nodes().forEach(n => { if (n.hasClass('thy-node')) return; const e = ENT.get(n.id()); if (e) n.position(posOf(e)); }));
+    FZ = new Set(F.ents); cy.batch(() => { cy.nodes('.fz').removeClass('fz'); cy.nodes().filter(n => FZ.has(n.id())).addClass('fz'); }); // every node of the selection labelled
+    curLayout = S.layout; runLayout._moved = true; focusFit(); TIMING.layout_ms = Math.round(performance.now() - t0); return;
+  }
+  if (S.layout === 'network' || !LAYOUTS.includes(S.layout)) {
+    const was = GL.kind; applyGroupLayout('network');
+    if (was !== 'network' && was !== 'local') cy.batch(() => cy.edges('.gdim').removeClass('gdim'));
+    if (was !== 'network' && LOD_ON) { lodInit(); lodSync(); }
+    if (was === 'local') runLayout._moved = true;
+    // the default layout uses the build-time positions already given to every node: just set the viewport
+    if (!S.expand.length && !runLayout._moved && fitFast(F.ents)) { readableView(); curLayout = S.layout; return; }
+    const els = cy.elements(':visible'); if (!els.length) return;
+    cy.batch(() => cy.nodes().forEach(n => { if (n.hasClass('thy-node')) return; const e = ENT.get(n.id()); if (e) n.position(posOf(e)); }));
+    curLayout = S.layout; runLayout._moved = false; if (S.expand.length || !fitFast(F.ents)) cy.fit(els, 30); readableView(); return;
+  }
+  // group layouts: every filtered entity gets a spot (not only those drawn), then the LOD grid follows the new positions
+  applyGroupLayout(S.layout);
+  if (LOD_ON) { lodInit(); lodSync(); }
+  cy.batch(() => cy.nodes().forEach(n => { if (n.hasClass('thy-node')) return; const e = ENT.get(n.id()); if (e) n.position(posOf(e)); }));
+  cy.batch(() => cy.edges().not('.ovl').addClass('gdim'));
+  curLayout = S.layout; runLayout._moved = true;
+  if (S.expand.length) cy.fit(cy.elements(':visible'), 30); else fitFrames(30);
+  readableView();
+  TIMING.layout_ms = Math.round(performance.now() - t0);
 }
 function renderGraph() {
   if (!cy) return;
@@ -1092,21 +1526,22 @@ function renderGraph() {
   cy.batch(() => {
     // visibility is tracked here so unchanged elements are not touched (reading style() on every element is slow)
     const V = renderGraph._vis || (renderGraph._vis = new Map());
-    cy.nodes().forEach(n => { const id = n.id(), on = F.ents.has(id); if ((V.get(id) ?? true) !== on) { V.set(id, on); n.style('display', on ? 'element' : 'none'); } });
-    cy.edges().not('.ovl').forEach(e => { const id = e.id(), on = F.linkSet.has(e.data('lid')); if ((V.get(id) ?? true) !== on) { V.set(id, on); e.style('display', on ? 'element' : 'none'); } });
+    cy.nodes().not('.thy-node').forEach(n => { const id = n.id(), on = F.ents.has(id); if ((V.get(id) ?? true) !== on) { V.set(id, on); n.style('display', on ? 'element' : 'none'); } });
+    cy.edges().not('.ovl, .thy-edge').forEach(e => { const id = e.id(), on = F.linkSet.has(e.data('lid')); if ((V.get(id) ?? true) !== on) { V.set(id, on); e.style('display', on ? 'element' : 'none'); } });
     if (renderGraph._ecolor !== S.ecolor) { renderGraph._ecolor = S.ecolor; cy.edges().not('.ovl').forEach(e => { const c = edgeColor(LNK.get(e.data('lid'))); e.data('color', c); }); }
     cy.nodes().removeClass('expanded'); S.expand.forEach(id => cy.$id(id).addClass('expanded'));
     if (typeof syncTheoryGraph === 'function') syncTheoryGraph();
     if (renderGraph._hl !== S.hl) { renderGraph._hl = S.hl; cy.elements().not('.ovl').toggleClass('hl', S.hl); }
   });
   const key = F.ents.size + ':' + [...F.ents].slice(0, 400).join('|') + S.layout;
-  if (key !== prevVisibleKey || curLayout !== S.layout) { const first = !prevVisibleKey; prevVisibleKey = key; if (S.view === 'map') { if (S.layout !== 'network' || curLayout !== 'network' || first || S.expand.length) runLayout(); else cy.fit(cy.elements(':visible'), 30); if (isMobile() && document.body.classList.contains('panel-open') && (S.node || S.link)) focusSelection(); /* a re-fit must not push the selection under the bottom sheet */ } else curLayout = null; }
+  if (key !== prevVisibleKey || curLayout !== S.layout) { const first = !prevVisibleKey; prevVisibleKey = key; if (S.view === 'map') { runLayout(); /* every layout re-runs on a filter change: Network refits (or lays a small selection out locally), the group layouts repack */ if (isMobile() && document.body.classList.contains('panel-open') && (S.node || S.link)) focusSelection(); /* a re-fit must not push the selection under the bottom sheet */ } else curLayout = null; }
   $('#empty-map').hidden = F.ents.size > 0;
   $$('[data-layout]').forEach(b => { b.classList.toggle('on', b.dataset.layout === S.layout); b.setAttribute('aria-pressed', b.dataset.layout === S.layout); });
+  if ($('#g-layout').value !== S.layout) $('#g-layout').value = S.layout;
   $('#btn-ecolor').textContent = 'Line: ' + (S.ecolor === 'type' ? 'type' : S.ecolor === 'layer' ? 'layer' : 'status'); $('#btn-ecolor').setAttribute('aria-pressed', S.ecolor !== 'status');
   $('#g-maxdeg').value = String(S.maxdeg); if ($('#g-maxdeg').value !== String(S.maxdeg)) { const o = document.createElement('option'); o.value = S.maxdeg; o.textContent = S.maxdeg + ' links'; $('#g-maxdeg').appendChild(o); $('#g-maxdeg').value = String(S.maxdeg); }
   renderFocusBar(); syncOverlapEdges();
-  highlightSelection(); highlightSearch();
+  highlightSelection(); highlightSearch(); scheduleLabelCull(); schedulePics();
 }
 function highlightSelection() {
   if (!cy) return;
@@ -1149,13 +1584,14 @@ function highlightSelection() {
     highlightPath();
     if (kbd) { cy.nodes('.kbd').removeClass('kbd'); cy.$id(kbd).addClass('kbd'); }
   });
+  scheduleLabelCull();
 }
 function highlightSearch() {
   if (!cy) return;
   cy.nodes('.hit').removeClass('hit');
   if (!S.q.trim()) return;
   const ids = new Set(); lastResults.forEach(r => { if (r.kind === 'e') ids.add(r.ref); else if (r.kind === 'l') { const l = LNK.get(r.ref); ids.add(l.from); ids.add(l.to); } });
-  cy.nodes().filter(n => ids.has(n.id())).addClass('hit');
+  cy.nodes().filter(n => ids.has(n.id())).addClass('hit'); scheduleLabelCull();
 }
 const isMobile = () => window.innerWidth <= 900;
 function revealOnMap(eles, zoomTo) {
@@ -1212,7 +1648,7 @@ $('#focus-bar').addEventListener('click', e => {
   if (e.target.closest('[data-clear-maxdeg]')) { S.maxdeg = 0; return update(true); }
 });
 $$('[data-layout]').forEach(b => b.addEventListener('click', () => { S.layout = b.dataset.layout; prevVisibleKey = ''; update(); }));
-$('#btn-names').addEventListener('click', e => { const on = !e.currentTarget.classList.contains('on'); e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on); LOD.nolabel = !on; cy.nodes().toggleClass('nolabel', !on); });
+$('#btn-names').addEventListener('click', e => { const on = !e.currentTarget.classList.contains('on'); e.currentTarget.classList.toggle('on', on); e.currentTarget.setAttribute('aria-pressed', on); LOD.nolabel = !on; cy.nodes().toggleClass('nolabel', !on); scheduleLabelCull(0); });
 $('#btn-ecolor').addEventListener('click', () => { S.ecolor = S.ecolor === 'status' ? 'type' : S.ecolor === 'type' ? 'layer' : 'status'; update(); renderLegend(); });
 $('#g-maxdeg').addEventListener('change', e => { S.maxdeg = +e.target.value; update(); });
 const zoomBy = f => cy.zoom({ level: cy.zoom() * f, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
@@ -1246,6 +1682,241 @@ $('#cy').addEventListener('keydown', e => {
   if (e.key === 'n' || e.key === 'N') { e.preventDefault(); const hits = cy.nodes('.hit:visible').map(n => n.id()); if (hits.length) setKbd(hits[(hits.indexOf(kbd) + 1) % hits.length]); else announce('No search hits on the map'); return; }
 });
 $('#cy').addEventListener('focus', () => { if (!kbd && cy) { const id = S.node || nearestInDirection(null); if (id) setKbd(id); } });
+
+// ---- 21-graph-layouts.js
+/* graph layouts by setting (Obsidian Canvas-style): Type, Layer, Province and Clusters put each group in its own
+   titled frame; Rings puts types in concentric bands. Every node gets its own spot (circles never overlap) and the
+   whole filtered set is placed, not only what is drawn, so zooming into a group fills it in (LOD grid follows). */
+// <graph-pack>
+// ---- node + label boxes (same formulas as lib/layout.mjs: shortLabel, wrapW, labelDims, boxOf, separateBoxes)
+const BOX_PAD = 12, LABEL_MAX = 100;
+function shortLabel(name) { const s = String(name || ''); if (s.length <= LABEL_MAX) return s; const cut = s.lastIndexOf(' ', LABEL_MAX - 4); return s.slice(0, cut > 60 ? cut : LABEL_MAX - 4).replace(/[\s,;:.\-–—/]+$/, '') + '…'; }
+const wrapW = (label, fs) => Math.round(Math.max(150, Math.min(Math.ceil(String(label || '').length / 2), 48) * fs * 0.6 + fs * 2));
+function labelDims(label, fs) { const len = String(label || '').length, full = len * fs * 0.6, maxW = wrapW(label, fs); const lines = full > maxW ? Math.ceil(full / (maxW * 0.92)) : 1; return { w: Math.min(maxW, full) + 6, h: fs * 1.15 * lines + 4 }; }
+function boxOf(size, label, fs, pad = BOX_PAD) { const r = size / 2, d = labelDims(label, fs); return { hw: Math.max(r, d.w / 2) + pad, top: r + pad, bot: r + 4 + d.h + pad }; }
+// Push apart overlapping boxes [x - hw, x + hw] x [y - top, y + bot] along the axis of least overlap until none overlap.
+function sepBoxes(pts, bx, iters = 4000) {
+  const n = pts.length; if (n < 2) return 0;
+  let cw = 0, ch = 0; for (const b of bx) { cw = Math.max(cw, 2 * b.hw); ch = Math.max(ch, b.top + b.bot); } cw += 1e-6; ch += 1e-6;
+  { // far too dense to fit (boxes' total area > 45% of the area they span): spread around the centroid first
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, cx = 0, cy = 0, S = 0;
+    pts.forEach((p, i) => { const b = bx[i]; x0 = Math.min(x0, p.x - b.hw); x1 = Math.max(x1, p.x + b.hw); y0 = Math.min(y0, p.y - b.top); y1 = Math.max(y1, p.y + b.bot); cx += p.x; cy += p.y; S += 2 * b.hw * (b.top + b.bot); });
+    cx /= n; cy /= n; const dens = S / Math.max(1, (x1 - x0) * (y1 - y0));
+    if (dens > 0.45) { const k = Math.sqrt(dens / 0.45); for (const p of pts) { p.x = cx + (p.x - cx) * k; p.y = cy + (p.y - cy) * k; } }
+  }
+  let left = 0;
+  for (let it = 0; it < iters; it++) {
+    const grid = new Map();
+    for (let i = 0; i < n; i++) { const k = Math.floor(pts[i].x / cw) + ',' + Math.floor(pts[i].y / ch); const a = grid.get(k); if (a) a.push(i); else grid.set(k, [i]); }
+    left = 0;
+    for (let i = 0; i < n; i++) {
+      const p = pts[i], a0 = bx[i], gx = Math.floor(p.x / cw), gy = Math.floor(p.y / ch);
+      for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) {
+        const a = grid.get((gx + ox) + ',' + (gy + oy)); if (!a) continue;
+        for (const j of a) {
+          if (j <= i) continue;
+          const q = pts[j], b0 = bx[j];
+          const ovx = Math.min(p.x + a0.hw, q.x + b0.hw) - Math.max(p.x - a0.hw, q.x - b0.hw); if (ovx <= 0) continue;
+          const ovy = Math.min(p.y + a0.bot, q.y + b0.bot) - Math.max(p.y - a0.top, q.y - b0.top); if (ovy <= 0) continue;
+          left++;
+          if (ovx <= ovy) { let d = Math.sign(q.x - p.x); if (!d) d = ((i * 73856093) ^ (j * 19349663)) & 1 ? 1 : -1; const m = ovx / 2 + 0.05; p.x -= d * m; q.x += d * m; }
+          else { let d = Math.sign((q.y + (b0.bot - b0.top) / 2) - (p.y + (a0.bot - a0.top) / 2)); if (!d) d = ((i * 19349663) ^ (j * 83492791)) & 1 ? 1 : -1; const m = ovy / 2 + 0.05; p.y -= d * m; q.y += d * m; }
+        }
+      }
+    }
+    if (!left) return 0;
+    if (it % 100 === 99) { let cx = 0, cy = 0; for (const p of pts) { cx += p.x; cy += p.y; } cx /= n; cy /= n; for (const p of pts) { p.x = cx + (p.x - cx) * 1.03; p.y = cy + (p.y - cy) * 1.03; } }
+  }
+  return left;
+}
+// A group as a disc of tidy rows: items [{ b: box }] (biggest hubs first) fill rows from the middle outwards (the
+// middle row first, then alternately above and below), each row as wide as the disc's chord at its height, and
+// inside a row the first items sit in the middle. Rows never overlap each other and boxes in a row never overlap,
+// so the result is overlap-free by construction, in O(n). Returns points centred near (0, 0).
+function spiralPack(items) {
+  const n = items.length, pts = new Array(n); if (!n) return pts;
+  let S = 0, maxW = 0; for (const it of items) { S += 2 * it.b.hw * (it.b.top + it.b.bot); maxW = Math.max(maxW, 2 * it.b.hw); }
+  const R = Math.sqrt(S / (Math.PI * 0.8));
+  let idx = 0, row = 0, edgeUp = 0, edgeDown = 0;
+  while (idx < n) {
+    const side = row === 0 ? 0 : row % 2 ? -1 : 1, est = items[idx].b;
+    const yEst = side === 0 ? 0 : side < 0 ? edgeUp - est.bot : edgeDown + est.top;
+    const W = Math.max(maxW, 2 * Math.sqrt(Math.max(0, R * R - yEst * yEst)));
+    const members = []; let w = 0;
+    while (idx < n && (members.length === 0 || w + 2 * items[idx].b.hw <= W)) { members.push(idx); w += 2 * items[idx].b.hw; idx++; }
+    let top = 0, bot = 0; for (const k of members) { top = Math.max(top, items[k].b.top); bot = Math.max(bot, items[k].b.bot); }
+    let y; if (side === 0) { y = 0; edgeUp = -top; edgeDown = bot; } else if (side < 0) { y = edgeUp - bot; edgeUp = y - top; } else { y = edgeDown + top; edgeDown = y + bot; }
+    // centre-out order: [… 3, 1, 0, 2, 4 …]
+    const order = []; members.forEach((k, m) => { if (m % 2) order.unshift(k); else order.push(k); });
+    let x = -w / 2; for (const k of order) { const hw = items[k].b.hw; pts[k] = { x: x + hw, y }; x += 2 * hw; }
+    row++;
+  }
+  return pts;
+}
+const bboxOf = (pts, items) => { let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity; pts.forEach((p, i) => { const b = items[i].b; x0 = Math.min(x0, p.x - b.hw); x1 = Math.max(x1, p.x + b.hw); y0 = Math.min(y0, p.y - b.top); y1 = Math.max(y1, p.y + b.bot); }); return { x0, y0, x1, y1 }; };
+// Groups [{ key, label, items: [{ id, b }] }] (display order) → { pos: Map(id → {x, y}), frames: [{ key, label, n, x, y, w, h, tb }] }.
+// Each group sits in a frame (inner margin `inner`) with a title band on top; frames are shelf-packed in rows with wide gaps.
+function packGroups(groups, o = {}) {
+  const gap = o.gap ?? 420, inner = o.inner ?? 70;
+  const blocks = groups.filter(g => g.items.length).map(g => {
+    const pts = spiralPack(g.items); const bb = bboxOf(pts, g.items); const w = bb.x1 - bb.x0 + 2 * inner, hh = bb.y1 - bb.y0 + 2 * inner;
+    return { g, pts, bb, w: Math.max(w, 260), hb: hh, tb: Math.max(80, Math.min(320, Math.max(w, hh) * 0.08)) };
+  });
+  const area = blocks.reduce((s, b) => s + (b.w + gap) * (b.hb + b.tb + gap), 0);
+  const target = Math.max(Math.sqrt(area) * (o.aspect || 1.5), ...blocks.map(b => b.w));
+  const pos = new Map(), frames = []; let x = 0, y = 0, rowH = 0;
+  for (const b of blocks) {
+    const h = b.hb + b.tb;
+    if (x > 0 && x + b.w > target) { x = 0; y += rowH + gap; rowH = 0; }
+    const ox = x + (b.w - (b.bb.x1 - b.bb.x0)) / 2 - b.bb.x0, oy = y + b.tb + inner - b.bb.y0;
+    b.g.items.forEach((it, i) => pos.set(it.id, { x: ox + b.pts[i].x, y: oy + b.pts[i].y }));
+    frames.push({ key: b.g.key, label: b.g.label, n: b.g.items.length, x, y, w: b.w, h, tb: b.tb });
+    x += b.w + gap; rowH = Math.max(rowH, h);
+  }
+  return { pos, frames };
+}
+// Rings: the first group is a disc in the middle, every later group a band of circles around it. Spacing along a circle
+// is the box diagonal, so neighbours never overlap at any angle. With o.nbr(id) → [ids], each band is ordered by the mean
+// angle of its already-placed neighbours (fewer crossing lines). → { pos, frames: [{ key, label, n, ring: true, r0, r1 }] }
+function ringPack(groups, o = {}) {
+  const gap = o.gap ?? 160, pad = o.pad ?? 8; const pos = new Map(), frames = []; let rad = 0;
+  const diag = it => Math.hypot(2 * it.b.hw, it.b.top + it.b.bot);
+  groups.filter(g => g.items.length).forEach((g, gi) => {
+    if (gi === 0) { const pts = spiralPack(g.items); let R = 40; g.items.forEach((it, i) => { pos.set(it.id, pts[i]); R = Math.max(R, Math.hypot(pts[i].x, pts[i].y) + diag(it) / 2); }); frames.push({ key: g.key, label: g.label, n: g.items.length, ring: true, r0: 0, r1: R }); rad = R; return; }
+    let items = g.items;
+    if (o.nbr) { // barycentric order: mean angle of neighbours already placed
+      const ang = new Map(); for (const it of items) { let sx = 0, sy = 0, c = 0; for (const id of o.nbr(it.id)) { const p = pos.get(id); if (!p) continue; const d = Math.hypot(p.x, p.y) || 1; sx += p.x / d; sy += p.y / d; c++; } if (c) ang.set(it.id, Math.atan2(sy, sx)); }
+      const withA = items.filter(it => ang.has(it.id)).sort((a, b) => ang.get(a.id) - ang.get(b.id)), rest = items.filter(it => !ang.has(it.id));
+      // spread the unconnected ones evenly between the ordered ones
+      items = []; const step = withA.length ? (withA.length + rest.length) / Math.max(1, rest.length) : 1; let ri = 0, wi = 0;
+      for (let k = 0; k < withA.length + rest.length; k++) { if (ri < rest.length && (wi >= withA.length || k >= Math.round((ri + 0.5) * step) - 1)) items.push(rest[ri++]); else items.push(withA[wi++]); }
+    }
+    const D = Math.max(...items.map(diag)); const r0 = rad + gap; const need = items.reduce((s, it) => s + diag(it) + pad, 0);
+    const circles = []; let rr = r0 + D / 2, cap = 0; while (cap < need) { circles.push({ r: rr, cap: 2 * Math.PI * rr * 0.96, used: 0, items: [] }); cap += 2 * Math.PI * rr * 0.96; rr += D + pad; }
+    for (const it of items) { const c = circles.reduce((a, b) => (a.used / a.cap <= b.used / b.cap ? a : b)); c.items.push(it); c.used += diag(it) + pad; }
+    let r1 = r0;
+    for (const c of circles) { if (!c.items.length) continue; const total = c.items.reduce((s, it) => s + diag(it) + pad, 0), scale = (2 * Math.PI * c.r * 0.96) / total; let acc = 0; for (const it of c.items) { const a = -Math.PI + (acc + (diag(it) + pad) / 2) * Math.max(1, scale) / c.r; acc += diag(it) + pad; pos.set(it.id, { x: Math.cos(a) * c.r, y: Math.sin(a) * c.r }); } r1 = Math.max(r1, c.r + D / 2); }
+    frames.push({ key: g.key, label: g.label, n: g.items.length, ring: true, r0, r1 }); rad = r1;
+  });
+  return { pos, frames };
+}
+// </graph-pack>
+
+const LAYOUTS = ['network', 'types', 'layers', 'provinces', 'clusters', 'rings'];
+const GL = { kind: 'network', key: '', pos: null, frames: [], ms: 0 };
+// group of an entity for a layout kind → [key, label, order]
+function groupOf(kind, e) {
+  if (kind === 'types' || kind === 'rings') { const i = TYPE_ORDER.indexOf(e.type); return [e.type, (TYPE[e.type] || {}).plural || e.type, i < 0 ? 99 : i]; }
+  if (kind === 'layers') { const s = seenOf(e); if (s.length > 1) return ['multi', 'Seen in 2+ source layers', -1]; const k = s[0] || (e.layers || [])[0] || 'wiretap'; return [k, layerInfo(k).label + ' layer', LAYER_KEYS.indexOf(k)]; }
+  if (kind === 'provinces') return e.province ? [e.province, provName(e.province) || e.province, 0] : ['—', 'No province recorded', 1];
+  if (kind === 'clusters') { const c = e.cluster; const n = c && NET.get(c); return c ? [c, (n && (n.name || n.label)) || c, 0] : ['zz', 'Not in a cluster', 1]; }
+  return ['all', '', 0];
+}
+// layout radius: the node circle plus a clear gap and part of its label width (labels hide by zoom when they still collide)
+// layout box of an entity: its circle plus its full label below, plus BOX_PAD of clear space all round
+const nodeBox = e => boxOf(nodeSize(e), shortLabel(e.name), fontSize(e));
+function computeGroupLayout(kind, ids) {
+  const t0 = performance.now(); const by = new Map();
+  for (const id of ids) { const e = ENT.get(id); if (!e || isThyE(e)) continue; const [k, label, ord] = groupOf(kind, e); let g = by.get(k); if (!g) by.set(k, g = { key: k, label, ord, items: [] }); g.items.push({ id, b: nodeBox(e), deg: e.degree || 0 }); }
+  const groups = [...by.values()];
+  for (const g of groups) g.items.sort((a, b) => (b.deg - a.deg) || (a.id < b.id ? -1 : 1));
+  if (kind === 'rings') groups.sort((a, b) => a.ord - b.ord); else groups.sort((a, b) => (b.items.length - a.items.length) || (a.label < b.label ? -1 : 1));
+  const r = kind === 'rings' ? ringPack(groups, { nbr: id => (byNode.get(id) || []).map(l => l.from === id ? l.to : l.from) }) : packGroups(groups);
+  GL.ms = Math.round(performance.now() - t0); r.groups = groups;
+  return r;
+}
+// position of an entity in the current layout (build-time force layout for Network)
+const posOf = e => { if (GL.pos && GL.kind !== 'network') { const p = GL.pos.get(e.id); if (p) return p; } return e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 }; };
+function applyGroupLayout(kind) {
+  if (kind === 'network') { GL.kind = 'network'; GL.pos = null; GL.frames = []; GL.groups = null; GL.key = ''; drawFrames(); return null; }
+  const ids = [...F.ents]; const key = kind + ':' + ids.length + ':' + ids.slice(0, 300).join('|');
+  if (GL.kind !== kind || GL.key !== key || !GL.pos) { const r = computeGroupLayout(kind, ids); GL.kind = kind; GL.key = key; GL.pos = r.pos; GL.frames = r.frames; GL.groups = r.groups; }
+  drawFrames();
+  return GL;
+}
+// ---- Network on a small selection (a topic, a network, tight filters): the build-time map would scatter a few hundred
+// nodes over the whole canvas, so they are re-laid out together (cose, started from their map positions so the shape
+// is familiar), then box-separated so no node or label overlaps another. Bigger selections keep the build-time positions.
+const LOCAL_MAX = 700;
+function wantLocalLayout() { return S.layout === 'network' && !S.expand.length && F.ents.size >= 2 && F.ents.size <= LOCAL_MAX && F.ents.size < D.entities.length * 0.5; }
+function applyLocalLayout() {
+  const ids = [...F.ents].filter(id => { const e = ENT.get(id); return e && !isThyE(e); });
+  const key = 'local:' + ids.length + ':' + ids.join('|').length + ':' + ids.slice(0, 300).join('|');
+  if (GL.kind === 'local' && GL.key === key && GL.pos) return GL;
+  const t0 = performance.now(), want = new Set(ids);
+  const es = ids.map(id => ENT.get(id));
+  let cx = 0, cyy = 0, np = 0; for (const e of es) if (e.pos) { cx += e.pos[0]; cyy += e.pos[1]; np++; } cx /= Math.max(1, np); cyy /= Math.max(1, np);
+  let rms = 0; for (const e of es) if (e.pos) rms += (e.pos[0] - cx) ** 2 + (e.pos[1] - cyy) ** 2; rms = Math.sqrt(rms / Math.max(1, np)) || 1;
+  const k = (95 * Math.sqrt(ids.length)) / rms;
+  // headless: the whole selection is laid out, whatever the level of detail has drawn so far
+  const els = es.map(e => ({ group: 'nodes', data: { id: e.id }, position: e.pos ? { x: (e.pos[0] - cx) * k, y: (e.pos[1] - cyy) * k } : { x: 0, y: 0 } }));
+  const seen = new Set(); for (const id of ids) for (const l of byNode.get(id) || []) { if (seen.has(l.id) || isThyL(l) || l.from === l.to || !want.has(l.from) || !want.has(l.to)) continue; seen.add(l.id); els.push({ group: 'edges', data: { id: 'L:' + l.id, source: l.from, target: l.to } }); }
+  const h = cytoscape({ headless: true, elements: els });
+  h.layout({ name: 'cose', animate: false, randomize: false, fit: false, idealEdgeLength: () => 140, edgeElasticity: () => 60, nodeRepulsion: n => 90000 + 9000 * Math.sqrt(ENT.get(n.id())?.degree || 0), nodeOverlap: 40, gravity: 0.6, numIter: 900, componentSpacing: 120, padding: 30 }).run();
+  const arr = h.nodes().map(n => n.id()), pts = h.nodes().map(n => ({ ...n.position() })), bx = arr.map(id => nodeBox(ENT.get(id)));
+  h.destroy();
+  sepBoxes(pts, bx); // every node + its label gets its own box of space
+  const pos = new Map(); arr.forEach((id, i) => pos.set(id, pts[i]));
+  GL.kind = 'local'; GL.key = key; GL.pos = pos; GL.frames = []; GL.groups = null; GL.ms = Math.round(performance.now() - t0); drawFrames();
+  return GL;
+}
+// ---- frames and titles (SVG under the graph canvas, moved with the viewport)
+function drawFrames() {
+  const svg = $('#grp-layer'); if (!svg) return;
+  const g = svg.querySelector('g');
+  if (!GL.frames.length || GL.kind === 'network') { g.innerHTML = ''; svg.setAttribute('hidden', ''); return; }
+  svg.removeAttribute('hidden');
+  g.innerHTML = GL.frames.map(f => f.ring
+    ? `<circle cx="0" cy="0" r="${f.r1.toFixed(1)}" class="grp-ring"/><text x="0" y="${(-f.r1 - Math.max(24, f.r1 * 0.02)).toFixed(1)}" class="grp-title" text-anchor="middle" data-fs="${Math.max(40, Math.min(220, f.r1 * 0.05)).toFixed(0)}" font-size="40">${esc(f.label)} · ${f.n}</text>`
+    : `<rect x="${f.x.toFixed(1)}" y="${f.y.toFixed(1)}" width="${f.w.toFixed(1)}" height="${f.h.toFixed(1)}" rx="${Math.min(60, f.w * 0.04).toFixed(1)}" class="grp-frame"/><text x="${(f.x + f.tb * 0.35).toFixed(1)}" y="${(f.y + f.tb * 0.68).toFixed(1)}" class="grp-title" data-fs="${(f.tb * 0.5).toFixed(0)}" data-w="${(f.w - f.tb * 0.35).toFixed(0)}" font-size="40">${esc(f.label)} · ${f.n}</text>`).join('');
+  syncFrames();
+}
+function syncFrames() {
+  const svg = $('#grp-layer'); if (!svg || svg.hasAttribute('hidden') || !cy) return; const z = cy.zoom(), p = cy.pan();
+  svg.querySelector('g').setAttribute('transform', `translate(${p.x.toFixed(1)},${p.y.toFixed(1)}) scale(${z.toFixed(5)})`);
+  // titles never shrink below ~13 px on screen, nor grow past ~30 px (zoomed in, the nodes matter more)
+  // a title wider than its frame waits until the zoom makes room for it (no titles running into each other)
+  svg.querySelectorAll('text').forEach(t => { const b = +t.dataset.fs || 40, fs = Math.min(Math.max(b, 13 / z), Math.max(30 / z, 13 / z)); t.setAttribute('font-size', fs.toFixed(1)); const fw = +t.dataset.w || 0; t.style.opacity = fw && t.textContent.length * fs * 0.56 > fw * 1.02 ? '0' : ''; });
+}
+function fitFrames(pad = 30) {
+  if (!cy || !GL.frames.length) return false;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const f of GL.frames) { if (f.ring) { x0 = Math.min(x0, -f.r1); x1 = Math.max(x1, f.r1); y0 = Math.min(y0, -f.r1 - 260); y1 = Math.max(y1, f.r1); } else { x0 = Math.min(x0, f.x); y0 = Math.min(y0, f.y); x1 = Math.max(x1, f.x + f.w); y1 = Math.max(y1, f.y + f.h); } }
+  const w = cy.width(), h = cy.height(); const z = Math.max(cy.minZoom(), Math.min(1.5, (w - 2 * pad) / Math.max(1, x1 - x0), (h - 2 * pad) / Math.max(1, y1 - y0)));
+  cy.viewport({ zoom: z, pan: { x: w / 2 - z * (x0 + x1) / 2, y: h / 2 - z * (y0 + y1) / 2 } }); return true;
+}
+// ---- pictures: photo or logo as the node. Only nodes in view, drawn at least ~11 px across, get their picture,
+// and nothing loads before the map's first frame (first-paint weight unchanged). Loaded pictures stay set.
+const PIC = { on: !/[?&]pics=0/.test(location.search), set: 0, t: 0 };
+function picSync() {
+  PIC.t = 0;
+  if (!PIC.on || !cy || S.view !== 'map') return;
+  if (TIMING.first_paint_ms == null) { schedulePics(250); return; } // never compete with the first frame
+  const z = cy.zoom(), ext = cy.extent(), mx = (ext.x2 - ext.x1) * 0.15, my = (ext.y2 - ext.y1) * 0.15; const add = [];
+  cy.nodes('.pic').forEach(n => { if (n.hasClass('imgon') || (renderGraph._vis && renderGraph._vis.get(n.id()) === false)) return; if ((n.data('size') || 0) * z < 11) return; const p = n.position(); if (p.x < ext.x1 - mx || p.x > ext.x2 + mx || p.y < ext.y1 - my || p.y > ext.y2 + my) return; add.push(n); });
+  if (!add.length) return;
+  cy.batch(() => { for (const n of add) { n.data('src', n.data('im')); n.addClass('imgon'); } });
+  PIC.set += add.length;
+}
+function schedulePics(ms = 120) { if (!PIC.on) return; clearTimeout(PIC.t); PIC.t = setTimeout(picSync, ms); }
+window.__wiretapPics = () => ({ on: PIC.on, set: PIC.set, withPicture: D.entities.filter(e => e.im).length, layout: GL.kind, layout_ms: GL.ms, frames: GL.frames.length });
+window.__wiretapLayoutCheck = (detail) => { // overlap check over what is drawn: pairs of node circles closer than their radii
+  if (!cy) return null; const ns = cy.nodes(':visible').filter(n => !n.hasClass('thy-node')); const pts = ns.map(n => ({ ...n.position() })), rad = ns.map(n => (n.data('size') || 0) / 2);
+  let maxR = 0; for (const r of rad) maxR = Math.max(maxR, r); const cell = 2 * maxR + 1e-6, grid = new Map(); let over = 0;
+  pts.forEach((p, i) => { const k = Math.floor(p.x / cell) + ',' + Math.floor(p.y / cell); (grid.get(k) || grid.set(k, []).get(k)).push(i); });
+  pts.forEach((p, i) => { const gx = Math.floor(p.x / cell), gy = Math.floor(p.y / cell); for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) for (const j of grid.get((gx + ox) + ',' + (gy + oy)) || []) if (j > i && Math.hypot(pts[j].x - p.x, pts[j].y - p.y) < rad[i] + rad[j] - 0.5) over++; });
+  // boxes: node circle + its full label (no padding): any overlap means a label touches another label or node
+  const bx = ns.map(n => { const e = ENT.get(n.id()); return e ? boxOf(nodeSize(e), shortLabel(e.name), fontSize(e), 0) : { hw: 1, top: 1, bot: 1 }; });
+  const pad = ns.map(n => { const e = ENT.get(n.id()); return e ? boxOf(nodeSize(e), shortLabel(e.name), fontSize(e), BOX_PAD - 0.5) : { hw: 1, top: 1, bot: 1 }; });
+  return { nodes: pts.length, overlaps: over, labelOverlaps: boxOverlaps(pts, bx), padOverlaps: boxOverlaps(pts, pad), layout: S.layout, ...(detail ? { pairs: boxOverlaps(pts, pad, []).slice(0, 6).map(([i, j]) => [ns[i].id(), ns[j].id(), Math.round(pts[i].x), Math.round(pts[i].y), Math.round(pts[j].x), Math.round(pts[j].y)]) } : {}) };
+};
+function boxOverlaps(pts, bx, out) {
+  let cw = 1, ch = 1; for (const b of bx) { cw = Math.max(cw, 2 * b.hw); ch = Math.max(ch, b.top + b.bot); }
+  const grid = new Map(); pts.forEach((p, i) => { const k = Math.floor(p.x / cw) + ',' + Math.floor(p.y / ch); (grid.get(k) || grid.set(k, []).get(k)).push(i); });
+  let c = 0; pts.forEach((p, i) => { const a0 = bx[i], gx = Math.floor(p.x / cw), gy = Math.floor(p.y / ch); for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) for (const j of grid.get((gx + ox) + ',' + (gy + oy)) || []) { if (j <= i) continue; const q = pts[j], b0 = bx[j]; if (Math.min(p.x + a0.hw, q.x + b0.hw) - Math.max(p.x - a0.hw, q.x - b0.hw) > 0.3 && Math.min(p.y + a0.bot, q.y + b0.bot) - Math.max(p.y - a0.top, q.y - b0.top) > 0.3) { c++; if (out) out.push([i, j]); } } });
+  return out || c;
+}
+$('#g-layout').addEventListener('change', e => { S.layout = e.target.value; prevVisibleKey = ''; update(); });
 
 // ---- 30-money.js
 /* follow the money: layered sankey of money links (estimates/budgets excluded unless toggled) */
@@ -1866,7 +2537,7 @@ function renderIndex() {
 $('#view-index').addEventListener('click', e => {
   const t = e.target.closest('[data-sort],[data-page],[data-node],[data-net]'); if (!t) return;
   if (t.dataset.sort) { if (iSort === t.dataset.sort) iDir = -iDir; else { iSort = t.dataset.sort; iDir = ['name', 'type', 'province'].includes(iSort) ? 1 : -1; } renderIndex(); }
-  else if (t.dataset.page) { iPage += +t.dataset.page; renderIndex(); $('#view-index').scrollTop = 0; }
+  else if (t.dataset.page) { const el = $('#view-index'); if (typeof scrollMemLeave === 'function') scrollMemLeave(el, scrollMemViewKeyFor('index')); iPage += +t.dataset.page; renderIndex(); if (typeof scrollMemEnter === 'function') { scrollMemBind(el); scrollMemEnter(el, scrollMemViewKeyFor('index')); } else el.scrollTop = 0; }
   else if (t.dataset.node) select({ node: t.dataset.node });
   else if (t.dataset.net) selectNet(t.dataset.net);
 });
@@ -2065,6 +2736,13 @@ function netCard(n) {
     <div class="nc-act"><button type="button" class="btn sm" data-net="${esc(n.id)}">${S.net === n.id ? 'Highlighted' : 'Highlight on map'}</button></div></div>`;
 }
 function panelSection(title, body, open = true, count) { return `<details class="psec" ${open ? 'open' : ''}><summary><h3>${esc(title)}${count != null ? ` <span class="muted">${count}</span>` : ''}</h3></summary>${body}</details>`; }
+// node picture in the profile: only the circular photo or logo in its type-colour ring. No credit, licence, source or
+// trademark text here; all of that is on the Image credits page (image-credits.html, linked from About).
+function photoHtml(e) {
+  if (!e.im) return '';
+  const logo = e.imk === 'l';
+  return `<div class="p-photo${logo ? ' logo' : ''}" data-photo="${esc(e.id)}" style="--ring:${esc(TYPE[e.type].color)}"><img src="${esc(e.im)}" alt="${esc(e.name)}" loading="lazy" decoding="async" width="88" height="88"></div>`;
+}
 function renderEntity(e) {
   if (typeof isTheoryEnt === 'function' && isTheoryEnt(e) && typeof renderTheoryCard === 'function') return renderTheoryCard(e);
   const T = TYPE[e.type]; const links = byNode.get(e.id);
@@ -2080,7 +2758,7 @@ function renderEntity(e) {
   const intro = GUIDE.entity_intros && GUIDE.entity_intros[e.id] && GUIDE.entity_intros[e.id].intro;
   const myLeads = LEADS.filter(L => L.entities.includes(e.id) || L.link_ids.some(id => { const l = LNK.get(id); return l && (l.from === e.id || l.to === e.id); }));
   return `<div class="p-head"><div class="p-type">${typeChip(e.type)}${e.type === 'event' ? ' ' + evStatusBadge(e) : ''}${e.province ? ` <span class="muted" title="${esc(provName(e.province))}">${esc(e.province)}</span>` : ''} ${layerChips(e)} ${seenBadge(e)}${e.status ? ' ' + lbadge(e) : ''}</div>
-    <h1 class="p-name">${esc(e.name)}</h1>${namedFromRecords(e) ? `<div>${roleBadge(e)}</div>` : e.role ? `<div class="muted">${esc(e.role)}</div>` : ''}${namedIn(e)}${e.aliases.length ? `<div class="small muted">Also: ${esc(e.aliases.join(' · '))}</div>` : ''}${legalChips(e)}${typeof theorySwitchHtml === 'function' ? theorySwitchHtml(e) : ''}${typeof personChecksHtml === 'function' ? personChecksHtml(e) : ''}${e.unlinked && !links.length ? `<p class="unlinked-note" data-unlinked role="note"><span class="kindtag">Unlinked</span> ${esc(e.unlinked_note || 'No sourced relationship found yet; entity kept from its cited source.')}</p>` : ''}<div class="p-corr">${reportCorrectionHtml('entity', e)}</div></div>
+    <h1 class="p-name">${esc(e.name)}</h1>${photoHtml(e)}${namedFromRecords(e) ? `<div>${roleBadge(e)}</div>` : e.role ? `<div class="muted">${esc(e.role)}</div>` : ''}${namedIn(e)}${e.aliases.length ? `<div class="small muted">Also: ${esc(e.aliases.join(' · '))}</div>` : ''}${legalChips(e)}${typeof theorySwitchHtml === 'function' ? theorySwitchHtml(e) : ''}${typeof personChecksHtml === 'function' ? personChecksHtml(e) : ''}${e.unlinked && !links.length ? `<p class="unlinked-note" data-unlinked role="note"><span class="kindtag">Unlinked</span> ${esc(e.unlinked_note || 'No sourced relationship found yet; entity kept from its cited source.')}</p>` : ''}<div class="p-corr">${reportCorrectionHtml('entity', e)}</div></div>
     ${sourceLabels(e)}
     ${typeof sourceFramingHtml === 'function' ? sourceFramingHtml(e) : ''}
     ${tagLabels(e)}
@@ -2197,11 +2875,12 @@ function panelNeeds() {
   return [];
 }
 function renderPanel() {
+  if (typeof scrollMemBeforePanel === 'function') scrollMemBeforePanel();
   const body = $('#panel-body'); let kicker = 'Overview', html;
   const rd = ready(panelNeeds(), 'panel', () => setTimeout(renderPanel, 0));
   if (rd !== true) { const sel = !!(S.node || S.link || S.net || S.ov != null || S.lead); $('#panel-kicker').textContent = S.node ? 'Profile' : S.link ? 'Claim' : S.net ? 'Network' : S.ov != null ? 'Overlap' : S.lead ? 'Pattern lead' : 'Overview';
     body.innerHTML = rd === 'error' ? detailErr() : (S.node && ENT.has(S.node) ? `<div class="p-head"><div class="p-type">${typeChip(ENT.get(S.node).type)}</div><h1 class="p-name">${esc(ENT.get(S.node).name)}</h1></div>` : '') + loadingNote('details');
-    document.body.classList.toggle('panel-open', sel); $('#btn-close').hidden = !sel; $('#btn-copy').hidden = !sel; $('#btn-print').hidden = !sel; return; }
+    document.body.classList.toggle('panel-open', sel); $('#btn-close').hidden = !sel; $('#btn-copy').hidden = !sel; $('#btn-print').hidden = !sel; if (typeof scrollMemAfterPanel === 'function') scrollMemAfterPanel(); return; }
   if (S.node && ENT.has(S.node)) { kicker = 'Profile'; html = renderEntity(ENT.get(S.node)); }
   else if (S.link && LNK.has(S.link)) { kicker = 'Claim'; html = renderLink(LNK.get(S.link)); }
   else if (S.net && NET.has(S.net)) { const n = NET.get(S.net); kicker = n.auto ? 'Auto-detected cluster' : 'Network'; html = renderNet(n); }
@@ -2212,6 +2891,7 @@ function renderPanel() {
   const sel = !!(S.node || S.link || S.net || S.ov != null || S.lead);
   document.body.classList.toggle('panel-open', sel);
   $('#btn-close').hidden = !sel; $('#btn-copy').hidden = !sel; $('#btn-print').hidden = !sel;
+  if (typeof scrollMemAfterPanel === 'function') scrollMemAfterPanel();
 }
 $('#panel').addEventListener('click', e => {
   const t = e.target.closest('[data-node],[data-link],[data-net],[data-expand],[data-focus],[data-follow],[data-path-from],[data-ov],[data-view-go],[data-lead],[data-tour-go],[data-connect],[data-net-tl]'); if (!t) return;
@@ -2804,94 +3484,100 @@ function renderTheoryCard(e) {
   </section>`;
 }
 
+// ---- Theories on the map. The Theories layer is never part of the verified map (filters, counts, index and exports
+// leave it out while it is off), but its nodes and lines are always drawn: dim gold and dashed while the layer is OFF,
+// bright gold while it is ON (or while a node's own theory switch is on). Each theory node sits in free space next to
+// the verified node(s) that name it, so it never covers a node or label. A theory node with a picture in the manifest
+// shows it in a round frame with the gold dashed ring (dimmed with the node while the layer is off).
+const THY_GOLD = '#f5d90a';
+const thySize = e => e && e.im ? 44 : 38;
+const thyPicCls = e => e && e.im ? (e.imk === 'l' ? ' pic logo' : ' pic') : '';
+let THY_ADJ = null, THY_ALL = null, THY_NVER = 0;
+function thyIndex() {
+  if (THY_ADJ) return;
+  THY_ADJ = new Map(); THY_ALL = [];
+  for (const e of D.entities) { if (isTheoryEnt(e)) THY_ALL.push(e.id); else THY_NVER++; }
+  for (const l of D.links) if (isTheoryLnk(l)) { (THY_ADJ.get(l.from) || THY_ADJ.set(l.from, []).get(l.from)).push(l); (THY_ADJ.get(l.to) || THY_ADJ.set(l.to, []).get(l.to)).push(l); }
+}
+// theory nodes drawn for the current selection: the whole layer on the full map; in a focused view (topic, filters)
+// the theories that name a node in view, plus one step along theory lines
+function theoriesInScope() {
+  thyIndex();
+  if (!F || !F.ents || F.ents.size >= THY_NVER * 0.9) return new Set(THY_ALL);
+  const out = new Set();
+  for (const id of F.ents) { const e = ENT.get(id); if (e && !isTheoryEnt(e)) for (const t of theoryIdsOf(e)) if (ENT.has(t)) out.add(t); }
+  for (const t of [...out]) for (const l of THY_ADJ.get(t) || []) out.add(l.from === t ? l.to : l.from);
+  return out;
+}
+const thyLabel = e => '⚠ ' + theoryShortLabel(e); // the ⚠ marks every theory node as unverified, on and off
+// free-space placement next to the anchors (verified nodes naming the theory, else theory neighbours already placed)
+const THY_POS = { key: '', pos: new Map() };
+function theoryPositions(ids) {
+  const key = (GL.kind || 'network') + '|' + (GL.key || '') + '|' + ids.length + '|' + ids.slice(0, 50).join(',');
+  if (THY_POS.key === key) return THY_POS.pos;
+  const posMap = id => { if (GL.pos && GL.kind !== 'network') return GL.pos.get(id) || null; const e = ENT.get(id); return e && e.pos ? { x: e.pos[0], y: e.pos[1] } : null; };
+  // fixed boxes: every verified node of the current layout
+  const fixed = []; let cw = 0, ch = 0, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  const src = GL.pos && GL.kind !== 'network' ? [...GL.pos.keys()] : D.entities.filter(e => !isTheoryEnt(e) && e.pos).map(e => e.id);
+  for (const id of src) { const e = ENT.get(id), p = posMap(id); if (!e || !p) continue; const b = boxOf(nodeSize(e), shortLabel(e.name), fontSize(e)); fixed.push({ x: p.x, y: p.y, b }); cw = Math.max(cw, 2 * b.hw); ch = Math.max(ch, b.top + b.bot); x1 = Math.max(x1, p.x + b.hw); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); }
+  const tb = new Map(); for (const id of ids) { const e = ENT.get(id); const b = boxOf(thySize(e), thyLabel(e), 12); tb.set(id, b); cw = Math.max(cw, 2 * b.hw); ch = Math.max(ch, b.top + b.bot); }
+  cw += 1e-6; ch += 1e-6;
+  const grid = new Map(), K = (gx, gy) => gx + ',' + gy; const put = it => { const k = K(Math.floor(it.x / cw), Math.floor(it.y / ch)); (grid.get(k) || grid.set(k, []).get(k)).push(it); };
+  for (const it of fixed) put(it);
+  const free = (x, y, b) => { const gx = Math.floor(x / cw), gy = Math.floor(y / ch); for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) for (const q of grid.get(K(gx + ox, gy + oy)) || []) if (x - b.hw < q.x + q.b.hw && x + b.hw > q.x - q.b.hw && y - b.top < q.y + q.b.bot && y + b.bot > q.y - q.b.top) return false; return true; };
+  const anchors = new Map(); // theory id -> verified ids naming it
+  for (const e of D.entities) if (!isTheoryEnt(e)) for (const t of theoryIdsOf(e)) (anchors.get(t) || anchors.set(t, []).get(t)).push(e.id);
+  const pos = new Map(), want = new Set(ids);
+  const order = ids.slice().sort((a, b) => (anchors.has(b) ? 1 : 0) - (anchors.has(a) ? 1 : 0) || (a < b ? -1 : 1));
+  let parkY = isFinite(y0) ? y0 : 0; const parkX = isFinite(x1) ? x1 + 500 : 0;
+  const place = (id, sx, sy) => {
+    const b = tb.get(id); const step = 24;
+    for (let r = 0; r < 40000; r += step) { const n = r ? Math.max(8, Math.round(2 * Math.PI * r / 40)) : 1; for (let k = 0; k < n; k++) { const a = -Math.PI / 2 + (k / n) * 2 * Math.PI, x = sx + Math.cos(a) * r, y = sy + Math.sin(a) * r; if (free(x, y, b)) { const it = { x, y, b }; put(it); pos.set(id, { x, y }); return; } } }
+    pos.set(id, { x: sx, y: sy });
+  };
+  const pending = [];
+  for (const id of order) {
+    const as = (anchors.get(id) || []).map(posMap).filter(Boolean);
+    if (as.length) { const sx = as.reduce((s, p) => s + p.x, 0) / as.length, sy = as.reduce((s, p) => s + p.y, 0) / as.length; place(id, sx, sy - 120); } else pending.push(id);
+  }
+  // theories with no verified anchor: next to a theory neighbour already placed, else in a column right of the map
+  for (let round = 0; round < 3 && pending.length; round++) for (let i = pending.length - 1; i >= 0; i--) {
+    const id = pending[i]; const nb = (THY_ADJ.get(id) || []).map(l => pos.get(l.from === id ? l.to : l.from)).filter(Boolean);
+    if (nb.length || round === 2) { if (nb.length) place(id, nb[0].x, nb[0].y + 140); else { place(id, parkX, parkY); parkY += 120; } pending.splice(i, 1); }
+  }
+  THY_POS.key = key; THY_POS.pos = pos;
+  return pos;
+}
 function syncTheoryGraph() {
   if (!cy || typeof F === 'undefined' || !F) return;
-  const thyShow = theoriesVisible();
-  const wantNodes = new Set(thyShow);
-  const wantEdges = new Set();
-  // synthetic edges from a verified node to its theories when the stub→theory link exists only on the stub
-  for (const id of S.thyOn) {
-    const e = ENT.get(id); if (!e || e.type === 'theory') continue;
-    for (const tid of theoryIdsOf(e)) {
-      wantNodes.add(tid);
-      wantEdges.add('thy:' + id + '>' + tid);
-    }
-  }
-  for (const l of D.links) {
-    if (!isTheoryLnk(l)) continue;
-    if (S.thy) { if (thyShow.has(l.from) && thyShow.has(l.to)) wantEdges.add('L:' + l.id); continue; }
-    // theory-to-theory via related: draw a dashed edge when parent theory switch is on
-    for (const id of S.thyOn) {
-      const e = ENT.get(id); if (!e) continue;
-      if (e.type === 'theory' && (relatedTheoryIds(e).includes(l.to) || relatedTheoryIds(e).includes(l.from)) && thyShow.has(l.from) && thyShow.has(l.to)) wantEdges.add('L:' + l.id);
-    }
-  }
-  // also show real named_in_theory links when global on
-  if (S.thy) for (const l of D.links) if (isTheoryLnk(l) && thyShow.has(l.from) && thyShow.has(l.to)) wantEdges.add('L:' + l.id);
-
+  thyIndex();
+  const bright = theoriesVisible(); // the whole layer when ON; otherwise what a node's own switch opened
+  const wantNodes = new Set(S.thy ? bright : [...theoriesInScope(), ...bright]);
+  for (const id of S.thyOn) { const e = ENT.get(id); if (e && e.type !== 'theory') for (const t of theoryIdsOf(e)) { wantNodes.add(t); bright.add(t); } }
+  for (const id of [...wantNodes]) { const e = ENT.get(id); if (!e || !isTheoryEnt(e) || e.visible === false) wantNodes.delete(id); }
+  const ids = [...wantNodes].sort(); const P = theoryPositions(ids);
+  const isBright = id => S.thy || bright.has(id);
   cy.batch(() => {
-    // remove stale theory ephemeral nodes/edges
-    cy.nodes('.thy-node, .thy-sw').forEach(n => { if (!wantNodes.has(n.id()) && !n.hasClass('thy-sw')) n.remove(); });
-    cy.edges('.thy-edge').forEach(e => { if (!wantEdges.has(e.id()) && !wantEdges.has(e.data('lid') && ('L:' + e.data('lid')))) { /* keep check below */ } });
-    // ensure theory nodes exist and sit near their anchor
-    for (const tid of wantNodes) {
-      const e = ENT.get(tid); if (!e) continue;
+    cy.nodes('.thy-node').forEach(n => { if (!wantNodes.has(n.id())) n.remove(); });
+    for (const tid of ids) {
+      const e = ENT.get(tid), p = P.get(tid) || (e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 });
       let n = cy.$id(tid);
-      if (!n.length) {
-        const anchor = [...S.thyOn].map(id => ENT.get(id)).find(a => a && (theoryIdsOf(a).includes(tid) || relatedTheoryIds(a).includes(tid)));
-        const ap = anchor && cy.$id(anchor.id).length ? cy.$id(anchor.id).position() : (e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 });
-        const sib = (anchor ? (anchor.type === 'theory' ? relatedTheoryIds(anchor) : theoryIdsOf(anchor)) : [tid]);
-        const ix = Math.max(0, sib.indexOf(tid));
-        const ang = -Math.PI / 2 + (ix - (sib.length - 1) / 2) * 0.7;
-        const r = 130 + sib.length * 12; // keep clear of parent label; larger node needs more gap
-        const short = theoryShortLabel(e);
-        cy.add({ group: 'nodes', classes: 'thy-node' + (e.type === 'theory' && relatedTheoryIds(e).length ? ' thy-has-sw' : ''), data: { id: tid, label: short, color: THEORY_COLOR(), shape: 'vee', size: 38, fs: 10, type: 'theory', province: '—' }, position: { x: ap.x + Math.cos(ang) * r, y: ap.y + Math.sin(ang) * r } });
-      } else if (isTheoryEnt(e)) {
-        n.addClass('thy-node');
-        n.data('label', theoryShortLabel(e));
-        n.data('size', 38);
-        n.data('fs', 10);
-        n.style('display', 'element');
-      } else {
-        n.style('display', 'element');
-      }
+      const cls = 'thy-node ' + (isBright(tid) ? 'thy-hot' : 'thy-dim') + (e.type === 'theory' && relatedTheoryIds(e).length ? ' thy-has-sw' : '') + thyPicCls(e);
+      if (!n.length) { n = cy.add({ group: 'nodes', classes: cls, data: { id: tid, label: thyLabel(e), full: thyLabel(e), tmw: wrapW(thyLabel(e), 12), color: THY_GOLD, shape: e.im ? 'ellipse' : 'vee', size: thySize(e), fs: 12, type: 'theory', province: '—', ...(e.im ? { im: e.im } : {}) }, position: p }); if (e.im && typeof schedulePics === 'function') schedulePics(); }
+      else { n.classes(cls + (n.hasClass('imgon') ? ' imgon' : '')); n.position(p); n.style('display', 'element'); }
     }
-    // verified→theory synthetic edges
-    for (const id of S.thyOn) {
-      const e = ENT.get(id); if (!e || e.type === 'theory') continue;
-      for (const tid of theoryIdsOf(e)) {
-        const eid = 'thy:' + id + '>' + tid;
-        if (!cy.$id(eid).length && cy.$id(id).length && cy.$id(tid).length) {
-          cy.add({ group: 'edges', classes: 'thy-edge dashed', data: { id: eid, lid: eid, source: id, target: tid, color: THEORY_COLOR(), dash: [6, 4], width: 1.4, arrow: 'none', arrow0: 'none', label: 'named in theory' } });
-        }
-      }
-      // theory→related theory
-      if (e.type === 'theory') for (const tid of relatedTheoryIds(e)) {
-        const eid = 'thy:' + id + '>' + tid;
-        if (!cy.$id(eid).length && cy.$id(id).length && cy.$id(tid).length) {
-          cy.add({ group: 'edges', classes: 'thy-edge dashed', data: { id: eid, lid: eid, source: id, target: tid, color: THEORY_COLOR(), dash: [6, 4], width: 1.4, arrow: 'none', arrow0: 'none', label: 'named in theory' } });
-        }
-      }
+    // lines: theory↔theory links, plus verified node → theory that names it (only for verified nodes drawn now)
+    const wantE = new Map();
+    for (const l of D.links) if (isTheoryLnk(l) && wantNodes.has(l.from) && wantNodes.has(l.to)) wantE.set('L:' + l.id, [l.from, l.to, isBright(l.from) && isBright(l.to), LT(l.type).label || 'named in theory']);
+    cy.nodes().forEach(n => { if (n.hasClass('thy-node')) return; const e = ENT.get(n.id()); if (!e) return; for (const t of theoryIdsOf(e)) if (wantNodes.has(t)) wantE.set('thy:' + e.id + '>' + t, [e.id, t, S.thy || S.thyOn.has(e.id) || bright.has(t) && S.thyOn.has(e.id), 'named in theory']); });
+    cy.edges('.thy-edge').forEach(ed => { if (!wantE.has(ed.id())) ed.remove(); });
+    for (const [eid, [a, b, hot, lab]] of wantE) {
+      if (!cy.hasElementWithId(a) || !cy.hasElementWithId(b)) continue;
+      const cls = 'thy-edge dashed ' + (hot ? 'thy-hot' : 'thy-dim');
+      const ed = cy.$id(eid);
+      if (!ed.length) cy.add({ group: 'edges', classes: cls, data: { id: eid, lid: eid.startsWith('L:') ? eid.slice(2) : eid, source: a, target: b, color: THY_GOLD, dash: [6, 4], width: 1.4, arrow: 'none', arrow0: 'none', label: '', rl: String(lab).toLowerCase() + ' (unverified)', cpd: 18 } });
+      else ed.classes(cls);
     }
-    for (const id of S.thyOn) {
-      const e = ENT.get(id); if (!e || e.type !== 'theory') continue;
-      for (const tid of relatedTheoryIds(e)) {
-        const eid = 'thy:' + id + '>' + tid;
-        if (!cy.$id(eid).length && cy.$id(id).length && cy.$id(tid).length) {
-          cy.add({ group: 'edges', classes: 'thy-edge dashed', data: { id: eid, lid: eid, source: id, target: tid, color: THEORY_COLOR(), dash: [6, 4], width: 1.4, arrow: 'none', arrow0: 'none', label: 'named in theory' } });
-        }
-      }
-    }
-    // hide theory layer base nodes/edges unless wanted (they may exist from initGraph)
-    cy.nodes().forEach(n => {
-      const e = ENT.get(n.id());
-      if (!e) return;
-      if (isTheoryEnt(e) && !wantNodes.has(n.id()) && !S.thyOn.has(n.id())) n.style('display', 'none');
-    });
-    cy.edges('.thy-edge').forEach(ed => {
-      const keep = [...S.thyOn].some(id => ed.id().startsWith('thy:' + id + '>')) || (S.thy && ed.hasClass('thy-edge'));
-      if (!keep && ed.id().startsWith('thy:')) ed.remove();
-    });
   });
   placeTheorySwitches();
 }
@@ -3013,7 +3699,7 @@ $('#x-json').addEventListener('click', async () => { await hydrateAll([...[...F.
   const out = { exported_at: new Date().toISOString(), view: location.href, note: `${filterNote()}. Reported claims come from the outlet's own reporting and are not independently verified. Overlaps are found by the map and are not reported claims.`, meta: { built_at: D.meta.built_at, is_sample: D.meta.is_sample }, entities: [...F.ents].map(id => strip(ENT.get(id))), links: F.links.map(strip), networks: F.nets.map(strip), overlaps: visibleOverlaps().map(o => ({ type: o.type, a: o.a, b: o.b, via: o.via, kinds: o.kinds, strength: o.strength, evidence_link_ids: o.links, evidence_source_urls: o.sources, note: OV_NOTE })) };
   download(`noticermap-${stamp()}.json`, JSON.stringify(out, null, 1), 'application/json');
 });
-function openDialog(title, html) { $('#dlg-title').textContent = title; $('#dlg-body').innerHTML = html; const d = $('#dlg'); if (d.showModal) d.showModal(); else d.setAttribute('open', ''); }
+function openDialog(title, html) { const d = $('#dlg'); if (typeof scrollMemLeave === 'function' && d) scrollMemLeave(d, scrollMemKey('dialog', $('#dlg-title')?.textContent || '')); $('#dlg-title').textContent = title; $('#dlg-body').innerHTML = html; if (d.showModal) d.showModal(); else d.setAttribute('open', ''); if (typeof scrollMemEnter === 'function') { scrollMemBind(d); scrollMemEnter(d, scrollMemKey('dialog', title)); } }
 function openEmbed() {
   const url = location.href.split('#')[0] + (toHash() ? '#' + toHash() : '');
   const what = S.node ? name(S.node) : S.link ? `${name(LNK.get(S.link).from)} → ${name(LNK.get(S.link).to)}` : 'Canadian influence & money network';
@@ -3396,6 +4082,7 @@ function renderTourCard() {
   const c = $('#tour-card'); const t = tourById(S.tour); if (!t) { c.hidden = true; document.body.classList.remove('touring'); return; }
   const st = t.steps[S.step]; const n = t.steps.length;
   const ents = (st.entity_ids || []).filter(id => ENT.has(id)).slice(0, 8), lks = (st.link_ids || []).filter(id => LNK.has(id)).slice(0, 6);
+  if (typeof scrollMemRemember === 'function') scrollMemRemember(c);
   c.innerHTML = `<div class="tc-top"><span class="kindtag">Tour</span> <span class="muted small">${esc(t.title)}</span><button type="button" class="icon-btn" data-tour-exit aria-label="Exit tour">✕</button></div>
     <h2 id="tc-title">${esc(st.title || 'Step ' + (S.step + 1))}</h2>${st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`}
     ${tourLeadHtml(st)}
@@ -3403,9 +4090,10 @@ function renderTourCard() {
     ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(id)}">claim</button></li>`; }).join('')}</ul>` : ''}
     <div class="tc-nav"><button type="button" class="btn sm" data-tour-prev ${S.step === 0 ? 'disabled' : ''}>← Back</button><span class="muted small" aria-live="polite">Step ${S.step + 1} of ${n}</span>${S.step < n - 1 ? '<button type="button" class="btn sm accent" data-tour-next>Next →</button>' : '<button type="button" class="btn sm accent" data-tour-exit>Finish</button>'}</div>`;
   c.hidden = false; document.body.classList.add('touring');
+  if (typeof scrollMemEnter === 'function') { scrollMemBind(c); scrollMemEnter(c, scrollMemKey('tour', t.id + ':' + S.step)); }
 }
 function tourGo(d) { const t = tourById(S.tour); if (!t) return; const j = S.step + d; if (j < 0 || j >= t.steps.length) return; S.step = j; applyTourStep(true); }
-function exitTour() { S.tour = null; S.step = 0; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); update(true); }
+function exitTour() { if (typeof scrollMemLeave === 'function') scrollMemLeave($('#tour-card'), scrollMemKey('tour', (S.tour || '') + ':' + S.step)); S.tour = null; S.step = 0; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); update(true); }
 $('#tour-card').addEventListener('click', e => {
   if (e.target.closest('[data-tour-next]')) return tourGo(1);
   if (e.target.closest('[data-tour-prev]')) return tourGo(-1);
@@ -3576,7 +4264,7 @@ function ensureFirstVisitNoticingStep(steps) {
 function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitNoticingStep(ensureFirstVisitLayoutSteps(ensureFirstVisitSearchHelp(w.steps.map(s => isSearchHelpStep(s) ? searchHelpWalkStep(s) : s)))) }; }
 function walkSteps() { const raw = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return normalizeWalkthrough(raw); }
 function openWalk(i = 0) { if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
-function closeWalk(silent) { if ($('#wt').hidden) return; $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) ($('#btn-howto') || $('#btn-help'))?.focus(); }
+function closeWalk(silent) { if ($('#wt').hidden) return; if (typeof scrollMemLeave === 'function') scrollMemLeave($('#wt-card'), scrollMemKey('howto', walkI)); $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) ($('#btn-howto') || $('#btn-help'))?.focus(); }
 function renderWalk() {
   const st = WALK.steps[walkI]; const n = WALK.steps.length;
   if (st.view && VIEWS.includes(st.view) && st.view !== S.view) setView(st.view);
@@ -3587,6 +4275,7 @@ function renderWalk() {
   const media = st.video ? `<figure class="wt-media" data-wt-video><video controls playsinline preload="metadata" aria-label="${esc(st.title || '')}"><source src="${esc(st.video)}" type="video/webm">${st.captions ? `<track kind="captions" srclang="en" src="${esc(st.captions)}" default>` : ''}</video></figure>` : '';
   const more = st.moreText ? `<details class="wt-details"><summary>${esc(st.moreTitle || 'More')}</summary>${String(st.moreText).split(/\n\s*\n/).map(s => `<p>${esc(s)}</p>`).join('')}</details>` : '';
   const body = (st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary>${paras}</details>` : paras) + more + media;
+  if (typeof scrollMemRemember === 'function') scrollMemRemember(card);
   card.innerHTML = `<div class="tc-top"><span class="kindtag">${esc(WALK.title || 'Welcome')}</span><span class="muted small">${walkI + 1} / ${n}</span></div><h2 id="wt-title">${esc(st.title || '')}</h2>${body}
     <div class="tc-nav"><button type="button" class="linkish" data-wt-skip>Skip</button><span></span><button type="button" class="btn sm" data-wt-prev ${walkI === 0 ? 'disabled' : ''}>← Back</button>${walkI < n - 1 ? '<button type="button" class="btn sm accent" data-wt-next>Next →</button>' : '<button type="button" class="btn sm accent" data-wt-skip>Done</button>'}</div>
     <div class="fv-again-wrap"><button type="button" class="linkish" data-fv-again>Watch the video again</button></div>`;
@@ -3596,6 +4285,7 @@ function renderWalk() {
   if (el && vw > 700) { const r = el.getBoundingClientRect(); let left = r.right + 16; if (left + cw > vw - 12) left = Math.max(12, r.left - cw - 16); if (left < 12 || left + cw > vw - 12) left = Math.max(12, Math.min(vw - cw - 12, r.left)); let top = Math.max(12, Math.min(vh - card.offsetHeight - 12, r.top)); if (left === Math.max(12, Math.min(vw - cw - 12, r.left))) top = r.bottom + 12 + card.offsetHeight < vh ? r.bottom + 12 : Math.max(12, r.top - card.offsetHeight - 12); Object.assign(card.style, { left: left + 'px', top: top + 'px', bottom: 'auto' }); }
   else Object.assign(card.style, { left: (vw - cw) / 2 + 'px', top: 'auto', bottom: '16px' });
   card.querySelector('[data-wt-next],[data-wt-skip]:last-child')?.focus();
+  if (typeof scrollMemEnter === 'function') { scrollMemBind(card); scrollMemEnter(card, scrollMemKey('howto', walkI)); }
 }
 $('#wt').addEventListener('click', e => {
   if (e.target.closest('[data-wt-next]')) { walkI = Math.min(WALK.steps.length - 1, walkI + 1); return renderWalk(); }
@@ -3618,13 +4308,16 @@ function maybeFirstVisit() {
 // ---- 'How are these connected?' finder: reuses shortestPaths over the filtered links; up to 3 paths
 function openConnect(fromId) {
   const c = $('#connect'); c.hidden = false; document.body.classList.add('connecting');
+  if (typeof scrollMemEnter === 'function') { scrollMemBind(c); scrollMemEnter(c, scrollMemKey('connect', (fromId || S.pa || '') + ':' + (S.pb || ''))); }
   if (fromId && ENT.has(fromId)) { S.pa = fromId; if (S.pb === fromId) S.pb = null; }
   if (!$('#pf-names').children.length && D.entities.length <= 5000) $('#pf-names').innerHTML = D.entities.map(e => `<option value="${esc(e.name)}">`).join('');
   renderConnect(); setTimeout(() => (S.pa ? $('#cf-b') : $('#cf-a')).focus(), 20);
 }
-function closeConnect() { $('#connect').hidden = true; document.body.classList.remove('connecting'); $('#btn-connect').focus(); }
+function closeConnect() { const c = $('#connect'); if (typeof scrollMemLeave === 'function') scrollMemLeave(c, scrollMemKey('connect', (S.pa || '') + ':' + (S.pb || ''))); c.hidden = true; document.body.classList.remove('connecting'); $('#btn-connect').focus(); }
 function renderConnect() {
   if ($('#connect').hidden) return;
+  if (typeof scrollMemRemember === 'function') scrollMemRemember($('#connect'));
+  try {
   if (document.activeElement !== $('#cf-a')) $('#cf-a').value = S.pa ? name(S.pa) : '';
   if (document.activeElement !== $('#cf-b')) $('#cf-b').value = S.pb ? name(S.pb) : '';
   const out = $('#cf-out');
@@ -3634,6 +4327,7 @@ function renderConnect() {
   const P = shortestPaths(S.pa, S.pb, F.links, 3);
   if (!P.length) { const all = shortestPaths(S.pa, S.pb, D.links, 1); out.innerHTML = `<p class="muted">No chain of links connects <b>${esc(name(S.pa))}</b> and <b>${esc(name(S.pb))}</b> with the current filters.${all.length ? ` A ${all[0].links.length}-step chain exists with all filters off. <button class="linkish" data-reset>Reset filters</button>` : ' They are not connected in the data.'}</p>`; return; }
   out.innerHTML = `<p><b>${P[0].links.length} step${P[0].links.length > 1 ? 's' : ''}</b> · ${P.length} path${P.length > 1 ? 's' : ''} shown <button type="button" class="btn sm" id="cf-map">Show on map</button></p>` + P.map((p, i) => `<h3 class="lbl">Path ${i + 1}</h3><ol class="path" aria-label="Path ${i + 1}">${p.links.map((lid, j) => { const l = LNK.get(lid); const a = p.nodes[j], b = p.nodes[j + 1]; const fwd = l.from === a; return `<li>${entBtn(a)} <span class="verb">${esc(fwd ? LT(l.type).label : LT(l.type).inverse)}</span> ${entBtn(b)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(lid)}">claim</button></li>`; }).join('')}</ol>`).join('');
+  } finally { if (typeof scrollMemEnter === 'function') { const c = $('#connect'); scrollMemBind(c); scrollMemEnter(c, scrollMemKey('connect', (S.pa || '') + ':' + (S.pb || ''))); } }
 }
 const cfSet = (which, v) => { const id = findEnt(v); if (v && !id) { toast('No entity matches “' + v + '”'); return; } S[which] = id; update(); };
 $('#btn-connect').addEventListener('click', () => ($('#connect').hidden ? openConnect() : closeConnect()));
@@ -3921,6 +4615,7 @@ function openNoticingDialog() {
   if (sel && !sel.value) sel.value = 'data';
   refreshNoticingLinks();
   if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+  if (typeof scrollMemEnter === 'function') { scrollMemBind(dlg); scrollMemEnter(dlg, scrollMemKey('dialog', 'noticing')); }
   if (btn) btn.setAttribute('aria-expanded', 'true');
   if (sel) setTimeout(function () { sel.focus(); }, 20);
 }
@@ -3928,6 +4623,7 @@ function openNoticingDialog() {
 function closeNoticingDialog() {
   const dlg = document.getElementById('noticing-dlg');
   const btn = document.getElementById('btn-corr-nav');
+  if (typeof scrollMemLeave === 'function' && dlg) scrollMemLeave(dlg, scrollMemKey('dialog', 'noticing'));
   if (dlg && dlg.open && dlg.close) dlg.close();
   else if (dlg) dlg.removeAttribute('open');
   if (btn) btn.setAttribute('aria-expanded', 'false');
@@ -4025,6 +4721,7 @@ const NOTES_CORE = (() => {
   const FORMAT = 'noticermap-notes';
   const VERSION = 1;
   const LIMITS = { notes: 50, title: 120, body: 200000, importBytes: 5e6 };
+  const SIZE = { minW: 220, minH: 160, maxW: 2000, maxH: 2000, step: 16, margin: 8, minVisibleX: 80, minVisibleY: 40 };
   const DEFAULT_TITLE = 'Note';
   const WALK_STEP = {
     target: 'notes', title: 'Floating notes',
@@ -4034,6 +4731,29 @@ const NOTES_CORE = (() => {
   const clean = (s, max) => { let t = String(s == null ? '' : s).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ''); return max && t.length > max ? t.slice(0, max) : t; };
   const oneLine = (s, max) => clean(s).replace(/\s+/g, ' ').trim().slice(0, max || 1000);
   const num = (v, d, lo, hi) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n))) : d; };
+  // clamp a note's size (and, with a viewport, its position) so it stays on screen
+  function clampSize(w, h, box = {}) {
+    const vw = box.vw, vh = box.vh, x = Number(box.x) || 0, y = Number(box.y) || 0, m = SIZE.margin;
+    const maxW = Math.min(SIZE.maxW, vw != null && Number.isFinite(+vw) ? Math.max(SIZE.minW, +vw - x - m) : SIZE.maxW);
+    const maxH = Math.min(SIZE.maxH, vh != null && Number.isFinite(+vh) ? Math.max(SIZE.minH, +vh - y - m) : SIZE.maxH);
+    return { w: num(w, 340, SIZE.minW, maxW), h: num(h, 300, SIZE.minH, maxH) };
+  }
+  function clampGeom(n, vw, vh) {
+    const m = SIZE.margin;
+    vw = Number(vw); vh = Number(vh);
+    const hasV = Number.isFinite(vw) && Number.isFinite(vh) && vw > 0 && vh > 0;
+    let w = num(n && n.w, 340, SIZE.minW, SIZE.maxW), h = num(n && n.h, 300, SIZE.minH, SIZE.maxH);
+    let x = num(n && n.x, 40, 0, 10000), y = num(n && n.y, 90, 0, 10000);
+    if (hasV) {
+      w = Math.min(w, Math.max(SIZE.minW, vw - m));
+      h = Math.min(h, Math.max(SIZE.minH, vh - m));
+      x = num(x, 40, 0, Math.max(0, vw - w - m));
+      y = num(y, 90, 0, Math.max(0, vh - h - m));
+      const s = clampSize(w, h, { vw, vh, x, y });
+      w = s.w; h = s.h;
+    }
+    return { x, y, w, h };
+  }
   let seq = 0;
   const uid = () => 'n' + Date.now().toString(36) + (++seq).toString(36) + Math.random().toString(36).slice(2, 6);
   const nowIso = () => new Date().toISOString();
@@ -4046,7 +4766,7 @@ const NOTES_CORE = (() => {
     const id = /^[A-Za-z0-9_-]{1,40}$/.test(String(n.id || '')) ? String(n.id) : uid();
     const iso = v => (typeof v === 'string' && !isNaN(Date.parse(v)) ? new Date(v).toISOString() : nowIso());
     return { id, title: oneLine(n.title, LIMITS.title) || `${DEFAULT_TITLE} ${i + 1}`, body: clean(n.body, LIMITS.body),
-      x: num(n.x, 40, 0, 10000), y: num(n.y, 90, 0, 10000), w: num(n.w, 340, 220, 2000), h: num(n.h, 300, 160, 2000), min: !!n.min,
+      x: num(n.x, 40, 0, 10000), y: num(n.y, 90, 0, 10000), w: num(n.w, 340, SIZE.minW, SIZE.maxW), h: num(n.h, 300, SIZE.minH, SIZE.maxH), min: !!n.min,
       created: iso(n.created), updated: iso(n.updated) };
   }
   function normalizeState(s) {
@@ -4130,7 +4850,7 @@ const NOTES_CORE = (() => {
     const c = Number(n) || 0;
     return c ? `+ Note: ${c} saved in this browser` : '+ Note: no notes saved in this browser';
   };
-  return { KEY, FORMAT, VERSION, LIMITS, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe, launchLabel, launchAria };
+  return { KEY, FORMAT, VERSION, LIMITS, SIZE, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe, launchLabel, launchAria, clampSize, clampGeom };
 })();
 
 // ---- 85-notes.js
@@ -4207,10 +4927,8 @@ const NOTES = (() => {
 
   // ---- windows
   function geom(w, n) {
-    if (mobile()) { w.style.left = w.style.top = w.style.width = w.style.height = ''; return; }
-    const vw = window.innerWidth, vh = window.innerHeight;
-    n.w = Math.min(n.w, vw - 16); n.h = Math.min(n.h, vh - 16);
-    n.x = Math.max(0, Math.min(n.x, vw - 80)); n.y = Math.max(0, Math.min(n.y, vh - 40));
+    const g = C.clampGeom(n, window.innerWidth, window.innerHeight);
+    n.x = g.x; n.y = g.y; n.w = g.w; n.h = g.h;
     Object.assign(w.style, { left: n.x + 'px', top: n.y + 'px', width: n.w + 'px', height: n.h + 'px' });
   }
   let zTop = 1; const front = w => { w.style.zIndex = ++zTop; };
@@ -4224,10 +4942,11 @@ const NOTES = (() => {
     B('rename', '✎', 'Rename note'); B('export', '⤓', 'Export note', { 'aria-haspopup': 'menu', 'aria-expanded': 'false' }); B('min', '–', 'Minimize note'); B('close', '✕', 'Close and delete note');
     bar.append(h, stt, btns);
     const lab = el('label', { class: 'sr-only', for: 'note-b-' + n.id }, 'Note text');
-    const body = el('textarea', { class: 'note-body', id: 'note-b-' + n.id, spellcheck: 'true', placeholder: mobile() ? "Type here, or use 'Copy to note' in a profile." : 'Type here, or drag a map point, search result or profile title in.' });
+    const body = el('textarea', { class: 'note-body', id: 'note-b-' + n.id, spellcheck: 'true', 'aria-label': 'Note text' });
     body.value = n.body;
     const foot = el('div', { class: 'note-foot muted' }, 'Saved in this browser only');
-    w.append(bar, lab, body, foot);
+    const grip = el('button', { type: 'button', class: 'note-resize', 'aria-label': 'Resize note. Use arrow keys to change the size.' });
+    w.append(bar, lab, body, foot, grip);
     body.addEventListener('input', () => { n.body = C.clean(body.value, C.LIMITS.body); n.updated = new Date().toISOString(); caret.set(n.id, body.selectionEnd); saveSoon(); });
     const keep = () => caret.set(n.id, body.selectionEnd); body.addEventListener('keyup', keep); body.addEventListener('click', keep); body.addEventListener('blur', keep);
     btns.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act;
@@ -4235,18 +4954,33 @@ const NOTES = (() => {
       else if (a === 'export') openMenu(b, ['md', 'txt', 'json'].map(f => ({ label: `Export this note (.${f})`, fn: () => download([n], f) })), 'Export note'); });
     // move: drag the title bar (pointer capture), or arrow keys on the focused bar
     bar.addEventListener('pointerdown', e => {
-      if (e.button !== 0 || e.target.closest('button,input') || mobile()) return;
+      if (e.button !== 0 || e.target.closest('button,input')) return;
       e.preventDefault(); bar.setPointerCapture(e.pointerId); front(w); const sx = e.clientX - n.x, sy = e.clientY - n.y;
       const mv = ev => { n.x = ev.clientX - sx; n.y = ev.clientY - sy; geom(w, n); };
       const up = () => { bar.removeEventListener('pointermove', mv); bar.removeEventListener('pointerup', up); bar.removeEventListener('pointercancel', up); save(); };
       bar.addEventListener('pointermove', mv); bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
     });
     bar.addEventListener('keydown', e => {
-      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!d || e.target !== bar || mobile()) return;
-      e.preventDefault(); const s = 16; if (e.shiftKey) { n.w = Math.max(220, n.w + d[0] * s); n.h = Math.max(160, n.h + d[1] * s); } else { n.x += d[0] * s; n.y += d[1] * s; } geom(w, n); saveSoon();
+      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!d || e.target !== bar) return;
+      e.preventDefault(); const s = e.shiftKey ? C.SIZE.step * 2 : C.SIZE.step;
+      if (e.shiftKey) { n.w += d[0] * s; n.h += d[1] * s; } else { n.x += d[0] * s; n.y += d[1] * s; }
+      geom(w, n); saveSoon();
     });
-    // resize: CSS resize handle; the size is read back and stored
-    if (typeof ResizeObserver === 'function') new ResizeObserver(() => { if (mobile() || w.hidden || !w.isConnected) return; const W = Math.round(w.offsetWidth), H = Math.round(w.offsetHeight); if (W && H && (Math.abs(W - n.w) > 1 || Math.abs(H - n.h) > 1)) { n.w = W; n.h = H; saveSoon(); } }).observe(w);
+    // visible corner handle: pointer (mouse and touch) and arrow keys; size is stored with the note
+    grip.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      e.preventDefault(); e.stopPropagation();
+      grip.setPointerCapture(e.pointerId); front(w);
+      const sw = n.w, sh = n.h, sx = e.clientX, sy = e.clientY;
+      const mv = ev => { n.w = sw + (ev.clientX - sx); n.h = sh + (ev.clientY - sy); geom(w, n); };
+      const up = () => { grip.removeEventListener('pointermove', mv); grip.removeEventListener('pointerup', up); grip.removeEventListener('pointercancel', up); save(); };
+      grip.addEventListener('pointermove', mv); grip.addEventListener('pointerup', up); grip.addEventListener('pointercancel', up);
+    });
+    grip.addEventListener('keydown', e => {
+      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (!d) return;
+      e.preventDefault(); const s = e.shiftKey ? C.SIZE.step * 2 : C.SIZE.step;
+      n.w += d[0] * s; n.h += d[1] * s; geom(w, n); saveSoon();
+    });
     w.addEventListener('pointerdown', () => front(w));
     w.addEventListener('focusin', () => front(w));
     w.addEventListener('keydown', e => { if (e.key !== 'Escape' || e.defaultPrevented) return; e.preventDefault(); e.stopPropagation(); if (menu) return closeMenu(); minimize(n.id, true); });
@@ -4267,8 +5001,12 @@ const NOTES = (() => {
   function create(o = {}) {
     if (st.notes.length >= C.LIMITS.notes) { tell(`You have ${C.LIMITS.notes} notes, the most this map keeps. Export and delete some first.`); return null; }
     const k = st.notes.length % 6, sb = $('#sidebar')?.getBoundingClientRect(), top = $('.topbar')?.getBoundingClientRect();
-    // start over the map, clear of the search panel and the header
-    const n = C.newNote({ x: Math.round((sb && sb.right > 0 ? sb.right : 0) + 24 + k * 28), y: Math.round((top ? top.bottom : 52) + 56 + k * 28), ...o }, st.notes); st.notes.push(n); save(); sync(); const w = wins.get(n.id); w.querySelector('.note-body').focus(); say(`Opened ${n.title}`); return n;
+    const vw = window.innerWidth, vh = window.innerHeight, mob = mobile();
+    // start over the map, clear of the search panel and the header; on a phone, nearly full width (user can shrink it)
+    const place = mob
+      ? { x: 6, y: Math.round((top ? top.bottom : 52) + 6), w: Math.max(C.SIZE.minW, vw - 12), h: Math.min(Math.round(vh * 0.46), 420) }
+      : { x: Math.round((sb && sb.right > 0 ? sb.right : 0) + 24 + k * 28), y: Math.round((top ? top.bottom : 52) + 56 + k * 28) };
+    const n = C.newNote({ ...place, ...o }, st.notes); st.notes.push(n); save(); sync(); const w = wins.get(n.id); w.querySelector('.note-body').focus(); say(`Opened ${n.title}`); return n;
   }
   function open(id) { const n = byId(id); if (!n) return; n.min = false; save(); sync(); const w = wins.get(id); front(w); geom(w, n); w.querySelector('.note-body').focus(); say(`Opened ${n.title}`); }
   function minimize(id, focusBack) { const n = byId(id); if (!n) return; n.min = true; save(); sync(); say(`${n.title} minimized`); if (focusBack) (dock.querySelector(`[data-restore="${CSS.escape(id)}"]`) || launcher).focus(); }
@@ -4407,6 +5145,7 @@ let AUTO_EXTRAS = [];
 /* main: views, selection, update loop, boot */
 function setView(v, push = true) {
   if (!VIEWS.includes(v)) v = 'map';
+  if (S.view !== v && typeof scrollMemLeaveView === 'function') scrollMemLeaveView(S.view);
   S.view = v;
   if (v === 'tours') {
     setTimeout(() => {
@@ -4428,7 +5167,7 @@ function setView(v, push = true) {
 }
 function select(sel, push = true) {
   S.node = sel.node || null; S.link = sel.link || null; S.net = sel.net || null; S.ov = sel.ov != null ? sel.ov : null; S.lead = sel.lead || null;
-  if (S.tour && (S.node || S.link)) { S.tour = null; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); }
+  if (S.tour && (S.node || S.link)) { if (typeof scrollMemLeave === 'function') scrollMemLeave($('#tour-card'), scrollMemKey('tour', S.tour + ':' + S.step)); S.tour = null; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); }
   if (S.node) kbd = S.node;
   update(push);
   if (S.node || S.link || S.ov != null) { setTimeout(focusSelection, 30); const e = S.node ? name(S.node) : S.link ? 'claim' : 'overlap'; announce(`Opened ${e}`); }
@@ -4456,6 +5195,7 @@ function update(push) {
     renderPanel(); renderConnect();
     if (typeof solAfterUpdate === 'function') solAfterUpdate();
     if (S.tour && $('#tour-card').hidden && EXTRA.loaded.guide) renderTourCard();
+    if (typeof scrollMemAfterViewRender === 'function') scrollMemAfterViewRender(S.view);
     commit(push);
   } finally { updating = false; }
 }
@@ -4502,6 +5242,7 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   if (typeof bindTheoryUi === 'function') bindTheoryUi();
   if (typeof syncTheoryGraph === 'function') syncTheoryGraph(); } catch (err) { console.error(err); $('#cy').innerHTML = '<p class="empty">The graph could not be drawn in this browser. The Index view has the same data.</p>'; }
   P('graph_init'); F = filtered(); renderResults(); P('filtered');
+  if (typeof scrollMemInitApp === 'function') scrollMemInitApp();
   setView(S.view, false); P('set_view');
   if (S.node || S.link) setTimeout(focusSelection, 60);
   const ld = $('#loading'); ld.classList.add('done'); setTimeout(() => ld.remove(), 300);
@@ -4519,6 +5260,6 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   if (cy) { cy.one('render', mark); requestAnimationFrame(() => requestAnimationFrame(mark)); } else mark();
 })();
 // test / debugging hook (read-only accessors)
-window.__wiretap = { sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, openFvVideo, closeFvVideo, fvVideoAssets: () => FV_VIDEO_ASSETS, fvVideoSeenKey: FV_VIDEO_SEEN_KEY, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null, setTheoriesLayer: typeof setTheoriesLayer === 'function' ? setTheoriesLayer : null };
+window.__wiretap = { scrollMem: typeof scrollMemEnter === 'function' ? { key: scrollMemKey, enter: scrollMemEnter, leave: scrollMemLeave, position: scrollMemPosition, storeKey: SM_STORE_KEY, panelKey: scrollMemPanelKey, viewKey: scrollMemViewKeyFor } : null, sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, openFvVideo, closeFvVideo, fvVideoAssets: () => FV_VIDEO_ASSETS, fvVideoSeenKey: FV_VIDEO_SEEN_KEY, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null, setTheoriesLayer: typeof setTheoriesLayer === 'function' ? setTheoriesLayer : null };
 
 })();

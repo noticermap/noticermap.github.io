@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(918,{"prs":[38085,185]});
+window.__wiretapShard&&window.__wiretapShard(918,{"prnewswire":[36795,183]});

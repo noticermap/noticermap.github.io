@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1070,{"szabo":[10473,578,23827,481],"szagala":[7932,578,22697,626],"szathmary":[6454,765,24287,453,24531,430],"szathmáry":[6439,554,24634,441],"szeto":[6487,578],"szi5acqpqehz":[35103,201],"szkorupa":[21129,60],"szmul":[21729,117],"szthmary":[6455,554,24618,441],"szulc":[7930,578],"szumski":[21338,179],"szwarc":[5396,578],"szymberski":[5467,810,12539,62,13274,469,21282,144,21495,127,21520,115]});
+window.__wiretapShard&&window.__wiretapShard(1070,{"sxdvsndwue3y":[35520,201]});

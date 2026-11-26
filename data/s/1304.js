@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1304,{"énergie":[162,175,213,723,6228,185,25723,197,25725,481,25729,481,25730,481,25731,466,25732,481,25733,481]});
+window.__wiretapShard&&window.__wiretapShard(1304,{"égales":[1452,385,18846,364,18847,371]});

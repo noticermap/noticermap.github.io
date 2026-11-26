@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1323,{"пишний":[4989,168,27345,401]});
+window.__wiretapShard&&window.__wiretapShard(1323,{"залучення":[27383,401]});

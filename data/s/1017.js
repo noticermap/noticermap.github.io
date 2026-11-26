@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1017,{"reza":[21281,200,21290,123,21339,185,21350,180,21363,123,21779,137],"reznikov":[9282,578],"rezvanifar":[8061,578,11317,151,11502,679,20875,611,20938,191,24875,441,28401,430,28413,566]});
+window.__wiretapShard&&window.__wiretapShard(1017,{"reward":[32534,410],"rewarded":[33271,420],"rewards":[446,57,20848,61,27025,377],"rewired":[29087,377],"rewiring":[27928,410],"reworded":[24914,124],"rewording":[24905,168],"rewrites":[27222,651],"rewrote":[30171,605]});

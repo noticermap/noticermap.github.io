@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1357,{"💥immigration":[27949,430],"💥in":[28455,410],"💥insane":[27916,410,28110,410,28112,401]});
+window.__wiretapShard&&window.__wiretapShard(1357,{"💥federal":[28568,430],"💥fingerprints":[28758,420],"💥flashback":[27181,441],"💥frances":[28342,420],"💥french":[27034,430],"💥from":[27994,410,28510,410],"💥fucking":[27630,420]});

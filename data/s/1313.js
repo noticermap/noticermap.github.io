@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1313,{"бізнесом":[27345,401]});
+window.__wiretapShard&&window.__wiretapShard(1313,{"şahin":[10769,578]});

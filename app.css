@@ -495,6 +495,25 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
 .thy-switch input:checked + .thy-sw-ui::after { left: calc(100% - 0.95rem); background: #d0d0cc; }
 .thy-sw-lab { font-size: 0.85rem; color: #bdbdb8; }
 #cy{position:relative;width:100%;height:100%}
+#cy>.grp-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+#cy>.grp-layer[hidden]{display:none}
+.grp-frame{fill:rgba(120,140,170,.045);stroke:rgba(170,185,210,.38);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.grp-ring{fill:none;stroke:rgba(170,185,210,.3);stroke-width:1.5;stroke-dasharray:6 6;vector-effect:non-scaling-stroke}
+.grp-title{fill:#cfd6e2;font-family:var(--sans,system-ui,sans-serif);font-weight:700;paint-order:stroke;stroke:#07080a;stroke-width:6px;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.92}
+.p-photo{display:flex;margin:8px 0 6px}
+.p-photo img{width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:50% 28%;border:3px solid var(--ring,#888);background:#1b1f26;flex:none}
+.p-photo.logo img{object-fit:contain;background:#fff;padding:8px;box-sizing:border-box}
+/* image credits page */
+.credits-page{max-width:880px;margin:0 auto;padding:20px 16px 60px;line-height:1.5}
+.credits-page h1{font-size:24px;margin:8px 0 6px}
+.credits-list{list-style:none;margin:16px 0 0;padding:0}
+.credits-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #23272e}
+.credits-list img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 28%;background:#1b1f26;flex:none}
+.credits-list li.logo img{object-fit:contain;background:#fff;padding:4px;box-sizing:border-box}
+.credits-list .c-name{font-weight:600}
+.credits-list .c-meta{font-size:13px;color:var(--muted,#9aa0a6);overflow-wrap:anywhere}
+.credits-list a{color:inherit}
+.credits-tm{font-size:13px;color:var(--muted,#9aa0a6);margin-top:14px}
 #thy-sw-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
 .thy-node-sw { pointer-events: none; opacity: 0; position: absolute; width: 22px; height: 22px; margin: 0; padding: 0; border-radius: 999px; border: 1px dashed #9A9A9A; background: #12141a; color: #d0d0cc; font: 700 11px/20px ui-monospace, Menlo, monospace; transform: translate(-50%, -50%); cursor: pointer; z-index: 6; transition: opacity .12s ease; }
 .thy-node-sw.on, .thy-node-sw.is-hot, .thy-node-sw:focus-visible { pointer-events: auto; opacity: 1; }
@@ -518,7 +537,7 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
 .thy-launch:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px #f5d90a}
 .thy-launch.on{color:#07080a;background:#f5d90a;border-color:#ffe96a;box-shadow:0 0 0 1px #ffe96a,0 0 18px #f5d90acc}
 .thy-launch.on:focus-visible{outline:2px solid #fff;outline-offset:3px;box-shadow:0 0 0 5px #07080a,0 0 18px #f5d90acc}
-.thy-launch .short,.thy-launch .tiny{display:none}
+.thy-launch .short{display:none}
 .thy-launch-lab{pointer-events:none}
 /* flex item after Noticing, just left of the pinned + Note reserved space (notes.css padding-right) */
 @media (min-width:901px){
@@ -526,15 +545,11 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
   .topbar.has-thy-launch:not(.has-notes-launch){padding-right:124px}
   .thy-launch{flex:0 0 auto;margin:0 0 0 4px}
 }
-/* compact "Theories" label below 1700px (covers 1440, 1280 and 390); aria-label keeps "Theories: off/on" */
+/* compact "Theories" label below 1700px (still the full word; aria-label keeps "Theories: off/on") */
 @media (max-width:1699px){
   .thy-launch .full{display:none}
   .thy-launch .short{display:inline}
   .thy-launch{padding:6px 10px}
-}
-@media (max-width:900px){
-  .thy-launch .short{display:none}
-  .thy-launch .tiny{display:inline}
 }
 /* hide the tagline earlier so Theories + Noticing + + Note fit at 1440 and 1280 */
 @media (max-width:1500px){
@@ -553,7 +568,16 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
   .topbar.has-thy-launch{gap:12px}
 }
 @media (max-width:900px){
-  .thy-launch{position:static;transform:none;order:1;margin:0 0 0 4px;padding:5px 8px;font-size:12px}
+  /* full word "Theories" at every width; tighter so it fits beside + Note on a phone */
+  .thy-launch{position:static;transform:none;order:1;margin:0 0 0 4px;padding:4px 7px;font-size:11px;letter-spacing:.02em}
+}
+@media (max-width:390px){
+  .topbar.has-thy-launch{gap:8px}
+  .thy-launch{padding:4px 6px;font-size:10.5px;margin:0 0 0 2px}
+}
+@media (max-width:360px){
+  /* wrap the Theories pill onto the second header row so the word stays fully spelled */
+  .thy-launch{order:2;margin:0 0 0 auto}
 }
 /* already icon-only Noticing at 1360; keep the 390 row tight */
 @media (max-width:520px){
@@ -633,3 +657,7 @@ body.page-404 .not-found .btn{margin-top:8px}
 @media (max-width:900px){
   .noticing-dlg{width:min(92vw,420px);max-width:none}
 }
+
+/* layout picker: buttons on desktop, a select on phones (six buttons do not fit 390 px) */
+.layout-pick{display:none}
+@media (max-width:900px){.layout-seg{display:none}.layout-pick{display:inline-flex}}

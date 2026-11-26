@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1322,{"нбу":[27345,401]});
+window.__wiretapShard&&window.__wiretapShard(1322,{"з":[27383,401]});

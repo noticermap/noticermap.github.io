@@ -1,6 +1,6 @@
 # Post-node audit
 
-Generated 2026-11-26T03:05:18.899Z from graph/merged/entities.json (read-only; nothing was edited or deleted).
+Generated 2026-11-26T12:39:49.465Z from graph/merged/entities.json (read-only; nothing was edited or deleted).
 Rule: posts, articles, videos, tweets, episodes, podcasts and report documents are sources, never nodes.
 
 ## Flagged (53)
@@ -61,7 +61,7 @@ Rule: posts, articles, videos, tweets, episodes, podcasts and report documents a
 | ent_theory_promoter_andrecorbeil_credited_for_the_related_david_hawkins_video_mentioned_in_the_descr | AndreCorbeil (credited for the related David Hawkins video mentioned in the description) | person | theories | id contains a media token (video) | convert to a source on links lnk_25b283a61dbb6128 (then drop the node) |
 | ent_theory_webb_palantir_cia_front | Webb X label: Palantir as CIA front company | theory | theories | summary describes the node itself as a media item; unusual type "theory" | convert to a source on links lnk_807f626555fa930a, lnk_3a4c9abbba69894b (then drop the node) |
 
-## Checked, not flagged (61)
+## Checked, not flagged (64)
 
 Single weak signals that turned out to be organizations, outlets or platforms.
 
@@ -127,4 +127,7 @@ Single weak signals that turned out to be organizations, outlets or platforms.
 | ent_theory_webb_digital_id_repackage | Webb on Glenn Beck: digital ID repackaged via private vendors / interoperable standards | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_webb_edgar_bronfman_bony_mogilevich | Webb narrative: Edgar Bronfman / Bank of New York / Mogilevich financial interests | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_webb_permindex_montreal_funding | ONUB narrative: Montreal funds via Permindex for Operation Mattei | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_wef_great_reset_canada | Claim: the WEF "Great Reset" is a plan to take over Canada, announced by Trudeau | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_wef_ktdi_digital_id_rollout | Claim: KTDI is a mandatory digital ID or social-credit system being rolled out in Canada | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_wef_penetrate_cabinets | Klaus Schwab, 2017: 'half of this cabinet, or even more than half of this cabinet, are actually Young Global Leaders' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_westinghouse_nuclear_conflict_carney_brookfield | 'Nuclear conflict of interest': Brookfield's Westinghouse deal, Ukraine aid and Freeland (Hillier) | theory | theories | unusual type "theory" | not flagged (single weak signal) |

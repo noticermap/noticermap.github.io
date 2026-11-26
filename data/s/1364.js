@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1364,{"💥pay":[28334,420],"💥pierre":[27500,410],"💥priorities":[27615,453],"💥propaganda":[27657,420],"💥public":[27838,410]});
+window.__wiretapShard&&window.__wiretapShard(1364,{"💥maid":[28324,430],"💥major":[27011,410,27030,410],"💥marc":[27605,410],"💥mark":[27551,401],"💥michelle":[27471,393],"💥mohamed":[27520,420]});

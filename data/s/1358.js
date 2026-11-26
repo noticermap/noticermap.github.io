@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1358,{"💥jeff":[28146,393],"💥journalism":[27653,410],"💥just":[27075,410,27139,410,27236,401,28637,393,28669,401,28677,401],"💥justice":[28323,410]});
+window.__wiretapShard&&window.__wiretapShard(1358,{"💥gary":[28238,410],"💥general":[28174,420],"💥government":[28541,430],"💥greg":[27871,401]});

@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1321,{"національний":[4141,187]});
+window.__wiretapShard&&window.__wiretapShard(1321,{"діалогу":[27383,401]});

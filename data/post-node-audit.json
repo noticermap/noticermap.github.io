@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-26T03:05:18.899Z",
+ "generated_at": "2026-11-26T12:39:49.465Z",
  "input": "graph/merged/entities.json",
  "rule": "Posts, articles, videos, tweets, episodes, podcasts and report documents are sources, never nodes.",
  "flagged_count": 53,
@@ -1649,6 +1649,45 @@
   {
    "id": "ent_theory_webb_permindex_montreal_funding",
    "name": "ONUB narrative: Montreal funds via Permindex for Operation Mattei",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_wef_great_reset_canada",
+   "name": "Claim: the WEF \"Great Reset\" is a plan to take over Canada, announced by Trudeau",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_wef_ktdi_digital_id_rollout",
+   "name": "Claim: KTDI is a mandatory digital ID or social-credit system being rolled out in Canada",
+   "type": "theory",
+   "layer": "theories",
+   "layers": [
+    "theories"
+   ],
+   "why": [
+    "unusual type \"theory\""
+   ],
+   "verdict": "not flagged (single weak signal)"
+  },
+  {
+   "id": "ent_theory_wef_penetrate_cabinets",
+   "name": "Klaus Schwab, 2017: 'half of this cabinet, or even more than half of this cabinet, are actually Young Global Leaders'",
    "type": "theory",
    "layer": "theories",
    "layers": [

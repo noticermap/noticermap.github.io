@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1015,{"reward":[32495,410],"rewarded":[33232,420],"rewards":[446,57,20838,61,26987,377],"rewired":[29048,377],"rewiring":[27890,410],"reworded":[24904,124],"rewording":[24895,168],"rewrites":[27184,651],"rewrote":[30132,605]});
+window.__wiretapShard&&window.__wiretapShard(1015,{"reunies":[29695,192],"reunification":[1691,189],"reuse":[24908,169,26319,154],"reussi":[33428,191],"reut":[9718,578,23172,441],"reuters":[10090,173,27771,754,28592,754,28611,756,28810,798,29349,635,29405,223,29571,624,31165,223,38529,229,41166,557]});

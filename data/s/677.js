@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(677,{"izabel":[7107,554,11611,79,11962,90,13036,479,13561,51,21546,151],"izekor":[7061,578,29044,420],"izzetpanah":[21429,148]});
+window.__wiretapShard&&window.__wiretapShard(677,{"ix":[235,736,19832,180,19922,686,29465,481],"ixbrl":[28274,195],"ixchel":[7110,554]});

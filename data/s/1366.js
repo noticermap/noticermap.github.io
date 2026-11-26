@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1366,{"💥scandal":[27024,430,27887,430,28671,393,28766,410,28841,401,28974,430],"💥scandalous":[26964,420],"💥seguin":[28754,401],"💥suspicious":[27381,410]});
+window.__wiretapShard&&window.__wiretapShard(1366,{"💥oct":[27486,410],"💥on":[27068,377,27462,393,27634,393],"💥ontario":[28777,410],"💥opinion":[29052,410,29148,401,29294,420]});

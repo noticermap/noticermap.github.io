@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1314,{"в":[27345,401]});
+window.__wiretapShard&&window.__wiretapShard(1314,{"андрій":[4993,168]});
