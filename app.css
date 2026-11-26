@@ -501,15 +501,16 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
 .grp-ring{fill:none;stroke:rgba(170,185,210,.3);stroke-width:1.5;stroke-dasharray:6 6;vector-effect:non-scaling-stroke}
 .grp-title{fill:#cfd6e2;font-family:var(--sans,system-ui,sans-serif);font-weight:700;paint-order:stroke;stroke:#07080a;stroke-width:6px;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.92}
 .p-photo{display:flex;margin:8px 0 6px}
-.p-photo img{width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:50% 28%;border:3px solid var(--ring,#888);background:#1b1f26;flex:none}
-.p-photo.logo img{object-fit:contain;background:#fff;padding:8px;box-sizing:border-box}
+.p-photo img{width:var(--pp,96px);height:var(--pp,96px);border-radius:50%;object-fit:cover;object-position:50% 28%;border:3px solid var(--ring,#888);background:#1b1f26;flex:none;box-sizing:border-box;image-rendering:auto}
+/* logos: the whole padded square file on a rounded-square tile (never cropped into a circle) */
+.p-photo.logo img{border-radius:22%;object-fit:cover;object-position:50% 50%;background:#fff;padding:0}
 /* image credits page */
 .credits-page{max-width:880px;margin:0 auto;padding:20px 16px 60px;line-height:1.5}
 .credits-page h1{font-size:24px;margin:8px 0 6px}
 .credits-list{list-style:none;margin:16px 0 0;padding:0}
 .credits-list li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #23272e}
-.credits-list img{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:50% 28%;background:#1b1f26;flex:none}
-.credits-list li.logo img{object-fit:contain;background:#fff;padding:4px;box-sizing:border-box}
+.credits-list img{width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:50% 28%;background:#1b1f26;flex:none}
+.credits-list li.logo img{border-radius:22%;object-fit:cover;object-position:50% 50%;background:#fff}
 .credits-list .c-name{font-weight:600}
 .credits-list .c-meta{font-size:13px;color:var(--muted,#9aa0a6);overflow-wrap:anywhere}
 .credits-list a{color:inherit}

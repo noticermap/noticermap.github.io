@@ -11,7 +11,7 @@
     ul.innerHTML = d.items.map(function (x) {
       var name = x[0], kind = x[1], credit = x[2], lic = x[3], url = /^https?:\/\//i.test(x[4] || '') ? x[4] : '', img = x[5], from = x[6];
       var meta = [kind === 'logo' ? 'Logo' : 'Photo', credit ? 'by ' + esc(credit) : '', lic ? esc(lic) : '', 'via ' + esc(from)].filter(Boolean).join(' · ');
-      return '<li class="' + (kind === 'logo' ? 'logo' : 'photo') + '"><img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" width="40" height="40"><div><div class="c-name">' + esc(name) + '</div><div class="c-meta">' + meta + (url ? ' · <a href="' + esc(url) + '" target="_blank" rel="noopener nofollow">source</a>' : '') + '</div></div></li>';
+      return '<li class="' + (kind === 'logo' ? 'logo' : 'photo') + '"><img src="' + esc(img) + '" alt="" loading="lazy" decoding="async" width="44" height="44"><div><div class="c-name">' + esc(name) + '</div><div class="c-meta">' + meta + (url ? ' · <a href="' + esc(url) + '" target="_blank" rel="noopener nofollow">source</a>' : '') + '</div></div></li>';
     }).join('');
   }
   function load() { var s = document.createElement('script'); s.src = 'data/image-credits.js' + (v ? '?v=' + v : ''); s.onload = render; s.onerror = function () { document.getElementById('credits-status').textContent = 'Could not load the credits.'; }; document.head.appendChild(s); }

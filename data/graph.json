@@ -1,7 +1,7 @@
 {
  "meta": {
-  "built_at": "2026-11-26T12:39:49.465Z",
-  "last_updated": "2026-11-26T08:26:21.860Z",
+  "built_at": "2026-11-26T14:55:48.579Z",
+  "last_updated": "2026-11-26T13:31:38.291Z",
   "latest_source": "2026-11-24",
   "is_sample": false,
   "data_dir": "graph",
@@ -185,7 +185,7 @@
      "kept": 3160
     }
    },
-   "ms": 240,
+   "ms": 283,
    "corroborated": 900
   },
   "intermediaries": {
@@ -210,26 +210,28 @@
    "breach"
   ],
   "layout": {
-   "ms": 50,
+   "ms": 77,
    "cached": 11064,
    "iters": 0,
    "version": 4,
    "overlaps": 0
   },
   "node_images": {
-   "used": 991,
-   "photos": 772,
-   "logos": 219,
+   "used": 1150,
+   "photos": 868,
+   "logos": 282,
    "skipped": {
     "not_high": 0,
     "excluded": 0,
     "no_entity": 0,
     "theory": 0,
     "bad_file": 0,
-    "not_open": 0,
-    "source_off": 0
+    "not_open": 6,
+    "source_off": 0,
+    "not_logo": 1
    },
-   "bytes": 9807551
+   "bytes": 17327717,
+   "hires": 269
   },
   "overrides": [],
   "extras": {
@@ -241,7 +243,7 @@
    "explain": 25279125
   },
   "chunks": {
-   "buckets": 842,
+   "buckets": 840,
    "shards": 1396,
    "inline": false
   }

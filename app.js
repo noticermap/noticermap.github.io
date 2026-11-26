@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-26T12:39:49.465Z */
+/* NoticerMap — built 2026-11-26T14:55:48.579Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -1158,7 +1158,7 @@ function curveOf(l) { // control-point distance (layout units, signed relative t
 }
 const edgeEl = l => { const t = LT(l.type), st = STATUS[l.status] || STATUS.reported; const a0 = t.directed === false ? 'none' : (t.arrow || 'triangle'); const money = isMoneyL(l); return { group: 'edges', classes: [money ? 'money' : '', isEst(l) ? 'est' : '', l.status === 'contradicted' ? 'contra' : '', 'seen' + Math.min(4, seenOf(l).length), st.dash ? 'dashed' : '', t.directed === false ? 'undirected' : '', LITE && renderGraph._hl ? 'hl' : ''].filter(Boolean).join(' '), data: { id: 'L:' + l.id, lid: l.id, source: l.from, target: l.to, color: LITE ? edgeColor(l) : STATUS[l.status].color, dash: st.dash || [1, 0], width: edgeWidth(l), cpd: curveOf(l), arrow: money && a0 !== 'none' ? a0 : BIG ? (initGraph._near ? a0 : 'none') : (t.arrow || 'triangle'), arrow0: a0, label: l.amount_cad > 0 ? fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '', rl: String(t.label || l.type).toLowerCase() + (l.amount_cad > 0 ? ' · ' + fmtCAD(l.amount_cad) + (isEst(l) ? ' est.' : '') : '') } }; };
 const edgeElements = () => D.links.filter(l => !isThyL(l)).map(edgeEl);
-const nodeEl = e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) && !initGraph._near ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : '') + (LITE && renderGraph._hl ? ' hl' : '') + (LOD.nolabel ? ' nolabel' : '') + (LC.init ? ' lc' : '') + (e.im ? (e.imk === 'l' ? ' pic logo' : ' pic') : '') + (FZ && FZ.has(e.id) ? ' fz' : ''), data: { id: e.id, zi: Math.min(40, Math.floor(Math.sqrt(e.degree) * 2)) + (e.im ? 1 : 0), label: shortLabel(e.name), full: e.name, ...(e.im ? { im: e.im } : {}), color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), tmw: wrapWidth(shortLabel(e.name), fontSize(e)), type: e.type, province: e.province || '—' }, position: posOf(e) });
+const nodeEl = e => ({ group: 'nodes', classes: 'seen' + seenTier(seenOf(e).length) + (isStoppedEv(e) ? ' ev-stopped' : '') + (MAJOR && !MAJOR.has(e.id) && !initGraph._near ? ' minor' : '') + (e.has_theory_switch ? ' has-thy' : '') + (LITE && renderGraph._hl ? ' hl' : '') + (LOD.nolabel ? ' nolabel' : '') + (LC.init ? ' lc' : '') + (e.im ? (e.imk === 'l' ? ' pic logo' : ' pic') : '') + (FZ && FZ.has(e.id) ? ' fz' : ''), data: { id: e.id, zi: Math.min(40, Math.floor(Math.sqrt(e.degree) * 2)) + (e.im ? 1 : 0), label: shortLabel(e.name), full: e.name, ...picData(e), color: TYPE[e.type].color, shape: TYPE[e.type].shape, size: nodeSize(e), fs: fontSize(e), tmw: wrapWidth(shortLabel(e.name), fontSize(e)), type: e.type, province: e.province || '—' }, position: posOf(e) });
 // ---- Label culling: labels are placed greedily in screen space (forced first, then by priority) and a label that
 // would overlap one already placed is hidden (class lc). The selection, its neighbours, search hits, paths, leads,
 // tours and network members are always labelled. A few hubs in view get a readable screen-size label when the map is
@@ -1366,9 +1366,12 @@ function initGraph() {
       // picture nodes: the photo or logo is the node, inside a ring in the type colour; until it loads (or with no
       // picture) the node is a plain circle in the type colour
       { selector: 'node.pic', style: { 'border-color': 'data(color)', 'border-width': 3, 'background-color': '#1b1f26' } },
-      { selector: 'node.pic.logo', style: { 'background-color': '#ffffff' } },
-      { selector: 'node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null' } },
-      { selector: 'node.pic.logo.imgon', style: { 'background-fit': 'none', 'background-width': '74%', 'background-height': 'auto', 'background-position-y': '50%' } },
+      // logos: the whole logo on a rounded-square tile (never cropped into a circle); the file is already a padded square
+      { selector: 'node.pic.logo', style: { 'background-color': '#ffffff', shape: 'round-rectangle', width: 'mapData(size, 0, 1000, 0, 840)', height: 'mapData(size, 0, 1000, 0, 840)' } },
+      { selector: 'node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null', 'background-image-smoothing': 'yes' } },
+      { selector: 'node.pic.logo.imgon', style: { 'background-position-y': '50%' } },
+      // picture that would be drawn larger than its own pixels (deep zoom): the node stops growing at native size (no upscaling); see picState in 21-graph-layouts.js
+      { selector: 'node.pic.imgcap', style: { width: 'data(cw)', height: 'data(cw)' } },
       { selector: 'node.fz', style: { 'min-zoomed-font-size': LBL_FOCUS_FS } },
       { selector: 'node.nolabel', style: { label: '' } },
       { selector: 'node.ev-stopped', style: { 'background-opacity': 0.12, 'border-color': 'data(color)', 'border-width': 2.5, 'border-style': 'dashed' } }, // hollow dashed star: blocked / didn't happen
@@ -1424,9 +1427,10 @@ function initGraph() {
       // bright while it is on (or while a node's own theory switch is on). Never a picture.
       { selector: 'node.thy-node', style: { 'background-color': '#f5d90a', 'background-opacity': 0.14, 'background-image': 'none', 'border-color': '#f5d90a', 'border-width': 2.5, 'border-style': 'dashed', shape: 'vee', width: 'data(size)', height: 'data(size)', 'font-size': 'data(fs)', color: '#f5d90a', 'min-zoomed-font-size': 0, 'text-valign': 'bottom', 'text-margin-y': 4, 'text-max-width': 'data(tmw)', 'text-wrap': 'wrap', label: 'data(label)', 'z-index': 40 } },
       { selector: 'node.thy-node.pic', style: { shape: 'ellipse', 'background-color': '#1b1f26', 'background-opacity': 1 } },
-      { selector: 'node.thy-node.pic.logo', style: { 'background-color': '#ffffff' } },
-      { selector: 'node.thy-node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null' } },
-      { selector: 'node.thy-node.pic.logo.imgon', style: { 'background-fit': 'none', 'background-width': '74%', 'background-height': 'auto', 'background-position-y': '50%' } },
+      { selector: 'node.thy-node.pic.logo', style: { 'background-color': '#ffffff', shape: 'round-rectangle', width: 'mapData(size, 0, 1000, 0, 840)', height: 'mapData(size, 0, 1000, 0, 840)' } },
+      { selector: 'node.thy-node.pic.imgon', style: { 'background-image': 'data(src)', 'background-fit': 'cover', 'background-clip': 'node', 'background-position-y': '28%', 'background-image-crossorigin': 'null', 'background-image-smoothing': 'yes' } },
+      { selector: 'node.thy-node.pic.logo.imgon', style: { 'background-position-y': '50%' } },
+      { selector: 'node.thy-node.pic.imgcap', style: { width: 'data(cw)', height: 'data(cw)' } },
       { selector: 'node.thy-node.thy-dim', style: { opacity: 0.5, 'border-opacity': 0.8, 'text-opacity': 0.85, 'z-index': 5 } },
       { selector: 'node.thy-node.thy-hot', style: { opacity: 1, 'background-opacity': 0.3, 'border-width': 3, 'text-opacity': 1, 'text-outline-color': '#07080a', 'text-outline-width': 3 } },
       { selector: 'edge.thy-edge', style: { 'line-style': 'dashed', 'line-dash-pattern': [6, 4], 'line-color': '#f5d90a', 'target-arrow-shape': 'none', 'curve-style': 'unbundled-bezier', 'control-point-distances': 'data(cpd)', width: 1.2, label: '', 'font-size': 8, color: '#f5d90a' } },
@@ -1887,19 +1891,56 @@ function fitFrames(pad = 30) {
 }
 // ---- pictures: photo or logo as the node. Only nodes in view, drawn at least ~11 px across, get their picture,
 // and nothing loads before the map's first frame (first-paint weight unchanged). Loaded pictures stay set.
-const PIC = { on: !/[?&]pics=0/.test(location.search), set: 0, t: 0 };
+// Sharpness rules (picState): a picture is never drawn larger than its own pixels (device px = size x zoom x devicePixelRatio);
+// beyond that the node stops growing (native size, ring and all). Logos switch to their 512 px copy (e.imh, img/n/h/) only when they are drawn
+// large (more than ~128 device px, ~80 when selected), and the copy loads then, not before. Portraits fill the tile (cover, face
+// side up); logos are shown whole on a rounded-square tile.
+const PIC = { on: !/[?&]pics=0/.test(location.search), set: 0, t: 0, hi: 0, cap: 0 };
+const picData = e => e && e.im ? { im: e.im, ...(e.imh ? { imh: e.im.replace('img/n/', 'img/n/h/') } : {}), ...(e.imn ? { ic: e.imn } : {}) } : {};
+const picDpr = () => { const d = window.devicePixelRatio || 1; return BIG ? Math.min(2, Math.max(1, d)) : Math.max(1, Math.min(3, d)); }; // same ratio the map's canvas uses
+const PIC_TILE = 0.84; // logo tile side as a share of the node size (rounded square; keeps its corners clear of neighbours)
+// high-quality canvas smoothing for the map's pictures (mipmapped downscale instead of the default low-quality filter)
+(function () {
+  const P = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype; if (!P || P.drawImage.__nmq) return;
+  const seen = new WeakMap(), orig = P.drawImage;
+  P.drawImage = function () {
+    let ok = seen.get(this); if (ok === undefined) { ok = !!(this.canvas && this.canvas.closest && this.canvas.closest('#cy')); seen.set(this, ok); }
+    if (ok && this.imageSmoothingEnabled && this.imageSmoothingQuality !== 'high') this.imageSmoothingQuality = 'high';
+    return orig.apply(this, arguments);
+  };
+  P.drawImage.__nmq = 1;
+})();
+// the map's own image cache (so a picture preloaded here is the one the node draws: no blank frame on a swap)
+function picImg(url) { try { const r = cy.renderer(); return r && r.getCachedImage ? r.getCachedImage(url, 'null', () => schedulePics(30)) : null; } catch { return null; } }
+const picReady = im => !!(im && im.complete && im.naturalWidth > 0 && !im.error);
+function picState(n, z, dpr, sel) {
+  const logo = n.hasClass('logo'), tile = (n.data('size') || 0) * (logo ? PIC_TILE : 1) * z * dpr; // device px across the picture
+  let src = n.data('src'); const hi = n.data('imh');
+  if (logo && hi && src !== hi && tile > (sel ? 80 : 128)) { // drawn large: use the 512 px copy, swapped in once it has loaded
+    const h = picImg(hi);
+    if (picReady(h)) { src = hi; n.data('src', hi); PIC.hi++; } else if (h && !h.error) return; // still loading: leave the node as it is
+  }
+  const im = picImg(src); if (!picReady(im)) return;
+  const nat = logo ? Math.min(im.naturalWidth, n.data('ic') || 1e5) : Math.min(im.naturalWidth, im.naturalHeight); // native size of the picture tile, device px
+  const cap = tile > nat + 0.5, k = z * dpr, was = n.hasClass('imgcap'), cw = nat / k; // beyond native: node (picture tile) = native px
+  if (cap) { if (!was || n.data('cw') !== cw) { n.data('cw', cw); n.addClass('imgcap'); if (!was) PIC.cap++; } }
+  else if (was) n.removeClass('imgcap');
+}
 function picSync() {
   PIC.t = 0;
   if (!PIC.on || !cy || S.view !== 'map') return;
   if (TIMING.first_paint_ms == null) { schedulePics(250); return; } // never compete with the first frame
-  const z = cy.zoom(), ext = cy.extent(), mx = (ext.x2 - ext.x1) * 0.15, my = (ext.y2 - ext.y1) * 0.15; const add = [];
-  cy.nodes('.pic').forEach(n => { if (n.hasClass('imgon') || (renderGraph._vis && renderGraph._vis.get(n.id()) === false)) return; if ((n.data('size') || 0) * z < 11) return; const p = n.position(); if (p.x < ext.x1 - mx || p.x > ext.x2 + mx || p.y < ext.y1 - my || p.y > ext.y2 + my) return; add.push(n); });
-  if (!add.length) return;
-  cy.batch(() => { for (const n of add) { n.data('src', n.data('im')); n.addClass('imgon'); } });
-  PIC.set += add.length;
+  const z = cy.zoom(), dpr = picDpr(), ext = cy.extent(), mx = (ext.x2 - ext.x1) * 0.15, my = (ext.y2 - ext.y1) * 0.15; const add = [], upd = [];
+  cy.nodes('.pic').forEach(n => {
+    if (renderGraph._vis && renderGraph._vis.get(n.id()) === false) return; if ((n.data('size') || 0) * z < 11) return;
+    const p = n.position(); if (p.x < ext.x1 - mx || p.x > ext.x2 + mx || p.y < ext.y1 - my || p.y > ext.y2 + my) return;
+    (n.hasClass('imgon') ? upd : add).push(n);
+  });
+  if (!add.length && !upd.length) return;
+  cy.batch(() => { for (const n of add) { n.data('src', n.data('im')); n.addClass('imgon'); } PIC.set += add.length; for (const n of upd) picState(n, z, dpr, n.hasClass('sel')); for (const n of add) picState(n, z, dpr, n.hasClass('sel')); });
 }
 function schedulePics(ms = 120) { if (!PIC.on) return; clearTimeout(PIC.t); PIC.t = setTimeout(picSync, ms); }
-window.__wiretapPics = () => ({ on: PIC.on, set: PIC.set, withPicture: D.entities.filter(e => e.im).length, layout: GL.kind, layout_ms: GL.ms, frames: GL.frames.length });
+window.__wiretapPics = () => ({ on: PIC.on, set: PIC.set, hires: PIC.hi, capped: PIC.cap, withPicture: D.entities.filter(e => e.im).length, layout: GL.kind, layout_ms: GL.ms, frames: GL.frames.length });
 window.__wiretapLayoutCheck = (detail) => { // overlap check over what is drawn: pairs of node circles closer than their radii
   if (!cy) return null; const ns = cy.nodes(':visible').filter(n => !n.hasClass('thy-node')); const pts = ns.map(n => ({ ...n.position() })), rad = ns.map(n => (n.data('size') || 0) / 2);
   let maxR = 0; for (const r of rad) maxR = Math.max(maxR, r); const cell = 2 * maxR + 1e-6, grid = new Map(); let over = 0;
@@ -2740,8 +2781,12 @@ function panelSection(title, body, open = true, count) { return `<details class=
 // trademark text here; all of that is on the Image credits page (image-credits.html, linked from About).
 function photoHtml(e) {
   if (!e.im) return '';
-  const logo = e.imk === 'l';
-  return `<div class="p-photo${logo ? ' logo' : ''}" data-photo="${esc(e.id)}" style="--ring:${esc(TYPE[e.type].color)}"><img src="${esc(e.im)}" alt="${esc(e.name)}" loading="lazy" decoding="async" width="88" height="88"></div>`;
+  const logo = e.imk === 'l', dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  // never shown larger than its own pixels: a small portrait (House of Commons, 142 px wide) is drawn at native size / devicePixelRatio
+  const px = Math.round(!logo && e.imd ? Math.max(48, Math.min(96, Math.min(e.imd[0], e.imd[1]) / dpr)) : 96);
+  // logos: the whole padded square (object-fit cover on a square file); the 512 px copy serves screens with devicePixelRatio > 1
+  const hi = logo && e.imh ? e.im.replace('img/n/', 'img/n/h/') : '';
+  return `<div class="p-photo${logo ? ' logo' : ''}" data-photo="${esc(e.id)}" style="--ring:${esc(TYPE[e.type].color)};--pp:${px}px"><img src="${esc(e.im)}"${hi ? ` srcset="${esc(e.im)} 1x, ${esc(hi)} 2x"` : ''} alt="${esc(e.name)}" loading="lazy" decoding="async" width="${px}" height="${px}"></div>`;
 }
 function renderEntity(e) {
   if (typeof isTheoryEnt === 'function' && isTheoryEnt(e) && typeof renderTheoryCard === 'function') return renderTheoryCard(e);
@@ -3563,7 +3608,7 @@ function syncTheoryGraph() {
       const e = ENT.get(tid), p = P.get(tid) || (e.pos ? { x: e.pos[0], y: e.pos[1] } : { x: 0, y: 0 });
       let n = cy.$id(tid);
       const cls = 'thy-node ' + (isBright(tid) ? 'thy-hot' : 'thy-dim') + (e.type === 'theory' && relatedTheoryIds(e).length ? ' thy-has-sw' : '') + thyPicCls(e);
-      if (!n.length) { n = cy.add({ group: 'nodes', classes: cls, data: { id: tid, label: thyLabel(e), full: thyLabel(e), tmw: wrapW(thyLabel(e), 12), color: THY_GOLD, shape: e.im ? 'ellipse' : 'vee', size: thySize(e), fs: 12, type: 'theory', province: '—', ...(e.im ? { im: e.im } : {}) }, position: p }); if (e.im && typeof schedulePics === 'function') schedulePics(); }
+      if (!n.length) { n = cy.add({ group: 'nodes', classes: cls, data: { id: tid, label: thyLabel(e), full: thyLabel(e), tmw: wrapW(thyLabel(e), 12), color: THY_GOLD, shape: e.im ? 'ellipse' : 'vee', size: thySize(e), fs: 12, type: 'theory', province: '—', ...picData(e) }, position: p }); if (e.im && typeof schedulePics === 'function') schedulePics(); }
       else { n.classes(cls + (n.hasClass('imgon') ? ' imgon' : '')); n.position(p); n.style('display', 'element'); }
     }
     // lines: theory↔theory links, plus verified node → theory that names it (only for verified nodes drawn now)
@@ -4720,12 +4765,12 @@ const NOTES_CORE = (() => {
   const KEY = 'noticermap:notes:v1';
   const FORMAT = 'noticermap-notes';
   const VERSION = 1;
-  const LIMITS = { notes: 50, title: 120, body: 200000, importBytes: 5e6 };
+  const LIMITS = { notes: 50, title: 120, body: 200000, importBytes: 5e6, chips: 100 };
   const SIZE = { minW: 220, minH: 160, maxW: 2000, maxH: 2000, step: 16, margin: 8, minVisibleX: 80, minVisibleY: 40 };
   const DEFAULT_TITLE = 'Note';
   const WALK_STEP = {
     target: 'notes', title: 'Floating notes',
-    text: "Press + Note, the red button at the top right, to open a private note. Drag a map point, search result or profile title into it, or use 'Copy to note' in a profile (that is how it works on phones). You can type your own text too. Drag the title bar to move a note, pull its corner to resize it, and keep as many notes as you like. Notes are saved only in this browser: nothing is sent anywhere, and clearing your browser data erases them. Use Export to back them up and Import to bring them back."
+    text: "Press + Note, the red button at the top right, to open a private note. Drag a map point, search result or profile title into it (on a phone, press and hold, then drag), or use 'Add node to note' or 'Copy to note' in a profile. A dropped node stays a small node: tap it to open its info inside the note, tap it again to fold it back. You can type your own text too. Drag the title bar to move a note, pull its corner to resize it, and keep as many notes as you like. Notes are saved only in this browser: nothing is sent anywhere, and clearing your browser data erases them. Use Export to back them up and Import to bring them back."
   };
   // control characters except tab and newline are dropped; line endings become \n
   const clean = (s, max) => { let t = String(s == null ? '' : s).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ''); return max && t.length > max ? t.slice(0, max) : t; };
@@ -4767,7 +4812,30 @@ const NOTES_CORE = (() => {
     const iso = v => (typeof v === 'string' && !isNaN(Date.parse(v)) ? new Date(v).toISOString() : nowIso());
     return { id, title: oneLine(n.title, LIMITS.title) || `${DEFAULT_TITLE} ${i + 1}`, body: clean(n.body, LIMITS.body),
       x: num(n.x, 40, 0, 10000), y: num(n.y, 90, 0, 10000), w: num(n.w, 340, SIZE.minW, SIZE.maxW), h: num(n.h, 300, SIZE.minH, SIZE.maxH), min: !!n.min,
-      created: iso(n.created), updated: iso(n.updated) };
+      chips: normalizeChips(n.chips), created: iso(n.created), updated: iso(n.updated) };
+  }
+  // node chips: map nodes dropped into a note, kept by entity id in order, each collapsed or expanded
+  const CHIP_ID = /^[A-Za-z0-9_][A-Za-z0-9_.:-]{0,159}$/;
+  function normalizeChips(list) {
+    if (!Array.isArray(list)) return [];
+    const seen = new Set(), out = [];
+    for (const c of list) {
+      const id = typeof c === 'string' ? c : c && typeof c === 'object' ? String(c.id || '') : '';
+      if (!CHIP_ID.test(id) || seen.has(id)) continue;
+      seen.add(id); out.push({ id, open: !!(c && c.open) });
+      if (out.length >= LIMITS.chips) break;
+    }
+    return out;
+  }
+  // add a chip (returns { chips, added, index }); an id already in the note is not added twice
+  function addChip(chips, id, at) {
+    chips = normalizeChips(chips); id = String(id || '');
+    const i = chips.findIndex(c => c.id === id);
+    if (i >= 0) return { chips, added: false, index: i };
+    if (!CHIP_ID.test(id) || chips.length >= LIMITS.chips) return { chips, added: false, index: -1 };
+    const p = at == null || at < 0 || at > chips.length ? chips.length : at;
+    chips.splice(p, 0, { id, open: false });
+    return { chips, added: true, index: p };
   }
   function normalizeState(s) {
     const list = Array.isArray(s) ? s : s && Array.isArray(s.notes) ? s.notes : [];
@@ -4780,13 +4848,20 @@ const NOTES_CORE = (() => {
   // ---- export
   const fileSafe = s => oneLine(s, 60).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'note';
   const day = d => (d || new Date()).toISOString().slice(0, 10);
-  const bundle = notes => ({ format: FORMAT, version: VERSION, app: 'NoticerMap', exported_at: nowIso(), note: 'Personal notes exported from NoticerMap. Stored only in the browser they came from.', notes: notes.map(n => ({ id: n.id, title: n.title, body: n.body, created: n.created, updated: n.updated })) });
-  function exportNotes(notes, fmt = 'md', date) {
+  const bundle = notes => ({ format: FORMAT, version: VERSION, app: 'NoticerMap', exported_at: nowIso(), note: 'Personal notes exported from NoticerMap. Stored only in the browser they came from.', notes: notes.map(n => ({ id: n.id, title: n.title, body: n.body, ...(n.chips && n.chips.length ? { chips: n.chips } : {}), created: n.created, updated: n.updated })) });
+  // text exports list a note's nodes after its text (nameOf(id) -> { name, url } or null, supplied by the page)
+  function chipLines(n, fmt, nameOf) {
+    if (!n.chips || !n.chips.length) return '';
+    const md = fmt === 'md';
+    const L = n.chips.map(c => { const r = (nameOf && nameOf(c.id)) || {}; const nm = oneLine(r.name || c.id, 300); const u = safeHttp(r.url); return (md ? '- ' : '- ') + nm + (u ? (md ? ` <${u}>` : ` ${u}`) : ''); });
+    return '\n\n' + (md ? '**Nodes in this note**' : 'Nodes in this note:') + '\n' + L.join('\n');
+  }
+  function exportNotes(notes, fmt = 'md', date, nameOf) {
     notes = normalizeState(notes).notes; const single = notes.length === 1;
     const base = single ? `noticermap-note-${fileSafe(notes[0].title)}-${day(date)}` : `noticermap-notes-${day(date)}`;
     if (fmt === 'json') return { name: base + '.json', mime: 'application/json', text: JSON.stringify(bundle(notes), null, 2) + '\n' };
-    if (fmt === 'txt') return { name: base + '.txt', mime: 'text/plain;charset=utf-8', text: notes.map(n => `${n.title}\n${'='.repeat(Math.min(60, Math.max(3, n.title.length)))}\n\n${n.body.trim()}\n`).join('\n\n') };
-    return { name: base + '.md', mime: 'text/markdown;charset=utf-8', text: notes.map(n => `# ${n.title}\n\n${n.body.trim()}\n`).join('\n---\n\n') };
+    if (fmt === 'txt') return { name: base + '.txt', mime: 'text/plain;charset=utf-8', text: notes.map(n => `${n.title}\n${'='.repeat(Math.min(60, Math.max(3, n.title.length)))}\n\n${n.body.trim()}${chipLines(n, 'txt', nameOf)}\n`).join('\n\n') };
+    return { name: base + '.md', mime: 'text/markdown;charset=utf-8', text: notes.map(n => `# ${n.title}\n\n${n.body.trim()}${chipLines(n, 'md', nameOf)}\n`).join('\n---\n\n') };
   }
   // ---- import (.json from exportNotes, a bare array of notes, or one note object). Imported notes get fresh ids when they collide.
   function importNotes(text, existing = []) {
@@ -4850,13 +4925,14 @@ const NOTES_CORE = (() => {
     const c = Number(n) || 0;
     return c ? `+ Note: ${c} saved in this browser` : '+ Note: no notes saved in this browser';
   };
-  return { KEY, FORMAT, VERSION, LIMITS, SIZE, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, fileSafe, launchLabel, launchAria, clampSize, clampGeom };
+  return { KEY, FORMAT, VERSION, LIMITS, SIZE, WALK_STEP, clean, oneLine, uid, newNote, normalizeNote, normalizeState, serializeState, parseState, exportNotes, importNotes, formatItem, insertText, ensureWalkStep, normalizeChips, addChip, fileSafe, launchLabel, launchAria, clampSize, clampGeom };
 })();
 
 // ---- 85-notes.js
 /* floating notes: visitor notepad windows. localStorage only: no accounts, no cookies, no network calls.
    Drag sources: search results, any [data-node]/[data-link]/[data-net] button, the profile title (#panel-body .p-name),
-   and map nodes on the graph canvas (via cytoscape's own node hit-test: press on a node, drag onto a note, release).
+   and map nodes on the graph canvas (via cytoscape's own node hit-test: press on a node, drag onto a note, release; on touch,
+   press and hold first). A dropped map node stays a node chip in the note: click it to open its info card, again to fold it.
    Keyboard / phone alternative: 'Copy to note' in the details panel header. Pure helpers: 84-notes-core.js. */
 const NOTES = (() => {
   const C = NOTES_CORE, MIME = 'application/x-noticermap-item';
@@ -4890,7 +4966,8 @@ const NOTES = (() => {
   // far top-right of the header (after the last nav item and the correction control)
   const bar = $('.topbar'); if (bar) { bar.appendChild(launcher); bar.classList.add('has-notes-launch'); } else $('.top-actions')?.appendChild(launcher);
   const toNote = el('button', { type: 'button', class: 'icon-btn wide', id: 'btn-to-note', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Copy this item into a note' }, 'Copy to note'); toNote.hidden = true;
-  { const pa = $('#panel .panel-actions'); const cp = $('#btn-copy'); if (pa) pa.insertBefore(toNote, cp && cp.parentNode === pa ? cp : pa.firstChild); }
+  const nodeToNote = el('button', { type: 'button', class: 'icon-btn wide', id: 'btn-node-to-note', 'aria-haspopup': 'menu', 'aria-expanded': 'false', title: 'Add this node to a note as a node you can open and fold' }, 'Add node to note'); nodeToNote.hidden = true;
+  { const pa = $('#panel .panel-actions'); const cp = $('#btn-copy'); if (pa) { pa.insertBefore(toNote, cp && cp.parentNode === pa ? cp : pa.firstChild); pa.insertBefore(nodeToNote, toNote); } }
   const refreshLauncher = () => {
     const n = st.notes.length;
     launcher.replaceChildren(el('span', { class: 'notes-launch-label' }, '+ Note'));
@@ -4946,7 +5023,11 @@ const NOTES = (() => {
     body.value = n.body;
     const foot = el('div', { class: 'note-foot muted' }, 'Saved in this browser only');
     const grip = el('button', { type: 'button', class: 'note-resize', 'aria-label': 'Resize note. Use arrow keys to change the size.' });
-    w.append(bar, lab, body, foot, grip);
+    const chipsBox = el('ul', { class: 'note-chips', 'aria-label': 'Nodes in this note' });
+    w.append(bar, chipsBox, lab, body, foot, grip);
+    renderChips(n, w);
+    chipsBox.addEventListener('click', e => chipClick(n.id, e));
+    chipsBox.addEventListener('keydown', e => chipKey(n.id, e));
     body.addEventListener('input', () => { n.body = C.clean(body.value, C.LIMITS.body); n.updated = new Date().toISOString(); caret.set(n.id, body.selectionEnd); saveSoon(); });
     const keep = () => caret.set(n.id, body.selectionEnd); body.addEventListener('keyup', keep); body.addEventListener('click', keep); body.addEventListener('blur', keep);
     btns.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act;
@@ -4988,7 +5069,7 @@ const NOTES = (() => {
     w.addEventListener('dragover', e => { const t = [...(e.dataTransfer?.types || [])]; if (!t.includes(MIME) && !t.includes('text/plain')) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; w.classList.add('drop-on'); });
     w.addEventListener('dragleave', e => { if (!w.contains(e.relatedTarget)) w.classList.remove('drop-on'); });
     w.addEventListener('drop', e => { w.classList.remove('drop-on'); const raw = e.dataTransfer.getData(MIME); const txt = e.dataTransfer.getData('text/plain'); if (!raw && !txt) return; e.preventDefault();
-      if (raw) { let ref = null; try { ref = JSON.parse(raw); } catch (_) {} if (ref) return insertRef(n.id, ref); } insertText(n.id, txt, 'text'); });
+      if (raw) { let ref = null; try { ref = JSON.parse(raw); } catch (_) {} if (ref) return dropRef(n.id, ref); } insertText(n.id, txt, 'text'); });
     wins.set(n.id, w); layer.appendChild(w); geom(w, n); front(w);
     if (storage !== 'ok') setState('x');
     return w;
@@ -5012,7 +5093,7 @@ const NOTES = (() => {
   function minimize(id, focusBack) { const n = byId(id); if (!n) return; n.min = true; save(); sync(); say(`${n.title} minimized`); if (focusBack) (dock.querySelector(`[data-restore="${CSS.escape(id)}"]`) || launcher).focus(); }
   function remove(id) {
     const n = byId(id); if (!n) return;
-    if (n.body.trim() && !window.confirm(`Close and delete “${n.title}”? Its text is removed from this browser. Export it first if you want a copy.`)) return;
+    if ((n.body.trim() || (n.chips || []).length) && !window.confirm(`Close and delete “${n.title}”? Its text and nodes are removed from this browser. Export it first if you want a copy.`)) return;
     st.notes = st.notes.filter(x => x.id !== id); caret.delete(id); save(); sync(); say(`${n.title} deleted`); launcher.focus();
   }
   function rename(id) {
@@ -5061,6 +5142,8 @@ const NOTES = (() => {
     }
     return null;
   }
+  // a dropped map node becomes a node chip; claims and networks are added as text
+  function dropRef(id, ref) { return ref && ref.k === 'e' ? addChip(id, ref.id) : insertRef(id, ref); }
   async function insertRef(id, ref) { const it = await itemFor(ref); if (!it) { tell('That item could not be added.'); return false; } return insertText(id, C.formatItem(it, 'md'), it.name); }
   const quickName = ref => ref.k === 'e' ? name(ref.id) : ref.k === 'l' && LNK.has(ref.id) ? `${name(LNK.get(ref.id).from)} → ${LT(LNK.get(ref.id).type).label} → ${name(LNK.get(ref.id).to)}` : ref.k === 'n' && NET.has(ref.id) ? NET.get(ref.id).name : '';
 
@@ -5083,34 +5166,201 @@ const NOTES = (() => {
   });
   document.addEventListener('dragend', () => { document.body.classList.remove('notes-dragging'); for (const w of wins.values()) w.classList.remove('drop-on'); });
 
-  // ---- graph canvas drag: cytoscape draws nodes on a canvas, so HTML drag-and-drop cannot start there.
-  // Uses cytoscape's own hit-test ('tapstart' on a node). If the pointer is released over a note window, the node is
-  // added and the map's pan (and the node's position, if nodes are grabbable) are put back. Mouse/pen only; phones use 'Copy to note'.
+  // ---- pointer drag onto a note: map nodes (cytoscape canvas) and, on touch screens, search results and profile
+  // connection lists. Mouse: press on a map node and move. Touch: press and hold (~0.45 s) without moving, then drag.
+  // A quick touch swipe still pans the map or scrolls the list. While dragging, the open notes show a drop highlight;
+  // releasing over a note adds the node as a chip. The map's pan (and the node's position) are put back.
+  const HOLD_MS = 450, SLOP = 10;
   let G = null;
   const noteAt = (x, y) => { const t = document.elementFromPoint(x, y); const w = t && t.closest && t.closest('.note-win'); return w && !w.hidden ? w.dataset.noteId : null; };
+  const ptOf = e => { const t = e.touches && e.touches[0] || e.changedTouches && e.changedTouches[0]; return t ? { x: t.clientX, y: t.clientY } : { x: e.clientX, y: e.clientY }; };
+  function ghostFor(ref) {
+    ghost.replaceChildren();
+    if (ref.k === 'e' && ENT.has(ref.id)) ghost.append(chipDot(ENT.get(ref.id)), el('span', { class: 'nchip-label' }, chipLabel(ENT.get(ref.id))));
+    else ghost.append('＋ ' + quickName(ref));
+  }
+  function dragStart(ref, x, y, touch, extra = {}) {
+    dragCancel();
+    G = { ref, x, y, touch, armed: !touch, on: false, timer: 0, ...extra };
+    if (touch) G.timer = setTimeout(() => { if (!G) return; G.armed = true; dragOn(G.x, G.y); try { navigator.vibrate && navigator.vibrate(12); } catch (_) {} }, HOLD_MS);
+  }
+  function dragOn(x, y) {
+    G.on = true; ghostFor(G.ref); ghost.hidden = false; ghost.classList.add('nchip-ghost'); document.body.classList.add('notes-dragging');
+    if (G.cy) { try { G.cyState = { pan: cy.userPanningEnabled(), box: cy.boxSelectionEnabled() }; cy.userPanningEnabled(false); cy.boxSelectionEnabled(false); } catch (_) {} }
+    dragMove(x, y);
+  }
+  function dragMove(x, y) {
+    G.lx = x; G.ly = y;
+    if (!G.on) return;
+    ghost.style.left = x + 12 + 'px'; ghost.style.top = y + 12 + 'px';
+    const t = noteAt(x, y); for (const [id, w] of wins) w.classList.toggle('drop-on', id === t);
+  }
+  function dragCancel() {
+    if (!G) return null; const g = G; G = null; clearTimeout(g.timer);
+    ghost.hidden = true; ghost.classList.remove('nchip-ghost'); document.body.classList.remove('notes-dragging'); for (const w of wins.values()) w.classList.remove('drop-on');
+    if (g.cyState) { try { cy.userPanningEnabled(g.cyState.pan); cy.boxSelectionEnabled(g.cyState.box); } catch (_) {} }
+    return g;
+  }
+  function dragEnd(x, y) {
+    const g = dragCancel(); if (!g || !g.on) return false;
+    const t = noteAt(x, y);
+    if (g.cy) { try { cy.pan(g.pan); if (g.node && g.node.grabbable && g.node.grabbable()) g.node.position(g.pos); } catch (_) {} }
+    if (t) dropRef(t, g.ref);
+    return true;
+  }
+  // mouse: map nodes only (HTML sources use native drag-and-drop on desktop)
+  window.addEventListener('mousemove', e => { if (!G || G.touch) return; if (!G.on && Math.hypot(e.clientX - G.x, e.clientY - G.y) > 8) dragOn(e.clientX, e.clientY); else if (G.on) dragMove(e.clientX, e.clientY); }, true);
+  window.addEventListener('mouseup', e => { if (!G || G.touch) return; dragEnd(e.clientX, e.clientY); }, true);
+  // touch: hold to pick up; moving before the hold is a normal swipe (pan or scroll) and cancels
+  window.addEventListener('touchmove', e => {
+    if (!G || !G.touch) return; const p = ptOf(e);
+    if (!G.armed) { if (Math.hypot(p.x - G.x, p.y - G.y) > SLOP) dragCancel(); return; }
+    if (e.cancelable) e.preventDefault(); e.stopPropagation(); dragMove(p.x, p.y);
+  }, { capture: true, passive: false });
+  const touchUp = e => { if (!G || !G.touch) return; const p = ptOf(e); const on = G.on; if (e.type === 'touchcancel') { dragCancel(); return; } dragEnd(p.x, p.y); if (on) { if (e.cancelable) e.preventDefault(); e.stopPropagation(); } };
+  window.addEventListener('touchend', touchUp, { capture: true, passive: false }); window.addEventListener('touchcancel', touchUp, true);
+  document.addEventListener('contextmenu', e => { if (G && G.touch) e.preventDefault(); }, true);
+  // touch on search results, profile connection lists ([data-node]) and the profile title
+  document.addEventListener('touchstart', e => {
+    if (!anyOpen() || e.touches.length !== 1) return; const x = e.target.closest?.(SRC_SEL); if (!x || x.closest('#cy')) return;
+    const ref = refOf(x); if (!ref) return; const p = ptOf(e); dragStart(ref, p.x, p.y, true);
+  }, { capture: true, passive: true });
   function bindCanvas(tries = 0) {
     if (typeof cy === 'undefined' || !cy) { if (tries < 100) setTimeout(() => bindCanvas(tries + 1), 100); return; }
     if (cy.__notesBound) return; cy.__notesBound = true;
-    cy.on('tapstart', 'node', ev => { const oe = ev.originalEvent; if (!anyOpen() || !oe || /^touch/.test(oe.type) || oe.pointerType === 'touch' || oe.button > 0) return; const id = ev.target.id(); if (!ENT.has(id)) return; G = { id, x: oe.clientX, y: oe.clientY, pan: { ...cy.pan() }, node: ev.target, pos: { ...ev.target.position() }, on: false }; });
-    const move = e => { if (!G) return; if (!G.on && Math.hypot(e.clientX - G.x, e.clientY - G.y) > 8) { G.on = true; ghost.textContent = '＋ ' + name(G.id); ghost.hidden = false; document.body.classList.add('notes-dragging'); }
-      if (G.on) { ghost.style.left = e.clientX + 12 + 'px'; ghost.style.top = e.clientY + 12 + 'px'; const t = noteAt(e.clientX, e.clientY); for (const [id, w] of wins) w.classList.toggle('drop-on', id === t); } };
-    const up = e => { if (!G) return; const g = G; G = null; ghost.hidden = true; document.body.classList.remove('notes-dragging'); for (const w of wins.values()) w.classList.remove('drop-on');
-      const t = g.on && noteAt(e.clientX, e.clientY); if (!t) return; try { cy.pan(g.pan); if (g.node && g.node.grabbable && g.node.grabbable()) g.node.position(g.pos); } catch (_) {} insertRef(t, { k: 'e', id: g.id }); };
-    window.addEventListener('mousemove', move, true); window.addEventListener('mouseup', up, true);
+    cy.on('tapstart', 'node', ev => {
+      const oe = ev.originalEvent; if (!anyOpen() || !oe) return; const id = ev.target.id(); if (!ENT.has(id)) return;
+      const touch = /^touch/.test(oe.type) || oe.pointerType === 'touch'; if (!touch && oe.button > 0) return; if (touch && oe.touches && oe.touches.length > 1) return;
+      const p = ptOf(oe); dragStart({ k: 'e', id }, p.x, p.y, touch, { cy: true, pan: { ...cy.pan() }, node: ev.target, pos: { ...ev.target.position() } });
+    });
   }
   setTimeout(bindCanvas, 0);
 
+  // ---- node chips: a dropped node stays a compact node (picture or type-colour circle + label, like the map) until
+  // clicked; then its info card opens inline in the note. Click the node again to fold it back. Enter/Space toggle,
+  // Delete/Backspace or the x removes it. Chips are saved with the note (entity id, order, open or closed).
+  const chipKeyMem = (nid, eid) => typeof scrollMemKey === 'function' ? scrollMemKey('notechip', nid + ':' + eid) : '';
+  const isThy = e => typeof isTheoryEnt === 'function' && isTheoryEnt(e);
+  const chipLabel = e => (isThy(e) ? '⚠ ' : '') + e.name;
+  const chipName = id => { const e = ENT.get(id); return e ? { name: (isThy(e) ? '⚠ Unverified theory: ' : '') + e.name, url: here() + '#node=' + encodeURIComponent(id) } : { name: id + ' (not on the map in this version)' }; };
+  function chipDot(e) {
+    const T = TYPE[e.type] || { color: '#888' }; const thy = isThy(e);
+    const d = el('span', { class: 'nchip-dot' + (e.im ? ' pic' : '') + (e.imk === 'l' ? ' logo' : '') + (thy ? ' thy' : ''), 'aria-hidden': 'true' });
+    d.style.setProperty('--ring', thy ? '#f5d90a' : T.color);
+    if (e.im) { const im = el('img', { src: e.im, alt: '', loading: 'lazy', decoding: 'async', draggable: 'false' }); d.appendChild(im); }
+    return d;
+  }
+  function chipEl(n, c, i) {
+    const e = ENT.get(c.id), li = el('li', { class: 'nchip-item' + (c.open ? ' open' : ''), 'data-chip': c.id });
+    const cid = `nc-${n.id}-${i}`;
+    if (!e) {
+      const b = el('span', { class: 'nchip gone', title: 'This node is not on the map in this version' }, c.id + ' (not on the map)');
+      li.append(el('div', { class: 'nchip-row' }, null)); li.firstChild.append(b, el('button', { type: 'button', class: 'nchip-x', 'data-chip-x': '', 'aria-label': `Remove ${c.id} from this note`, title: 'Remove from note' }, '×'));
+      return li;
+    }
+    const thy = isThy(e);
+    const b = el('button', { type: 'button', class: 'nchip' + (thy ? ' thy' : ''), 'data-chip-toggle': '', 'aria-expanded': String(!!c.open), 'aria-controls': cid,
+      'aria-label': `${e.name}${thy ? ', unverified theory' : ''}, ${(TYPE[e.type] || {}).label || e.type}. ${c.open ? 'Hide' : 'Show'} details. Delete removes it from the note.`, title: c.open ? 'Click to fold back to the node' : 'Click to open the info' });
+    b.append(chipDot(e), el('span', { class: 'nchip-label' }, chipLabel(e)));
+    const x = el('button', { type: 'button', class: 'nchip-x', 'data-chip-x': '', 'aria-label': `Remove ${e.name} from this note`, title: 'Remove from note' }, '×');
+    const row = el('div', { class: 'nchip-row' }); row.append(b, x);
+    const card = el('div', { class: 'nchip-card', id: cid, role: 'region', 'aria-label': e.name + ' details', tabindex: '-1' }); card.hidden = !c.open;
+    li.append(row, card);
+    if (c.open) fillCard(n.id, c.id, card);
+    return li;
+  }
+  function renderChips(n, w) {
+    w = w || wins.get(n.id); if (!w) return; const box = w.querySelector('.note-chips');
+    for (const card of box.querySelectorAll('.nchip-card:not([hidden])')) { const li = card.closest('[data-chip]'); if (typeof scrollMemLeave === 'function' && li) scrollMemLeave(card, chipKeyMem(n.id, li.dataset.chip)); }
+    box.replaceChildren(...(n.chips || []).map((c, i) => chipEl(n, c, i)));
+    box.hidden = !(n.chips || []).length; w.classList.toggle('has-chips', !box.hidden);
+  }
+  // the info card: what the profile shows, condensed (no new fields; never addresses or contact details)
+  async function fillCard(nid, eid, card) {
+    const e = ENT.get(eid); if (!e) return;
+    card.innerHTML = '<p class="muted small">Loading…</p>';
+    const ls = (byNode.get(e.id) || []).slice();
+    try { if (typeof hydrateAll === 'function') await hydrateAll([e, ...ls]); } catch (_) {}
+    if (!card.isConnected || card.hidden) return;
+    const thy = isThy(e);
+    const top = ls.slice().sort((a, b) => (b.amount_cad || 0) - (a.amount_cad || 0) || (STRENGTH[b.status] || 0) - (STRENGTH[a.status] || 0) || String(b.date || '').localeCompare(String(a.date || ''))).slice(0, 6);
+    const flows = ls.filter(isFlow), ests = ls.filter(isEst);
+    const sum = (arr, dir) => arr.filter(l => (dir === 'in' ? l.to : l.from) === e.id).reduce((s, l) => s + l.amount_cad, 0);
+    const money = flows.length || ests.length ? `<div class="nchip-money"><span><span class="muted">Money in</span> <b class="amt">${fmtCAD(sum(flows, 'in')) || '$0'}</b></span> <span><span class="muted">Money out</span> <b class="amt">${fmtCAD(sum(flows, 'out')) || '$0'}</b></span>${ests.length ? ` <span class="small"><span class="est">Estimate</span> ${fmtCAD(sum(ests, 'in') + sum(ests, 'out'))} not counted</span>` : ''}</div>` : '';
+    const norm = e.norm_flag || ls.some(l => l.norm_flag);
+    const conn = top.map(l => { const out = l.from === e.id, o = out ? l.to : l.from; return `<li><span class="verb">${esc(out ? LT(l.type).label : LT(l.type).inverse)}</span> <button type="button" class="linkish ent" data-node="${esc(o)}">${esc(name(o))}</button> ${l.status ? lbadge(l) : ''}${l.amount_cad > 0 ? ` <b class="amt">${esc(fmtCAD(l.amount_cad))}</b>${isEst(l) ? ' <span class="est">Estimate</span>' : ''}` : ''}${l.norm_flag ? ' ' + normFlagBadge(l) : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button></li>`; }).join('');
+    const srcs = (e.sources || []).slice(0, 5).map(s => { const u = safeUrl(s.url); const t = esc(s.title || s.registry || s.publisher || 'source'); return `<li>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${t}</a>` : t}${s.publisher && s.publisher !== s.title ? ` <span class="muted">(${esc(s.publisher)})</span>` : ''}${s.kind === 'official_website' ? ' <span class="muted">organization’s own claim</span>' : ''}${typeof isPaywalled === 'function' && isPaywalled(s) ? ' <span class="muted">paywalled</span>' : ''}</li>`; }).join('');
+    const summary = e.summary || (e.summaries && Object.values(e.summaries)[0]) || '';
+    card.innerHTML = `<div class="nchip-type">${typeChip(e.type)}${e.province ? ` <span class="muted">${esc(e.province)}</span>` : ''} ${e.status ? lbadge(e) : '<span class="muted small">Claim status: see each link</span>'}${norm ? ' ' + (e.norm_flag ? normFlagBadge(e) : '<span class="norm-flag" data-norm-flag>Outside the norm</span>') : ''}</div>
+      <h3 class="nchip-name">${esc(e.name)}</h3>
+      ${thy ? `<p class="thy-warn small" role="note">⚠ ${esc(e.warning || THEORY_WARN())}</p>` : ''}
+      ${typeof namedFromRecords === 'function' && namedFromRecords(e) ? `<div>${roleBadge(e)}</div>` : e.role ? `<div class="muted small">${esc(e.role)}</div>` : ''}
+      ${typeof namedIn === 'function' ? namedIn(e) : ''}
+      ${summary ? `<p class="small">${esc(summary.length > 420 ? summary.slice(0, 420).replace(/\s+\S*$/, '') + '…' : summary)}</p>` : ''}
+      ${money}
+      ${conn ? `<h4 class="lbl">Key connections <span class="muted">${ls.length}</span></h4><ul class="nchip-list">${conn}</ul>` : ''}
+      <h4 class="lbl">Sources</h4>${srcs ? `<ul class="nchip-list">${srcs}</ul>${(e.sources || []).length > 5 ? `<p class="muted small">+${(e.sources || []).length - 5} more in the full profile</p>` : ''}` : '<p class="muted small">No source listed</p>'}
+      <p><button type="button" class="btn sm" data-chip-open="${esc(e.id)}">Open full profile</button></p>`;
+    if (typeof scrollMemBind === 'function') { scrollMemBind(card); scrollMemEnter(card, chipKeyMem(nid, eid)); }
+  }
+  function setChipOpen(nid, eid, open, focus = true) {
+    const n = byId(nid), w = wins.get(nid); if (!n || !w) return; const c = (n.chips || []).find(x => x.id === eid); if (!c) return;
+    c.open = !!open; n.updated = new Date().toISOString(); saveSoon();
+    const li = w.querySelector(`.nchip-item[data-chip="${CSS.escape(eid)}"]`); if (!li) return renderChips(n, w);
+    const b = li.querySelector('[data-chip-toggle]'), card = li.querySelector('.nchip-card'); if (!b || !card) return;
+    const e = ENT.get(eid);
+    if (!open && typeof scrollMemLeave === 'function') scrollMemLeave(card, chipKeyMem(nid, eid));
+    li.classList.toggle('open', c.open); b.setAttribute('aria-expanded', String(c.open)); card.hidden = !c.open;
+    b.setAttribute('title', c.open ? 'Click to fold back to the node' : 'Click to open the info');
+    if (e) b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/(Show|Hide) details/, c.open ? 'Hide details' : 'Show details'));
+    if (c.open) { fillCard(nid, eid, card); const box = w.querySelector('.note-chips'); box.scrollTop = Math.max(0, li.offsetTop - box.offsetTop); }
+    if (focus) b.focus();
+    say(`${name(eid)} ${c.open ? 'opened' : 'folded back to a node'}`);
+  }
+  function removeChip(nid, eid) {
+    const n = byId(nid), w = wins.get(nid); if (!n || !w) return; const i = (n.chips || []).findIndex(x => x.id === eid); if (i < 0) return;
+    n.chips.splice(i, 1); n.updated = new Date().toISOString(); save(); renderChips(n, w);
+    const bs = w.querySelectorAll('[data-chip-toggle], .nchip.gone + .nchip-x'); (bs[Math.min(i, bs.length - 1)] || w.querySelector('.note-body')).focus();
+    say(`Removed ${name(eid)} from ${n.title}`);
+  }
+  function addChip(nid, eid) {
+    const n = byId(nid); if (!n || !ENT.has(eid)) { tell('That item could not be added.'); return false; }
+    const r = C.addChip(n.chips, eid); n.chips = r.chips;
+    if (r.index < 0) { tell(`This note holds at most ${C.LIMITS.chips} nodes.`); return false; }
+    if (n.min) n.min = false; n.updated = new Date().toISOString(); save(); sync();
+    const w = wins.get(nid); renderChips(n, w); front(w);
+    const li = w.querySelector(`.nchip-item[data-chip="${CSS.escape(eid)}"]`); if (li) { li.classList.add('flash'); setTimeout(() => li.classList.remove('flash'), 700); li.scrollIntoView({ block: 'nearest' }); }
+    w.classList.add('flash'); setTimeout(() => w.classList.remove('flash'), 600);
+    say(r.added ? `Added ${name(eid)} to ${n.title} as a node` : `${name(eid)} is already in ${n.title}`); return true;
+  }
+  function chipClick(nid, e) {
+    const li = e.target.closest('[data-chip]'); if (!li) return; const eid = li.dataset.chip;
+    if (e.target.closest('[data-chip-x]')) return removeChip(nid, eid);
+    if (e.target.closest('[data-chip-toggle]')) { const n = byId(nid); const c = n && (n.chips || []).find(x => x.id === eid); return setChipOpen(nid, eid, !(c && c.open)); }
+    const o = e.target.closest('[data-chip-open]'); if (o) return select({ node: o.dataset.chipOpen });
+    const t = e.target.closest('[data-node],[data-link]'); if (t) { e.preventDefault(); return t.dataset.link ? select({ link: t.dataset.link }) : select({ node: t.dataset.node }); }
+  }
+  function chipKey(nid, e) {
+    const b = e.target.closest('[data-chip-toggle]'); if (!b) return; const eid = b.closest('[data-chip]').dataset.chip;
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); removeChip(nid, eid); }
+    // Enter and Space are native button clicks (toggle)
+  }
+
   // ---- 'Copy to note' (panel header): keyboard and phone alternative to dragging
   const selRef = () => S.node && ENT.has(S.node) ? { k: 'e', id: S.node } : S.link && LNK.has(S.link) ? { k: 'l', id: S.link } : S.net && NET.has(S.net) ? { k: 'n', id: S.net } : null;
-  const syncToNote = () => { toNote.hidden = !selRef(); };
+  const syncToNote = () => { toNote.hidden = !selRef(); nodeToNote.hidden = !(S.node && ENT.has(S.node)); };
   if ($('#panel-body')) new MutationObserver(syncToNote).observe($('#panel-body'), { childList: true });
   toNote.addEventListener('click', () => { const ref = selRef(); if (!ref) return;
     openMenu(toNote, [{ label: '＋ New note', fn: () => { const n = create({ title: quickName(ref).slice(0, 60) || undefined }); if (n) insertRef(n.id, ref); } }, ...(st.notes.length ? [{ sep: true }] : []), ...st.notes.map(n => ({ label: 'Add to: ' + n.title, fn: () => insertRef(n.id, ref) }))], 'Copy to note'); });
 
+  // 'Add node to note': keyboard and phone alternative to dragging a node in
+  nodeToNote.addEventListener('click', () => { const id = S.node; if (!id || !ENT.has(id)) return;
+    openMenu(nodeToNote, [{ label: '＋ New note', fn: () => { const n = create({ title: name(id).slice(0, 60) || undefined }); if (n) addChip(n.id, id); } }, ...(st.notes.length ? [{ sep: true }] : []), ...st.notes.map(n => ({ label: 'Add to: ' + n.title, fn: () => addChip(n.id, id) }))], 'Add node to note'); });
+
   // ---- launcher menu, export / import
   function download(notes, fmt) {
     if (!notes.length) return tell('No notes to export.');
-    const f = C.exportNotes(notes, fmt); const url = URL.createObjectURL(new Blob([f.text], { type: f.mime }));
+    const f = C.exportNotes(notes, fmt, undefined, chipName); const url = URL.createObjectURL(new Blob([f.text], { type: f.mime }));
     const a = el('a', { href: url, download: f.name }); a.hidden = true; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000); say(`Exported ${f.name}`);
   }
   file.addEventListener('change', async () => {
@@ -5135,7 +5385,7 @@ const NOTES = (() => {
   if (typeof normalizeWalkthrough === 'function') { const base = normalizeWalkthrough; normalizeWalkthrough = w => C.ensureWalkStep(base(w)); }
 
   load(); sync();
-  return { state: () => JSON.parse(C.serializeState(st)), create, open, insertRef, format: ref => itemFor(ref).then(it => it && C.formatItem(it, 'md')), storage: () => storage };
+  return { state: () => JSON.parse(C.serializeState(st)), create, open, insertRef, addChip, setChipOpen, removeChip, format: ref => itemFor(ref).then(it => it && C.formatItem(it, 'md')), storage: () => storage };
 })();
 window.__wiretapNotes = NOTES; // test / debugging hook
 

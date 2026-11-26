@@ -73,3 +73,45 @@ body.notes-dragging .note-win{border-style:dashed}
   body.panel-open .notes-dock{bottom:calc(55vh + 6px)}
 }
 @media print{.notes-layer,.notes-dock,.notes-menu,.notes-ghost,.notes-launch,#btn-to-note{display:none!important}}
+/* node chips: map nodes dropped into a note. Same look as the map: round picture or type-colour circle + label;
+   theory nodes keep the gold dashed ring and the ⚠ unverified marker. Click to open the info card, again to fold. */
+.note-chips{flex:0 1 auto;max-height:62%;overflow-y:auto;margin:0;padding:6px 6px 4px;list-style:none;display:flex;flex-wrap:wrap;gap:4px 6px;align-content:flex-start;border-bottom:1px solid var(--line);overscroll-behavior:contain}
+.note-chips[hidden]{display:none}
+.nchip-item{display:flex;flex-direction:column;max-width:100%;min-width:0}
+.nchip-item.open{flex:1 1 100%}
+.nchip-item.flash .nchip{box-shadow:0 0 0 2px var(--gold)}
+.nchip-row{display:flex;align-items:center;gap:2px;min-width:0}
+.nchip{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:100%;padding:3px 9px 3px 3px;background:var(--bg3);border:1px solid var(--line2);border-radius:999px;color:var(--fg);font:12px/1.2 var(--mono);cursor:pointer;text-align:left}
+.nchip:hover{border-color:var(--fg3)}
+.nchip:focus-visible{outline:2px solid #416AFF;outline-offset:1px}
+.nchip[aria-expanded=true]{border-color:#416AFF;background:#416AFF22}
+.nchip.thy{border-color:#f5d90a88;color:#f5d90a}
+.nchip.gone{cursor:default;color:var(--fg3);border-style:dashed;padding-left:9px}
+.nchip-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nchip-dot{flex:0 0 auto;width:26px;height:26px;border-radius:50%;box-sizing:border-box;background:var(--ring);border:3px solid var(--ring);overflow:hidden;display:inline-flex;align-items:center;justify-content:center}
+.nchip-dot.pic{background:#1b1f26}
+/* logos: the whole padded square file on a rounded-square tile (same as the map and the profile); portraits stay round */
+.nchip-dot.logo{background:#fff;border-radius:22%}
+.nchip-dot img{width:100%;height:100%;object-fit:cover;object-position:50% 28%;display:block}
+.nchip-dot.logo img{object-fit:cover;object-position:50% 50%;width:100%;height:100%}
+.nchip-dot.thy{border-style:dashed;background:#f5d90a24}
+.nchip-dot.thy.pic{background:#1b1f26}
+.nchip-x{flex:0 0 auto;width:22px;height:22px;padding:0;border:1px solid transparent;border-radius:50%;background:none;color:var(--fg3);font:14px/1 var(--mono);cursor:pointer}
+.nchip-x:hover,.nchip-x:focus-visible{color:var(--fg);border-color:var(--line2)}
+.nchip-card{margin:4px 0 2px;padding:8px 10px;max-height:min(60vh,420px);overflow-y:auto;background:var(--bg);border:1px solid var(--line2);border-left:3px solid #416AFF;border-radius:4px;font-size:12.5px;line-height:1.45;overscroll-behavior:contain}
+.nchip-card[hidden]{display:none}
+.nchip-card:focus{outline:none}
+.nchip-name{margin:4px 0 4px;font-size:14px;line-height:1.3}
+.nchip-type{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.nchip-card .lbl{margin:8px 0 3px}
+.nchip-list{margin:0;padding-left:16px}
+.nchip-list li{margin:2px 0}
+.nchip-money{display:flex;flex-wrap:wrap;gap:4px 12px;margin:6px 0}
+.notes-ghost.nchip-ghost{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px 3px 3px}
+.note-win.has-chips .note-body{min-height:60px}
+body.notes-on #cy{-webkit-touch-callout:none}
+body.notes-on #results .result,body.notes-on #panel-body [data-node]{-webkit-touch-callout:none}
+@media (max-width:900px){
+  .nchip{min-height:36px}
+  .nchip-x{width:36px;height:36px}
+}
