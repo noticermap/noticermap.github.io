@@ -654,3 +654,10 @@ body.page-404 .not-found .btn{margin-top:8px}
 /* layout picker: buttons on desktop, a select on phones (six buttons do not fit 390 px) */
 .layout-pick{display:none}
 @media (max-width:900px){.layout-seg{display:none}.layout-pick{display:inline-flex}}
+
+/* landing on a claim: the claim card in the panel and, in list/chart views, the row or mark that was clicked */
+.claim-hl { outline: 2px solid var(--gold, #f5d90a); outline-offset: 2px; border-radius: 6px; animation: claim-hl-pulse 1.1s ease-out 1; }
+svg .claim-hl, path.claim-hl, circle.claim-hl, rect.claim-hl { outline: none; stroke: var(--gold, #f5d90a); stroke-width: 2.5; animation: none; }
+@keyframes claim-hl-pulse { 0% { outline-color: transparent; outline-offset: 8px; } 100% { outline-color: var(--gold, #f5d90a); outline-offset: 2px; } }
+@media (prefers-reduced-motion: reduce) { .claim-hl { animation: none; } }
+.tour-back { margin: 0 0 .6rem; }

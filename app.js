@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-27T03:08:34.106Z */
+/* NoticerMap — built 2026-11-27T15:23:40.545Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -2313,7 +2313,7 @@ function renderTimeline() {
   }
   const list = [...ls].reverse();
   const purposeBit = l => (typeof isLobbyingLink === 'function' && isLobbyingLink(l) && typeof purposeInline === 'function') ? ` <span class="tl-purpose">${esc(purposeInline(l))}</span>` : '';
-  $('#tl-list').innerHTML = [...evs].reverse().slice(0, tlShown).map(e => `<li class="tl-ev"><button type="button" class="linkish" data-node="${esc(e.id)}"><span class="tl-d">${esc(evDate(e) || (e.expected && xDate(e.expected) ? 'exp. ' + xDate(e.expected) : ''))}</span> <span class="kindtag">Event</span> ${evStatusBadge(e)} ${esc(e.name)}${e._xiv && e._xiv !== e._iv ? ` <span class="muted small">· expected ${esc(xDate(e.expected))}</span>` : ''}${e.place ? ` <span class="muted">· ${esc(e.place)}</span>` : ''}</button></li>`).join('') + list.slice(0, tlShown).map(l => `<li><button type="button" class="linkish" data-link="${esc(l.id)}"><span class="tl-d">${esc(basis === 'reported' ? l.reported : l.date)}</span> ${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''}${purposeBit(l)}</button> ${estTag(l)} ${lbadge(l)}</li>`).join('');
+  $('#tl-list').innerHTML = [...evs].reverse().slice(0, tlShown).map(e => `<li class="tl-ev"><button type="button" class="linkish" data-node="${esc(e.id)}"><span class="tl-d">${esc(evDate(e) || (e.expected && xDate(e.expected) ? 'exp. ' + xDate(e.expected) : ''))}</span> <span class="kindtag">Event</span> ${evStatusBadge(e)} ${esc(e.name)}${e._xiv && e._xiv !== e._iv ? ` <span class="muted small">· expected ${esc(xDate(e.expected))}</span>` : ''}${e.place ? ` <span class="muted">· ${esc(e.place)}</span>` : ''}</button></li>`).join('') + list.slice(0, tlShown).map(l => `<li>${claimBtn(l.id, `<span class="tl-d">${esc(basis === 'reported' ? l.reported : l.date)}</span> ${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''}${purposeBit(l)}`, 'linkish')} ${estTag(l)} ${lbadge(l)}</li>`).join('');
   $('#tl-more').hidden = list.length <= tlShown && evs.length <= tlShown;
 }
 const tlZoom = (f, center) => {
@@ -2341,11 +2341,15 @@ $('#tl').addEventListener('wheel', e => {
   else tlZoom(e.deltaY < 0 ? 0.8 : 1.25, center);
 }, { passive: false });
 
+// A press only becomes a pan after it moves a few pixels. Capturing the pointer on press (and re-drawing on every tiny
+// move) re-targeted the click onto the chart and replaced the mark under the finger, so clicking a claim mark opened nothing.
+let tlPanned = false;
 $('#tl').addEventListener('pointerdown', e => {
   if (e.button != null && e.button !== 0) return;
-  tlPan = { x: e.clientX, a: tlWin && tlWin.a, b: tlWin && tlWin.b, id: e.pointerId };
-  try { $('#tl').setPointerCapture(e.pointerId); } catch { }
+  tlPan = { x: e.clientX, a: tlWin && tlWin.a, b: tlWin && tlWin.b, id: e.pointerId, moved: false };
 });
+// a drag that panned the chart must not also click the mark it ended on
+$('#tl').addEventListener('click', e => { if (tlPanned) { tlPanned = false; e.stopPropagation(); e.preventDefault(); } }, true);
 $('#tl').addEventListener('pointermove', e => {
   const mark = e.target.closest('[data-link],[data-node]');
   if (mark && !tlPan) {
@@ -2353,6 +2357,7 @@ $('#tl').addEventListener('pointermove', e => {
     showTlTip(link ? tlTooltipHtml('link', LNK.get(link)) : tlTooltipHtml('ev', ENT.get(node)), e);
   } else if (!tlPan) hideTlTip();
   if (!tlPan || !tlWin) return;
+  if (!tlPan.moved) { if (Math.abs(e.clientX - tlPan.x) < 4) return; tlPan.moved = true; try { $('#tl').setPointerCapture(tlPan.id); } catch { } }
   const rec = $('#tl').getBoundingClientRect();
   const span = tlPan.b - tlPan.a;
   const dx = e.clientX - tlPan.x;
@@ -2360,7 +2365,7 @@ $('#tl').addEventListener('pointermove', e => {
   tlWin.a = tlPan.a + days; tlWin.b = tlPan.b + days;
   renderTimeline();
 });
-const endPan = () => { tlPan = null; };
+const endPan = () => { tlPanned = !!(tlPan && tlPan.moved); tlPan = null; if (tlPanned) setTimeout(() => { tlPanned = false; }, 0); };
 $('#tl').addEventListener('pointerup', endPan);
 $('#tl').addEventListener('pointercancel', endPan);
 $('#tl').addEventListener('pointerleave', hideTlTip);
@@ -2509,7 +2514,7 @@ function renderPathFinder() {
   if (S.mvia) { const MP = moneyPaths(S.pa, S.pb, F.links, 5); PATHS = MP; out.innerHTML = moneyPathsHtml(MP, S.pa, S.pb); return; }
   PATHS = shortestPaths(S.pa, S.pb, F.links);
   if (!PATHS.length) { const all = shortestPaths(S.pa, S.pb, D.links, 1); out.innerHTML = `<p class="muted">No path between <b>${esc(name(S.pa))}</b> and <b>${esc(name(S.pb))}</b> with the current filters.${all.length ? ` A ${all[0].links.length}-step path exists with all filters off. <button class="linkish" data-reset>Reset filters</button>` : ' They are not connected in the data.'}</p>`; return; }
-  out.innerHTML = `<p><b>${PATHS[0].links.length} step${PATHS[0].links.length > 1 ? 's' : ''}</b> · ${PATHS.length}${PATHS.length === 5 ? '+' : ''} shortest path${PATHS.length > 1 ? 's' : ''} <button type="button" class="btn sm" id="pf-map">Show on map</button></p>` + PATHS.map((p, i) => `<ol class="path" aria-label="Path ${i + 1}">${p.links.map((lid, j) => { const l = LNK.get(lid); const a = p.nodes[j], b = p.nodes[j + 1]; const fwd = l.from === a; return `<li>${entBtn(a)} <span class="verb">${esc(fwd ? LT(l.type).label : LT(l.type).inverse)}</span> ${entBtn(b)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(lid)}">claim</button></li>`; }).join('')}</ol>`).join('');
+  out.innerHTML = `<p><b>${PATHS[0].links.length} step${PATHS[0].links.length > 1 ? 's' : ''}</b> · ${PATHS.length}${PATHS.length === 5 ? '+' : ''} shortest path${PATHS.length > 1 ? 's' : ''} <button type="button" class="btn sm" id="pf-map">Show on map</button></p>` + PATHS.map((p, i) => `<ol class="path" aria-label="Path ${i + 1}">${p.links.map((lid, j) => { const l = LNK.get(lid); const a = p.nodes[j], b = p.nodes[j + 1]; const fwd = l.from === a; return `<li>${entBtn(a)} <span class="verb">${esc(fwd ? LT(l.type).label : LT(l.type).inverse)}</span> ${entBtn(b)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} ${claimBtn(lid)}</li>`; }).join('')}</ol>`).join('');
 }
 function setPathEnd(which, v) { const id = findEnt(v); if (v && !id) { toast('No entity matches “' + v + '”'); return; } S[which] = id; update(); }
 $('#pf-a').addEventListener('change', e => setPathEnd('pa', e.target.value));
@@ -2548,7 +2553,7 @@ function crossLayerRows() {
 }
 function crossRow(c) {
   const x = c.kind === 'e' ? ENT.get(c.id) : LNK.get(c.id);
-  const body = c.kind === 'e' ? `${entBtn(c.id)} <span class="muted small">${esc(TYPE[x.type].label)}</span>` : `${entBtn(x.from)} <span class="verb">${esc(LT(x.type).label)}</span> ${entBtn(x.to)} <button type="button" class="linkish small" data-link="${esc(x.id)}">claim</button> ${lbadge(x)}`;
+  const body = c.kind === 'e' ? `${entBtn(c.id)} <span class="muted small">${esc(TYPE[x.type].label)}</span>` : `${entBtn(x.from)} <span class="verb">${esc(LT(x.type).label)}</span> ${entBtn(x.to)} ${claimBtn(x.id)} ${lbadge(x)}`;
   return `<li class="ov">${seenBadge(x)} ${body} ${seenOf(x).map(k => layerChip(k, true)).join('')}${c.kind === 'l' ? ` <code class="small muted">${esc(x.id)}</code>` : ''}</li>`;
 }
 function renderCrossLayer() {
@@ -2576,10 +2581,11 @@ function renderIndex() {
   $('#i-nets').innerHTML = nets.length ? `<h3 class="lbl">Networks</h3><table class="index-table"><thead><tr><th>Network</th><th>Kind</th><th>Status</th><th>Members</th><th>Money (evidence links)</th></tr></thead><tbody>${nets.map(n => `<tr><td><button type="button" class="linkish" data-net="${esc(n.id)}">${esc(n.name)}</button></td><td>${esc(NETKIND[n.kind]?.label || n.kind)}</td><td>${lbadge(n)}</td><td>${n.members.length}</td><td class="amt">${n.money_cad ? fmtCAD(n.money_cad) : ''}${n.est_cad ? ` <span class="est">Estimate</span> ${fmtCAD(n.est_cad)}` : ''}</td></tr>`).join('')}</tbody></table>` : '';
 }
 $('#view-index').addEventListener('click', e => {
-  const t = e.target.closest('[data-sort],[data-page],[data-node],[data-net]'); if (!t) return;
+  const t = e.target.closest('[data-sort],[data-page],[data-node],[data-link],[data-net]'); if (!t) return;
   if (t.dataset.sort) { if (iSort === t.dataset.sort) iDir = -iDir; else { iSort = t.dataset.sort; iDir = ['name', 'type', 'province'].includes(iSort) ? 1 : -1; } renderIndex(); }
   else if (t.dataset.page) { const el = $('#view-index'); if (typeof scrollMemLeave === 'function') scrollMemLeave(el, scrollMemViewKeyFor('index')); iPage += +t.dataset.page; renderIndex(); if (typeof scrollMemEnter === 'function') { scrollMemBind(el); scrollMemEnter(el, scrollMemViewKeyFor('index')); } else el.scrollTop = 0; }
   else if (t.dataset.node) select({ node: t.dataset.node });
+  else if (t.dataset.link) select({ link: t.dataset.link });
   else if (t.dataset.net) selectNet(t.dataset.net);
 });
 
@@ -2605,7 +2611,7 @@ function renderSources() {
   const list = D.sources.filter(sourcePass).sort(S.ssort === 'cited' ? (a, b) => b.cites.length - a.cites.length : (a, b) => String(b.date || '').localeCompare(String(a.date || '')));
   if (document.activeElement !== $('#s-q')) $('#s-q').value = S.sq; $('#s-kind').value = S.skind; $('#s-sort').value = S.ssort; $('#s-layer').value = S.slayer;
   $('#s-summary').textContent = `${list.length} of ${D.sources.length} sources${D.meta.source_groups && (D.meta.source_groups.registry_merged || D.meta.source_groups.items_merged) ? ' (same item on several platforms shown once)' : ''}`;
-  const cite = ([k, id]) => k === 'e' ? `<button type="button" class="linkish" data-node="${esc(id)}">${esc(name(id))}</button>` : k === 'l' && LNK.has(id) ? (() => { const l = LNK.get(id); return `<button type="button" class="linkish" data-link="${esc(id)}">${esc(name(l.from))} → ${esc(name(l.to))}</button>`; })() : k === 'n' && NET.has(id) ? `<button type="button" class="linkish" data-net="${esc(id)}">${esc(NET.get(id).name)}</button>` : esc(id);
+  const cite = ([k, id]) => k === 'e' ? `<button type="button" class="linkish" data-node="${esc(id)}">${esc(name(id))}</button>` : k === 'l' && LNK.has(id) ? (() => { const l = LNK.get(id); return `${claimBtn(id, `${esc(name(l.from))} → ${esc(name(l.to))}`, 'linkish')}`; })() : k === 'n' && NET.has(id) ? `<button type="button" class="linkish" data-net="${esc(id)}">${esc(NET.get(id).name)}</button>` : esc(id);
   $('#s-list').innerHTML = list.slice(0, sShown).map(s => { const u = safeUrl(s.url); const kind = [srcKindLabel(s.kind), srcMedium(s)].filter(Boolean).join(' · '); const lys = [...(s.layers || [])]; if ((s.records || s.kind === 'public_record') && !lys.includes('records')) lys.push('records');
     return `<li class="s-item"><div class="s-title">${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(s.title || s.registry || s.url)}</a>` : esc(s.title || s.registry || s.key)}${ownClaimChip(s)}${paywallChip(s)}${platformLinks(s)}</div>
     <div class="s-meta"><span class="kindtag">${esc(kind)}</span> ${lys.map(k => layerChip(k)).join('')} ${[s.publisher, s.registry && s.kind === 'public_record' ? s.registry : '', s.record_id ? '#' + s.record_id : '', s.date].filter(Boolean).map(esc).join(' · ')}${s.retrieved_date ? ` <span class="retrieved">· Retrieved ${esc(s.retrieved_date)}</span>` : ''}</div>
@@ -2671,7 +2677,7 @@ document.addEventListener('click', ev => {
 }, true);
 function roleRow(l, otherId) {
   const n = l.sources.length;
-  return `<li class="ev-role" data-role-link="${esc(l.id)}">${entBtn(otherId)} ${badge(l.status, l.source_layer)} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>${l.date ? ` <span class="small muted">${esc(l.date)}</span>` : ''}<details class="c-src"><summary>${n} source${n === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`;
+  return `<li class="ev-role" data-role-link="${esc(l.id)}">${entBtn(otherId)} ${badge(l.status, l.source_layer)} ${claimBtn(l.id)}${l.date ? ` <span class="small muted">${esc(l.date)}</span>` : ''}<details class="c-src"><summary>${n} source${n === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`;
 }
 // Hosted by / Speakers / Attendees: listed by role only, never grouped or labelled as a community
 function eventRoles(e) {
@@ -2686,12 +2692,12 @@ function moneyTiedSection(e) {
   const ls = [...new Map(moneyTiedTo(e.id).map(l => [l.id, l])).values()].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
   if (!ls.length) return '';
   const tot = ls.filter(isFlow).reduce((a, l) => a + l.amount_cad, 0);
-  return panelSection('Money tied to this event', `<ul class="ev-money" data-ev-money>${ls.map(l => `<li data-tied-link="${esc(l.id)}">${entBtn(l.from)} → ${entBtn(l.to)} <span class="small muted">${esc(LT(l.type).label)}</span> ${l.amount_cad != null ? `<b class="${isEst(l) ? 'est' : ''}">${esc(fmtCADfull(l.amount_cad))}</b>` : ''} ${badge(l.status, l.source_layer)} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>${l.date ? ` <span class="small muted">${esc(l.date)}</span>` : ''}<details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`).join('')}</ul>${tot ? `<p class="small"><span class="muted">Total of these links</span> <b data-ev-money-total>${esc(fmtCADfull(tot))}</b></p>` : ''}<p class="small muted">Each link is counted once in totals; listing it here does not add it again. Estimates and "other" amounts are excluded.</p>`, true, ls.length);
+  return panelSection('Money tied to this event', `<ul class="ev-money" data-ev-money>${ls.map(l => `<li data-tied-link="${esc(l.id)}">${entBtn(l.from)} → ${entBtn(l.to)} <span class="small muted">${esc(LT(l.type).label)}</span> ${l.amount_cad != null ? `<b class="${isEst(l) ? 'est' : ''}">${esc(fmtCADfull(l.amount_cad))}</b>` : ''} ${badge(l.status, l.source_layer)} ${claimBtn(l.id)}${l.date ? ` <span class="small muted">${esc(l.date)}</span>` : ''}<details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`).join('')}</ul>${tot ? `<p class="small"><span class="muted">Total of these links</span> <b data-ev-money-total>${esc(fmtCADfull(tot))}</b></p>` : ''}<p class="small muted">Each link is counted once in totals; listing it here does not add it again. Estimates and "other" amounts are excluded.</p>`, true, ls.length);
 }
 function eventCard(e, viaLinks = []) {
   const roles = [...new Set(viaLinks.map(l => LT(l.type).label))];
   return `<li class="ev-card" data-event="${esc(e.id)}"><div class="ev-head"><span class="ev-date">${esc(evDate(e) || (e.expected && xDate(e.expected) ? 'expected ' + xDate(e.expected) : 'undated'))}</span> ${evStatusBadge(e)} <button type="button" class="linkish ent" data-node="${esc(e.id)}">${esc(e.name)}</button>${evPlace(e) ? ` <span class="muted small">· ${evPlace(e)}</span>` : ''}</div>
-    ${roles.length ? `<div class="small muted">${esc(roles.join(', '))}${viaLinks.map(l => ` <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>`).join('')}</div>` : ''}
+    ${roles.length ? `<div class="small muted">${esc(roles.join(', '))}${viaLinks.map(l => ` ${claimBtn(l.id)}`).join('')}</div>` : ''}
     ${e.summary ? `<p class="small">${esc(e.summary)}</p>` : ''}${e.expected && (e.expected.description || xDate(e.expected)) ? `<div class="small ev-exp-line"><span class="muted">Expected:</span> ${esc([e.expected.description, xDate(e.expected)].filter(Boolean).join(' · '))}</div>` : ''}${e.stopped_by && ENT.has(e.stopped_by) ? `<div class="small"><span class="muted">Stopped by</span> ${entBtn(e.stopped_by)}</div>` : ''}
     <details class="c-src"><summary>${e.sources.length} source${e.sources.length === 1 ? '' : 's'}</summary>${srcList(e.sources)}</details></li>`;
 }
@@ -2718,7 +2724,7 @@ function chargeRow(l, personId) {
   const so = l.legal_status_source; const u = so && safeUrl(so.url);
   const src = so ? (u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(so.publisher || so.title || 'source')}</a>` : esc(so.title || so.publisher || 'source')) : '';
   const note = CHARGE_NOTE(st);
-  return `<li class="legal-rec" data-charge="${esc(l.id)}"><div class="legal-row"><span class="legal-chip" title="Legal status as the source states it. Not a finding by this map.">${esc(lab)}</span> <span class="small">${personId ? `${entBtn(l.from)}` : `${entBtn(l.from)} → ${entBtn(l.to)}`}</span>${det ? ` <span class="legal-det">${esc(det)}</span>` : ''}${src ? ` <span class="muted">· ${src}</span>` : ''}${l.legal_status_date ? ` <span class="muted">· ${esc(l.legal_status_date)}</span>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button></div>${note ? `<div class="legal-note">${esc(note)}</div>` : ''}</li>`;
+  return `<li class="legal-rec" data-charge="${esc(l.id)}"><div class="legal-row"><span class="legal-chip" title="Legal status as the source states it. Not a finding by this map.">${esc(lab)}</span> <span class="small">${personId ? `${entBtn(l.from)}` : `${entBtn(l.from)} → ${entBtn(l.to)}`}</span>${det ? ` <span class="legal-det">${esc(det)}</span>` : ''}${src ? ` <span class="muted">· ${src}</span>` : ''}${l.legal_status_date ? ` <span class="muted">· ${esc(l.legal_status_date)}</span>` : ''} ${claimBtn(l.id)}</div>${note ? `<div class="legal-note">${esc(note)}</div>` : ''}</li>`;
 }
 function legalRecordSection(e) {
   if (e.type !== 'person') return '';
@@ -2759,13 +2765,16 @@ const ownClaimBlock = e => e.official_claim ? `<div class="own-claim small" data
 const srcList = srcs => srcs && srcs.length ? `<ul class="srcs">${srcs.map(srcLink).join('')}</ul>` : '<p class="muted small">No sources listed.</p>';
 const entBtn = id => `<button type="button" class="linkish ent" data-node="${esc(id)}">${esc(name(id))}</button>`;
 const layerChips = x => itemLayers(x).map(k => layerChip(k)).join('');
+// every claim link/button is drawn through this: with no claim behind the id, nothing is drawn (never a dead button)
+const hasClaim = id => typeof id === 'string' && id !== '' && LNK.has(id);
+const claimBtn = (id, label = 'claim', cls = 'linkish small') => hasClaim(id) ? `<button type="button" class="${cls}" data-link="${esc(id)}">${label}</button>` : '';
 function claimRow(l, fromId, opts = {}) {
   const out = !fromId || l.from === fromId; const t = LT(l.type); const other = out ? l.to : l.from;
   const verb = fromId ? (out ? t.label : t.inverse) : t.label;
   const amt = l.amount_cad > 0 ? `<span class="amt${isEst(l) ? ' estv' : ''}">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : '';
   const hid = F && !F.linkSet.has(l.id) ? ' <span class="hid" title="Hidden by current filters">hidden by filters</span>' : '';
   return `<li class="claim" data-cat="${esc(t.cat)}"><div class="c-main">${fromId ? '' : entBtn(l.from) + ' '}<span class="verb">${esc(verb)}</span> ${entBtn(fromId ? other : l.to)} ${amt}</div>
-    <div class="c-meta">${lbadge(l)} ${layerChips(l)}${l.date ? ` <span class="muted">${esc(l.date)}</span>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim details</button> ${reportCorrectionHtml('claim', l, { compact: true, fromName: name(l.from), toName: name(l.to), verb })}${hid}</div>
+    <div class="c-meta">${lbadge(l)} ${layerChips(l)}${l.date ? ` <span class="muted">${esc(l.date)}</span>` : ''} ${claimBtn(l.id, 'claim details')} ${reportCorrectionHtml('claim', l, { compact: true, fromName: name(l.from), toName: name(l.to), verb })}${hid}</div>
     ${opts.sources ? srcList(l.sources) : `<details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details>`}</li>`;
 }
 function netCard(n) {
@@ -2837,7 +2846,7 @@ function renderLink(l) {
   return `<div class="p-head"><div class="p-type"><span class="kindtag">${esc(LINK_CATS[t.cat].label)}</span> ${layerChips(l)} ${seenBadge(l)}</div><h1 class="p-name small-h">${entBtn(l.from)} <span class="verb">${esc(t.label)}</span> ${entBtn(l.to)}</h1><div class="p-corr">${reportCorrectionHtml('claim', l)}</div></div>
     <div class="claim-box">${lbadge(l)}${l.amount_cad > 0 ? `<div><b class="amt">${fmtCADfull(l.amount_cad)}</b> ${estTag(l)} <span class="muted">${esc(AMOUNT_KINDS[l.amount_kind]?.label || '')}</span></div>` : ''}${l.date ? `<div class="muted">Date: ${esc(l.date)}</div>` : '<div class="muted">Undated</div>'}${l.reported ? `<div class="muted">First reported: ${esc(l.reported)}</div>` : ''}</div>
     ${adminNote(l)}
-    ${l.upstream_counted ? `<p class="upstream-note small" data-upstream-note>Part of upstream award ${LNK.has(l.parent_link_id) ? `<button type="button" class="linkish" data-link="${esc(l.parent_link_id)}">${esc(name(LNK.get(l.parent_link_id).from))} → ${esc(name(LNK.get(l.parent_link_id).to))}${LNK.get(l.parent_link_id).amount_cad > 0 ? ' ' + fmtCAD(LNK.get(l.parent_link_id).amount_cad) : ''}</button>` : esc(l.parent_link_id)}; not counted again.</p>` : ''}
+    ${l.upstream_counted ? `<p class="upstream-note small" data-upstream-note>Part of upstream award ${LNK.has(l.parent_link_id) ? `${claimBtn(l.parent_link_id, `${esc(name(LNK.get(l.parent_link_id).from))} → ${esc(name(LNK.get(l.parent_link_id).to))}${LNK.get(l.parent_link_id).amount_cad > 0 ? ' ' + fmtCAD(LNK.get(l.parent_link_id).amount_cad) : ''}`, 'linkish')}` : esc(l.parent_link_id)}; not counted again.</p>` : ''}
     ${lobbyBlock(l)}
     ${chargeBlock(l)}
     ${l.descriptions && Object.keys(l.descriptions).length > 1 ? Object.entries(l.descriptions).map(([k, v]) => `<p>${layerChip(k)} ${esc(v)}</p>`).join('') : l.description ? `<p>${esc(l.description)}</p>` : ''}
@@ -2855,7 +2864,7 @@ function renderLink(l) {
 // Deduped by id (guide entries win). Display only: nothing here is added to money totals. Attendees are listed per person, never grouped.
 const TL_MEM_CAP = 3;
 const roleOf = (m, l) => { if (!l) return 'network member'; const t = LT(l.type); const r = l.from === m ? t.label : (t.inverse || t.label); return l.event_id && l.to !== l.event_id && l.from !== l.event_id ? `money tied to it (${r} ${name(l.from === m ? l.to : l.from)})` : r; };
-const memRole = (m, lid) => { const me = ENT.get(m); const l = lid && LNK.get(lid); return `<span class="tl-mem" data-tl-mem="${esc(m)}">${entBtn(m)} <span class="muted small">${esc(roleOf(m, l))}${me && me.role ? ' · ' + esc(me.role) : ''}</span>${l ? ` <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>` : ''}</span>`; };
+const memRole = (m, lid) => { const me = ENT.get(m); const l = lid && LNK.get(lid); return `<span class="tl-mem" data-tl-mem="${esc(m)}">${entBtn(m)} <span class="muted small">${esc(roleOf(m, l))}${me && me.role ? ' · ' + esc(me.role) : ''}</span>${l ? ` ${claimBtn(l.id)}` : ''}</span>`; };
 function tlMembers(m) {
   const ms = m.filter(x => x[0]); if (!ms.length) return '';
   const head = ms.slice(0, TL_MEM_CAP).map(x => memRole(x[0], x[1])).join(' · '), rest = ms.slice(TL_MEM_CAP);
@@ -2875,9 +2884,9 @@ function netTimelineItems(n) {
 function tlItem(x) {
   if (x.lead) { const L = x.lead; return `<li class="sl-item sl-lead" data-sl="${esc(x.k)}" data-sl-from="lead"><span class="tl-d">${esc(x.d || 'undated')}</span> <span class="kindtag" data-tl-kind>${esc(LEAD_NOTE)}</span> <button type="button" class="linkish" data-lead="${esc(L.id)}">${esc(L.title)}</button>${leadDetailHtml(L)}</li>`; }
   if (x.g) { const g = x.g; const e = g.entity_id && ENT.get(g.entity_id); const stop = e && isStoppedEv(e); const mark = e && e.type === 'event' ? `<span class="sl-star${stop ? ' hollow' : ''}" aria-hidden="true">${stop ? '☆' : '★'}</span>` : '<span class="sl-dot" aria-hidden="true">•</span>';
-    const btn = g.link_id && LNK.has(g.link_id) ? `<button type="button" class="linkish" data-link="${esc(g.link_id)}">${esc(g.text)}</button>` : `<button type="button" class="linkish" data-node="${esc(g.entity_id)}">${esc(g.text)}</button>`;
+    const btn = hasClaim(g.link_id) ? claimBtn(g.link_id, esc(g.text), 'linkish') : g.entity_id && ENT.has(g.entity_id) ? `<button type="button" class="linkish" data-node="${esc(g.entity_id)}">${esc(g.text)}</button>` : `<span>${esc(g.text)}</span>`;
     return `<li class="sl-item${stop ? ' sl-stopped' : ''}" data-sl="${esc(x.k)}" data-sl-from="guide"><span class="tl-d">${esc(g.date || 'undated')}</span> ${mark} ${btn}${e && (stop || isUpcomingEv(e)) ? ' ' + evStatusBadge(e) : ''}</li>`; }
-  if (x.l) { const l = x.l; return `<li class="sl-item" data-sl="${esc(l.id)}" data-sl-from="link"><span class="tl-d">${esc(l.date || l.date_range.start || '')}</span> <span class="sl-dot" aria-hidden="true">•</span> <button type="button" class="linkish" data-link="${esc(l.id)}">${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}</button>${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''} ${lbadge(l)}</li>`; }
+  if (x.l) { const l = x.l; return `<li class="sl-item" data-sl="${esc(l.id)}" data-sl-from="link"><span class="tl-d">${esc(l.date || l.date_range.start || '')}</span> <span class="sl-dot" aria-hidden="true">•</span> ${claimBtn(l.id, `${esc(name(l.from))} <span class="verb">${esc(LT(l.type).label)}</span> ${esc(name(l.to))}`, 'linkish')}${l.amount_cad ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span>` : ''} ${lbadge(l)}</li>`; }
   const it = x.t;
   if (it.k === 'c') { const l = LNK.get(it.id); return `<li class="sl-item sl-charge" data-sl="${esc(l.id)}" data-sl-from="derived"><span class="tl-d">${esc(it.d)}</span> <span class="kindtag" data-tl-kind>Charge record</span><ul class="legal-recs">${chargeRow(l)}</ul></li>`; }
   const e = ENT.get(it.id); const ev = e.type === 'event'; const stop = ev && isStoppedEv(e);
@@ -2932,14 +2941,18 @@ function renderPanel() {
   else if (S.ov != null && ovAt(S.ov)) { kicker = 'Overlap'; html = renderOverlap(ovAt(S.ov)); }
   else if (S.lead && LEAD.has(S.lead)) { kicker = 'Pattern lead'; html = leadCard(LEAD.get(S.lead), true); }
   else html = renderOverview();
-  $('#panel-kicker').textContent = kicker; body.innerHTML = html;
+  $('#panel-kicker').textContent = kicker;
+  const tb = TOUR_BACK && (S.node || S.link) && typeof tourById === 'function' ? tourById(TOUR_BACK.id) : null;
+  body.innerHTML = (tb ? `<p class="tour-back"><button type="button" class="btn sm" data-tour-resume>← Back to the tour: step ${TOUR_BACK.step + 1} of ${tb.steps.length}</button></p>` : '') + html;
   const sel = !!(S.node || S.link || S.net || S.ov != null || S.lead);
   document.body.classList.toggle('panel-open', sel);
   $('#btn-close').hidden = !sel; $('#btn-copy').hidden = !sel; $('#btn-print').hidden = !sel;
   if (typeof scrollMemAfterPanel === 'function') scrollMemAfterPanel();
+  if (typeof claimLandPanel === 'function') claimLandPanel();
 }
 $('#panel').addEventListener('click', e => {
-  const t = e.target.closest('[data-node],[data-link],[data-net],[data-expand],[data-focus],[data-follow],[data-path-from],[data-ov],[data-view-go],[data-lead],[data-tour-go],[data-connect],[data-net-tl]'); if (!t) return;
+  const t = e.target.closest('[data-node],[data-link],[data-net],[data-expand],[data-focus],[data-follow],[data-path-from],[data-ov],[data-view-go],[data-lead],[data-tour-go],[data-connect],[data-net-tl],[data-tour-resume]'); if (!t) return;
+  if (t.dataset.tourResume != null) return resumeTour();
   if (t.dataset.netTl) return openNetTimeline(t.dataset.netTl);
   if (t.dataset.lead) return openLead(t.dataset.lead);
   if (t.dataset.tourGo) return startTour(t.dataset.tourGo, 0);
@@ -3000,7 +3013,7 @@ function nextSteps(e) {
   }
   if (!steps.length && !fitsOf(e.id).length) return '';
   const btn = st => st.entity_id && ENT.has(st.entity_id) ? `<button type="button" class="linkish" data-node="${esc(st.entity_id)}">${esc(st.label)}</button>`
-    : st.link_id && LNK.has(st.link_id) ? `<button type="button" class="linkish" data-link="${esc(st.link_id)}">${esc(st.label)}</button>`
+    : st.link_id && LNK.has(st.link_id) ? `${claimBtn(st.link_id, `${esc(st.label)}`, 'linkish')}`
     : st.tour_id ? `<button type="button" class="linkish" data-tour-go="${esc(st.tour_id)}">${esc(st.label)}</button>`
     : st.network && NET.has(st.network) ? `<button type="button" class="linkish" data-net-tl="${esc(st.network)}">${esc(st.label)}</button>`
     : st.thy_switch && ENT.has(st.thy_switch) ? `<button type="button" class="linkish" data-thy-switch="${esc(st.thy_switch)}">${esc(st.label)}</button>`
@@ -3084,7 +3097,7 @@ function lobbyingFor(e) {
       ${tg.size ? `<div class="small"><span class="lbl">Lobbied on</span> ${[...tg.values()].map(t => partyHtml(t) + (t.first_mentioned ? ` <span class="muted small tfm">Target first named in registry ${esc(t.first_mentioned)}</span>` : '')).join(' · ')}</div>` : ''}
       ${inst.length ? `<div class="small"><span class="lbl">Lobbied</span> ${inst.map(entBtn).join(' · ')}</div>` : ''}
       ${cm.length ? `<div class="small muted">${cm.length} communication${cm.length === 1 ? '' : 's'}${commRange(cm)}</div>` : ''}
-      <div class="small">${g.map(l => `<button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button>`).join(' ')} ${[...regs].map((u, i) => regLink(u, regs.size > 1 ? `Registry record ${i + 1}` : 'Registry record')).join(' ')}</div></div>`;
+      <div class="small">${g.map(l => `${claimBtn(l.id)}`).join(' ')} ${[...regs].map((u, i) => regLink(u, regs.size > 1 ? `Registry record ${i + 1}` : 'Registry record')).join(' ')}</div></div>`;
   }).join('');
   const nSubj = keys.filter(Boolean).length;
   return panelSection('Lobbying for', subjDisclosure(`<div data-guide="lobbying-for">${body}</div>`, nSubj), true, nSubj || undefined);
@@ -3094,8 +3107,8 @@ const chainsOf = id => CHAINS.filter(c => c.lobby === id || c.client === id || c
 function chainRow(c) {
   const m = LNK.get(c.money_link), L = LNK.get(c.lobby_link); if (!m || !L) return '';
   return `<li class="chain"><ol class="chain-steps">
-    <li>${entBtn(c.lobby)} <span class="verb">${esc(LT(L.type).label)}</span> ${entBtn(c.target)} <span class="muted small">${c.target_first_mentioned ? `Target first named in registry ${esc(c.target_first_mentioned)}` : `first communication ${esc(c.first_communication)}`}</span> <button type="button" class="linkish small" data-link="${esc(L.id)}">claim</button></li>
-    <li>${c.via ? `${entBtn(c.via)} <span class="muted small">(linked to ${esc(name(c.target))})</span>` : entBtn(c.target)} <span class="verb">${esc(LT(m.type).label)}</span> ${entBtn(c.recipient)}${m.amount_cad > 0 ? ` <span class="amt">${fmtCAD(m.amount_cad)}</span>` : ''} <span class="muted small">${esc(m.date)} · ${c.gap_days} days later</span> <button type="button" class="linkish small" data-link="${esc(m.id)}">claim</button></li></ol></li>`;
+    <li>${entBtn(c.lobby)} <span class="verb">${esc(LT(L.type).label)}</span> ${entBtn(c.target)} <span class="muted small">${c.target_first_mentioned ? `Target first named in registry ${esc(c.target_first_mentioned)}` : `first communication ${esc(c.first_communication)}`}</span> ${claimBtn(L.id)}</li>
+    <li>${c.via ? `${entBtn(c.via)} <span class="muted small">(linked to ${esc(name(c.target))})</span>` : entBtn(c.target)} <span class="verb">${esc(LT(m.type).label)}</span> ${entBtn(c.recipient)}${m.amount_cad > 0 ? ` <span class="amt">${fmtCAD(m.amount_cad)}</span>` : ''} <span class="muted small">${esc(m.date)} · ${c.gap_days} days later</span> ${claimBtn(m.id)}</li></ol></li>`;
 }
 function chainSection(list, opts = {}) {
   if (!list.length) return '';
@@ -3151,7 +3164,7 @@ function hopRow(h, i) {
   const s = firstSrc(l);
   const kind = h.kind === 'corporate' ? '<span class="hop-kind corp" title="Corporate connector: not a payment">corporate connector</span>' : h.kind === 'documented' ? '<span class="hop-kind doc" title="This step cites the upstream award it came from (parent_link_id)">documented pass-through</span>' : h.kind === 'possible' ? '<span class="hop-kind poss" title="Later-dated money leaving the intermediary; not shown to be the same dollars">possible next step</span>' : '<span class="hop-kind">money</span>';
   const pct = l.ownership_pct != null ? ` <span class="muted small">${esc(l.ownership_pct)}%</span>` : '';
-  return `<li data-hop="${i}">${kind} ${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)}${pct}${l.amount_cad > 0 && h.kind !== 'corporate' ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} <span class="muted small">${esc(l.date || 'undated')}</span> ${lbadge(l)}${s ? ` <ul class="src-cite small">${srcLink(s)}</ul>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button></li>`;
+  return `<li data-hop="${i}">${kind} ${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)}${pct}${l.amount_cad > 0 && h.kind !== 'corporate' ? ` <span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} <span class="muted small">${esc(l.date || 'undated')}</span> ${lbadge(l)}${s ? ` <ul class="src-cite small">${srcLink(s)}</ul>` : ''} ${claimBtn(l.id)}</li>`;
 }
 function mchainRow(c) {
   return `<li class="mchain ${esc(c.kind)}" data-mchain="${esc(c.id)}"><p class="small ${c.kind === 'possible' ? 'possible-note' : 'doc-note'}"><strong>${c.kind === 'possible' ? 'Possible path' : 'Documented pass-through'}</strong> · ${c.hops.length} hops · ${esc(c.kind === 'possible' ? MI.possible_note || '' : MI.documented_note || '')}</p><ol class="hops">${c.hops.map(hopRow).join('')}</ol></li>`;
@@ -3175,7 +3188,7 @@ function corporateFamily(e) {
     else if (l.type === 'affiliated_with') rows.affiliates.push([l, l.from === e.id ? l.to : l.from]);
   }
   const n = Object.values(rows).reduce((s, r) => s + r.length, 0); if (!n) return '';
-  const li = ([l, other]) => { const s = firstSrc(l); return `<li>${entBtn(other)}${l.ownership_pct != null ? ` <span class="amt" title="ownership share">${esc(l.ownership_pct)}%</span>` : ''} ${lbadge(l)} ${s ? `<ul class="src-cite small">${srcLink(s)}</ul>` : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button></li>`; };
+  const li = ([l, other]) => { const s = firstSrc(l); return `<li>${entBtn(other)}${l.ownership_pct != null ? ` <span class="amt" title="ownership share">${esc(l.ownership_pct)}%</span>` : ''} ${lbadge(l)} ${s ? `<ul class="src-cite small">${srcLink(s)}</ul>` : ''} ${claimBtn(l.id)}</li>`; };
   const grp = (t, r) => r.length ? `<h4 class="small">${t} <span class="muted">${r.length}</span></h4><ul class="corp-list">${r.map(li).join('')}</ul>` : '';
   return `<section class="corp-family" data-guide="corporate-family"><h3 class="lbl">Corporate family</h3>${grp('Parent companies', rows.parents)}${grp('Subsidiaries', rows.subs)}${grp('Owned by', rows.owners)}${grp('Owns', rows.holdings)}${grp('Affiliates', rows.affiliates)}<p class="small muted">Corporate links are relationships, not payments; they are never counted in money totals.</p></section>`;
 }
@@ -3243,7 +3256,7 @@ function leadCard(L, inPanel) {
     ${L.summary ? `<p class="small">${esc(L.summary)}</p>` : ''}
     <div class="lc-ents">${L.entities.filter(id => ENT.has(id)).map(entBtn).join(' · ')}</div>
     <div class="lc-meta small">${tm.mode === 'gap' && L.window?.start ? `<span>Window ${esc(L.window.start)}${L.window.end && L.window.end !== L.window.start ? ' → ' + esc(L.window.end) : ''}</span> · ` : ''}<span class="lc-gap" data-timing="${esc(tm.mode)}">${esc(tm.text)}</span>${L.amount_cad > 0 ? ` · <span class="amt">${fmtCAD(L.amount_cad)}</span>` : ''}${(L.provinces || []).length ? ` · ${esc(L.provinces.join(', '))}` : ''}</div>
-    <ol class="lc-tl">${steps.map(l => `<li><span class="tl-date">${esc(l.date || 'undated')}</span> ${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button><details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`).join('')}</ol>
+    <ol class="lc-tl">${steps.map(l => `<li><span class="tl-date">${esc(l.date || 'undated')}</span> ${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} ${claimBtn(l.id)}<details class="c-src"><summary>${l.sources.length} source${l.sources.length === 1 ? '' : 's'}</summary>${srcList(l.sources)}</details></li>`).join('')}</ol>
     ${L.sources && L.sources.length ? `<details class="c-src"><summary>Lead sources (${L.sources.length})</summary>${srcList(L.sources)}</details>` : ''}
     <div class="nc-act">${inPanel ? '' : `<button type="button" class="btn sm" data-lead="${esc(L.id)}">Show on map</button>`} <span class="muted small">lead id <code>${esc(L.id)}</code></span></div>
   </article>`;
@@ -3285,7 +3298,7 @@ function renderNetworks() {
   $('#n-list').innerHTML = cur.length ? cur.map(n => netCard(n)).join('') : '<p class="muted pad">No curated networks in this data.</p>';
   $('#n-clusters').innerHTML = auto.slice(0, 60).map(n => netCard(n)).join('') || '<p class="muted pad">None.</p>';
 }
-$('#view-networks').addEventListener('click', e => { const t = e.target.closest('[data-net],[data-node],[data-link]'); if (!t) return; if (t.dataset.net) { selectNet(t.dataset.net); setView('map'); setTimeout(focusSelection, 40); } else if (t.dataset.node) select({ node: t.dataset.node }); });
+$('#view-networks').addEventListener('click', e => { const t = e.target.closest('[data-net],[data-node],[data-link]'); if (!t) return; if (t.dataset.net) { selectNet(t.dataset.net); setView('map'); setTimeout(focusSelection, 40); } else if (t.dataset.node) select({ node: t.dataset.node }); else if (t.dataset.link) select({ link: t.dataset.link }); });
 
 // ---- 68-theories.js
 /* v1.11 per-node theory switch + global Theories (unverified) toggle.
@@ -4093,6 +4106,7 @@ function tourHighlight() {
   return { entities: (st.entity_ids || []).filter(id => ENT.has(id)), links: (st.link_ids || []).filter(id => LNK.has(id)), neighbours: st.focus === 'neighbours' };
 }
 function startTour(id, step = 0) {
+  TOUR_BACK = null;
   if (!EXTRA.loaded.guide) { loadExtra('guide').then(() => startTour(id, step)); return; }
   const t = tourById(id); if (!t || !t.steps.length) { toast('Tour not found'); return; }
   closeWalk(true);
@@ -4132,13 +4146,13 @@ function renderTourCard() {
     <h2 id="tc-title">${esc(st.title || 'Step ' + (S.step + 1))}</h2>${st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`}
     ${tourLeadHtml(st)}
     ${ents.length ? `<div class="small">${ents.map(entBtn).join(' · ')}</div>` : ''}
-    ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); const src = S.step > 0 ? ` ${lbadge(l)} ${layerChips(l)}` : ''; return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)}${src} <button type="button" class="linkish small" data-link="${esc(id)}">claim</button></li>`; }).join('')}</ul>` : ''}
+    ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); const src = S.step > 0 ? ` ${lbadge(l)} ${layerChips(l)}` : ''; return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)}${src} ${claimBtn(id)}</li>`; }).join('')}</ul>` : ''}
     <div class="tc-nav"><button type="button" class="btn sm" data-tour-prev ${S.step === 0 ? 'disabled' : ''}>← Back</button><span class="muted small" aria-live="polite">Step ${S.step + 1} of ${n}</span>${S.step < n - 1 ? '<button type="button" class="btn sm accent" data-tour-next>Next →</button>' : '<button type="button" class="btn sm accent" data-tour-exit>Finish</button>'}</div>`;
-  c.hidden = false; document.body.classList.add('touring');
+  c.dataset.key = S.tour + ':' + S.step; c.hidden = false; document.body.classList.add('touring');
   if (typeof scrollMemEnter === 'function') { scrollMemBind(c); scrollMemEnter(c, scrollMemKey('tour', t.id + ':' + S.step)); }
 }
 function tourGo(d) { const t = tourById(S.tour); if (!t) return; const j = S.step + d; if (j < 0 || j >= t.steps.length) return; S.step = j; applyTourStep(true); }
-function exitTour() { if (typeof scrollMemLeave === 'function') scrollMemLeave($('#tour-card'), scrollMemKey('tour', (S.tour || '') + ':' + S.step)); S.tour = null; S.step = 0; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); update(true); }
+function exitTour() { TOUR_BACK = null; if (typeof scrollMemLeave === 'function') scrollMemLeave($('#tour-card'), scrollMemKey('tour', (S.tour || '') + ':' + S.step)); S.tour = null; S.step = 0; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); update(true); }
 $('#tour-card').addEventListener('click', e => {
   if (e.target.closest('[data-tour-next]')) return tourGo(1);
   if (e.target.closest('[data-tour-prev]')) return tourGo(-1);
@@ -4308,7 +4322,7 @@ function ensureFirstVisitNoticingStep(steps) {
 }
 function normalizeWalkthrough(w) { return !w || !Array.isArray(w.steps) ? w : { ...w, steps: ensureFirstVisitNoticingStep(ensureFirstVisitLayoutSteps(ensureFirstVisitSearchHelp(w.steps.map(s => isSearchHelpStep(s) ? searchHelpWalkStep(s) : s)))) }; }
 function walkSteps() { const raw = GUIDE.walkthrough && GUIDE.walkthrough.steps && GUIDE.walkthrough.steps.length ? GUIDE.walkthrough : BUILTIN_WALK; return normalizeWalkthrough(raw); }
-function openWalk(i = 0) { if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
+function openWalk(i = 0) { TOUR_BACK = null; if (S.tour) exitTour(); WALK = walkSteps(); walkI = i; $('#wt').hidden = false; document.body.classList.add('walking'); renderWalk(); }
 function closeWalk(silent) { if ($('#wt').hidden) return; if (typeof scrollMemLeave === 'function') scrollMemLeave($('#wt-card'), scrollMemKey('howto', walkI)); $('#wt').hidden = true; document.body.classList.remove('walking'); clearSpot(); try { localStorage.setItem(WALK_KEY, '1'); } catch { } if (!silent) ($('#btn-howto') || $('#btn-help'))?.focus(); }
 function renderWalk() {
   const st = WALK.steps[walkI]; const n = WALK.steps.length;
@@ -4371,7 +4385,7 @@ function renderConnect() {
   if (S.mvia) { const MP = moneyPaths(S.pa, S.pb, F.links, 3); out.innerHTML = (MP.length ? `<p><button type="button" class="btn sm" id="cf-map">Show on map</button></p>` : '') + moneyPathsHtml(MP, S.pa, S.pb); return; }
   const P = shortestPaths(S.pa, S.pb, F.links, 3);
   if (!P.length) { const all = shortestPaths(S.pa, S.pb, D.links, 1); out.innerHTML = `<p class="muted">No chain of links connects <b>${esc(name(S.pa))}</b> and <b>${esc(name(S.pb))}</b> with the current filters.${all.length ? ` A ${all[0].links.length}-step chain exists with all filters off. <button class="linkish" data-reset>Reset filters</button>` : ' They are not connected in the data.'}</p>`; return; }
-  out.innerHTML = `<p><b>${P[0].links.length} step${P[0].links.length > 1 ? 's' : ''}</b> · ${P.length} path${P.length > 1 ? 's' : ''} shown <button type="button" class="btn sm" id="cf-map">Show on map</button></p>` + P.map((p, i) => `<h3 class="lbl">Path ${i + 1}</h3><ol class="path" aria-label="Path ${i + 1}">${p.links.map((lid, j) => { const l = LNK.get(lid); const a = p.nodes[j], b = p.nodes[j + 1]; const fwd = l.from === a; return `<li>${entBtn(a)} <span class="verb">${esc(fwd ? LT(l.type).label : LT(l.type).inverse)}</span> ${entBtn(b)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(lid)}">claim</button></li>`; }).join('')}</ol>`).join('');
+  out.innerHTML = `<p><b>${P[0].links.length} step${P[0].links.length > 1 ? 's' : ''}</b> · ${P.length} path${P.length > 1 ? 's' : ''} shown <button type="button" class="btn sm" id="cf-map">Show on map</button></p>` + P.map((p, i) => `<h3 class="lbl">Path ${i + 1}</h3><ol class="path" aria-label="Path ${i + 1}">${p.links.map((lid, j) => { const l = LNK.get(lid); const a = p.nodes[j], b = p.nodes[j + 1]; const fwd = l.from === a; return `<li>${entBtn(a)} <span class="verb">${esc(fwd ? LT(l.type).label : LT(l.type).inverse)}</span> ${entBtn(b)} ${l.amount_cad > 0 ? `<span class="amt">${fmtCAD(l.amount_cad)}</span> ${estTag(l)}` : ''} ${lbadge(l)} ${layerChips(l)} ${claimBtn(lid)}</li>`; }).join('')}</ol>`).join('');
   } finally { if (typeof scrollMemEnter === 'function') { const c = $('#connect'); scrollMemBind(c); scrollMemEnter(c, scrollMemKey('connect', (S.pa || '') + ':' + (S.pb || ''))); } }
 }
 const cfSet = (which, v) => { const id = findEnt(v); if (v && !id) { toast('No entity matches “' + v + '”'); return; } S[which] = id; update(); };
@@ -5288,7 +5302,7 @@ const NOTES = (() => {
     const sum = (arr, dir) => arr.filter(l => (dir === 'in' ? l.to : l.from) === e.id).reduce((s, l) => s + l.amount_cad, 0);
     const money = flows.length || ests.length ? `<div class="nchip-money"><span><span class="muted">Money in</span> <b class="amt">${fmtCAD(sum(flows, 'in')) || '$0'}</b></span> <span><span class="muted">Money out</span> <b class="amt">${fmtCAD(sum(flows, 'out')) || '$0'}</b></span>${ests.length ? ` <span class="small"><span class="est">Estimate</span> ${fmtCAD(sum(ests, 'in') + sum(ests, 'out'))} not counted</span>` : ''}</div>` : '';
     const norm = e.norm_flag || ls.some(l => l.norm_flag);
-    const conn = top.map(l => { const out = l.from === e.id, o = out ? l.to : l.from; return `<li><span class="verb">${esc(out ? LT(l.type).label : LT(l.type).inverse)}</span> <button type="button" class="linkish ent" data-node="${esc(o)}">${esc(name(o))}</button> ${l.status ? lbadge(l) : ''}${l.amount_cad > 0 ? ` <b class="amt">${esc(fmtCAD(l.amount_cad))}</b>${isEst(l) ? ' <span class="est">Estimate</span>' : ''}` : ''}${l.norm_flag ? ' ' + normFlagBadge(l) : ''} <button type="button" class="linkish small" data-link="${esc(l.id)}">claim</button></li>`; }).join('');
+    const conn = top.map(l => { const out = l.from === e.id, o = out ? l.to : l.from; return `<li><span class="verb">${esc(out ? LT(l.type).label : LT(l.type).inverse)}</span> <button type="button" class="linkish ent" data-node="${esc(o)}">${esc(name(o))}</button> ${l.status ? lbadge(l) : ''}${l.amount_cad > 0 ? ` <b class="amt">${esc(fmtCAD(l.amount_cad))}</b>${isEst(l) ? ' <span class="est">Estimate</span>' : ''}` : ''}${l.norm_flag ? ' ' + normFlagBadge(l) : ''} ${claimBtn(l.id)}</li>`; }).join('');
     const srcs = (e.sources || []).slice(0, 5).map(s => { const u = safeUrl(s.url); const t = esc(s.title || s.registry || s.publisher || 'source'); return `<li>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${t}</a>` : t}${s.publisher && s.publisher !== s.title ? ` <span class="muted">(${esc(s.publisher)})</span>` : ''}${s.kind === 'official_website' ? ' <span class="muted">organization’s own claim</span>' : ''}${typeof isPaywalled === 'function' && isPaywalled(s) ? ' <span class="muted">paywalled</span>' : ''}</li>`; }).join('');
     const summary = e.summary || (e.summaries && Object.values(e.summaries)[0]) || '';
     card.innerHTML = `<div class="nchip-type">${typeChip(e.type)}${e.province ? ` <span class="muted">${esc(e.province)}</span>` : ''} ${e.status ? lbadge(e) : '<span class="muted small">Claim status: see each link</span>'}${norm ? ' ' + (e.norm_flag ? normFlagBadge(e) : '<span class="norm-flag" data-norm-flag>Outside the norm</span>') : ''}</div>
@@ -5416,14 +5430,60 @@ function setView(v, push = true) {
   update(push);
 }
 function select(sel, push = true) {
+  // a claim that does not exist is never opened (no blank panel, no reset): say so and stay where you are
+  if (sel.link && !LNK.has(sel.link)) { toast('That claim is not in this map'); return; }
+  // opening a node or claim from a tour card pauses the tour; its step is remembered so closing the panel (or the
+  // "Back to the tour" button) returns to that same step, never to the beginning
+  if (S.tour && (sel.node || sel.link)) TOUR_BACK = { id: S.tour, step: S.step };
+  document.querySelectorAll('.claim-hl').forEach(x => x.classList.remove('claim-hl'));
   S.node = sel.node || null; S.link = sel.link || null; S.net = sel.net || null; S.ov = sel.ov != null ? sel.ov : null; S.lead = sel.lead || null;
+  CLAIM_LAND = S.link;
   if (S.tour && (S.node || S.link)) { if (typeof scrollMemLeave === 'function') scrollMemLeave($('#tour-card'), scrollMemKey('tour', S.tour + ':' + S.step)); S.tour = null; $('#tour-card').hidden = true; document.body.classList.remove('touring'); clearSpot(); }
   if (S.node) kbd = S.node;
   update(push);
   if (S.node || S.link || S.ov != null) { setTimeout(focusSelection, 30); const e = S.node ? name(S.node) : S.link ? 'claim' : 'overlap'; announce(`Opened ${e}`); }
   if (window.innerWidth <= 900 && (S.node || S.link || S.ov != null)) document.body.classList.add('panel-open');
+  if (S.link) landOnClaim(S.link);
+}
+// ---- landing on a claim: the details open at the top, the claim is highlighted in the panel and, when the view lists
+// or draws it, scrolled into view and highlighted there too (the map reveals the edge itself via focusSelection)
+let CLAIM_LAND = null, TOUR_BACK = null;
+// a claim opens at the top the first time; one the reader scrolled and left keeps its remembered place (scroll-memory rule)
+const claimRemembered = id => typeof scrollMemGet === 'function' && typeof scrollMemKey === 'function' && (scrollMemGet(scrollMemKey('claim', id)) || 0) > 0;
+function landOnClaim(id) {
+  const apply = () => {
+    if (S.link !== id) return;
+    const pb = $('#panel-body'), pn = $('#panel');
+    if (!claimRemembered(id)) { if (pb) pb.scrollTop = 0; if (pn) pn.scrollTop = 0; }
+    pb && pb.querySelectorAll('.claim-box, .thy-warn').forEach(x => x.classList.add('claim-hl'));
+    if (S.view !== 'map') {
+      const host = $('#view-' + S.view);
+      const src = host && [...host.querySelectorAll('[data-link]')].find(x => x.dataset.link === id);
+      if (src) { src.classList.add('claim-hl'); try { src.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch { } }
+    }
+  };
+  setTimeout(apply, 40); setTimeout(apply, 450);
+}
+// called by renderPanel once the claim has really been drawn (the details may load after the click)
+function claimLandPanel() {
+  if (!S.link || CLAIM_LAND !== S.link) return;
+  const pb = $('#panel-body'); if (!pb || !pb.querySelector('.claim-box, .thy-warn')) return;
+  const keep = claimRemembered(S.link); CLAIM_LAND = null; if (!keep) { pb.scrollTop = 0; $('#panel').scrollTop = 0; }
+  pb.querySelectorAll('.claim-box, .thy-warn').forEach(x => x.classList.add('claim-hl'));
+}
+function resumeTour() {
+  const b = TOUR_BACK; TOUR_BACK = null;
+  if (!b || !tourById(b.id)) return false;
+  S.tour = b.id; S.step = b.step; applyTourStep(true); return true;
 }
 function selectNet(id) { S.net = id; S.node = S.link = S.lead = null; S.ov = null; update(true); if (id) { setTimeout(focusSelection, 30); announce(`Highlighting ${NET.get(id).name}`); } }
+// the tour card always shows what the state says: Back/Forward and hash edits can change the tour or step under it
+function syncTourCard() {
+  const c = $('#tour-card');
+  if (!S.tour) { if (!c.hidden) { c.hidden = true; document.body.classList.remove('touring'); if (typeof clearSpot === 'function') clearSpot(); } return; }
+  if (!EXTRA.loaded.guide) return;
+  if (c.hidden || c.dataset.key !== S.tour + ':' + S.step) renderTourCard();
+}
 let updating = false;
 function update(push) {
   if (updating) return; updating = true;
@@ -5444,15 +5504,15 @@ function update(push) {
     if (S.view === 'overlaps' && cy) highlightSelection();
     renderPanel(); renderConnect();
     if (typeof solAfterUpdate === 'function') solAfterUpdate();
-    if (S.tour && $('#tour-card').hidden && EXTRA.loaded.guide) renderTourCard();
+    syncTourCard();
     if (typeof scrollMemAfterViewRender === 'function') scrollMemAfterViewRender(S.view);
     commit(push);
   } finally { updating = false; }
 }
 // tabs (roving tabindex + arrows)
-$$('.tabs [role=tab]').forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
+$$('.tabs [role=tab]').forEach(t => t.addEventListener('click', () => { TOUR_BACK = null; setView(t.dataset.view); }));
 $('.tabs').addEventListener('keydown', e => { const tabs = $$('.tabs [role=tab]'); const i = tabs.indexOf(document.activeElement); if (i < 0) return; let j = null; if (e.key === 'ArrowRight') j = (i + 1) % tabs.length; else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = tabs.length - 1; if (j == null) return; e.preventDefault(); tabs[j].focus(); setView(tabs[j].dataset.view); });
-$('#btn-close').addEventListener('click', () => { select({}); document.body.classList.remove('panel-open', 'panel-full'); });
+$('#btn-close').addEventListener('click', () => { select({}); document.body.classList.remove('panel-open', 'panel-full'); resumeTour(); });
 $('#btn-copy').addEventListener('click', async () => { const url = location.href; try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch { openDialog('Copy link', `<textarea readonly rows="3" class="code">${esc(url)}</textarea>`); } });
 $('#btn-print').addEventListener('click', () => window.print());
 $('#panel-grip').addEventListener('click', () => { const full = document.body.classList.toggle('panel-full'); $('#panel-grip').setAttribute('aria-expanded', full); });
@@ -5461,7 +5521,7 @@ document.addEventListener('keydown', e => {
   if (document.activeElement === $('#q')) return;
   if (document.body.classList.contains('sb-open')) return closeSidebarMobile();
   if (S.expand.length) { S.expand = []; prevVisibleKey = ''; return update(true); }
-  if (S.node || S.link || S.net || S.ov != null || S.lead) select({});
+  if (S.node || S.link || S.net || S.ov != null || S.lead) { select({}); resumeTour(); }
 });
 function onExtraLoaded(name) {
   if (name === 'guide') { renderGlossary(); renderLegend(); if (S.tour) { if (tourById(S.tour)) applyTourStep(false); else S.tour = null; } }
@@ -5470,8 +5530,8 @@ function onExtraLoaded(name) {
   if (!updating) update(false);
 }
 const sbText = () => { const built = new Date(D.meta.built_at); const upd = isNaN(built) ? '' : built.toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' }); return `Data last updated ${upd}${D.meta.data_updated ? ' · source files ' + String(D.meta.data_updated).slice(0, 10) : ''} · ${D.entities.length} entities · ${D.links.length} claims · ${EXTRA.loaded.sources ? D.sources.length : D.meta.counts?.sources ?? '…'} sources · ${EXTRA.loaded.overlaps ? OVS.length : '…'} overlaps`; };
-window.addEventListener('popstate', () => { fromHash(); lastHash = toHash(); $('#q').value = S.q; renderResults(); setView(S.view, false); });
-window.addEventListener('hashchange', () => { if (location.hash.slice(1) === lastHash) return; fromHash(); lastHash = toHash(); $('#q').value = S.q; renderResults(); setView(S.view, false); });
+window.addEventListener('popstate', () => { TOUR_BACK = null; fromHash(); lastHash = toHash(); $('#q').value = S.q; renderResults(); setView(S.view, false); });
+window.addEventListener('hashchange', () => { if (location.hash.slice(1) === lastHash) return; TOUR_BACK = null; fromHash(); lastHash = toHash(); $('#q').value = S.q; renderResults(); setView(S.view, false); });
 window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') cy.resize(); if (S.view === 'money') renderMoney(); if (S.view === 'timeline') renderTimeline(); }, 150));
 
 // ---- boot
@@ -5510,6 +5570,6 @@ window.addEventListener('resize', debounce(() => { if (cy && S.view === 'map') c
   if (cy) { cy.one('render', mark); requestAnimationFrame(() => requestAnimationFrame(mark)); } else mark();
 })();
 // test / debugging hook (read-only accessors)
-window.__wiretap = { scrollMem: typeof scrollMemEnter === 'function' ? { key: scrollMemKey, enter: scrollMemEnter, leave: scrollMemLeave, position: scrollMemPosition, storeKey: SM_STORE_KEY, panelKey: scrollMemPanelKey, viewKey: scrollMemViewKeyFor } : null, sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, openFvVideo, closeFvVideo, fvVideoAssets: () => FV_VIDEO_ASSETS, fvVideoSeenKey: FV_VIDEO_SEEN_KEY, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null, setTheoriesLayer: typeof setTheoriesLayer === 'function' ? setTheoriesLayer : null };
+window.__wiretap = { claimAudit: { hasClaim, hydrateAll, entity: renderEntity, link: renderLink, net: renderNet, lead: leadCard, overlap: renderOverlap, tourHtml: (id, step) => { const k = [S.tour, S.step]; S.tour = id; S.step = step; try { renderTourCard(); return $('#tour-card').innerHTML; } finally { S.tour = k[0]; S.step = k[1]; } }, nets: () => NETS, ovs: () => OVS, tourBack: () => TOUR_BACK }, scrollMem: typeof scrollMemEnter === 'function' ? { key: scrollMemKey, enter: scrollMemEnter, leave: scrollMemLeave, position: scrollMemPosition, storeKey: SM_STORE_KEY, panelKey: scrollMemPanelKey, viewKey: scrollMemViewKeyFor } : null, sol: () => window.__wiretapSol, timing: () => TIMING, extras: () => ({ ...EXTRA.loaded }), extrasReady: () => AUTO_EXTRAS.length > 0 && AUTO_EXTRAS.every(k => EXTRA.loaded[k]), lite: () => LITE, lod: () => LOD_ON, chunks: () => ({ lite: LITE, lod: LOD_ON, node_max: LOD.NODE_MAX, overview_n: LOD.OVERVIEW_N, buckets_loaded: DET.have.size, buckets_pending: DET.pending.size, shards_loaded: SH.data.size, graph_nodes: cy ? cy.nodes().length : 0, graph_edges: cy ? cy.edges().length : 0, lod_adds: LOD.adds, lod_removes: LOD.removes }), hydrated: id => isHyd(ENT.get(id) || LNK.get(id)), runSearch: q => runSearch(q), searchLoad, leads: () => LEADS, guide: () => GUIDE, startTour, openWalk, openConnect, openDisclaimer, closeDisclaimer, openFvVideo, closeFvVideo, fvVideoAssets: () => FV_VIDEO_ASSETS, fvVideoSeenKey: FV_VIDEO_SEEN_KEY, data: () => D, cy: () => cy, state: () => S, filtered: () => F, overlaps: () => OVS, paths: () => PATHS, shortestPaths, update, select, setView, theory: () => window.__wiretapTheory, setTheorySwitch: typeof setTheorySwitch === 'function' ? setTheorySwitch : null, setTheoriesLayer: typeof setTheoriesLayer === 'function' ? setTheoriesLayer : null };
 
 })();
