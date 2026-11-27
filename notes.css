@@ -22,12 +22,10 @@
   .topbar.has-notes-launch{position:relative;padding-right:124px}
   .notes-launch{position:absolute;right:16px;top:50%;transform:translateY(-50%);margin:0}
 }
-/* short nav / correction labels until the full ones fit beside the pinned button */
+/* short tab labels until the full ones fit beside the pinned + Note button */
 @media (min-width:901px) and (max-width:1699px){
-  .topbar.has-notes-launch .tabs .full,
-  .topbar.has-notes-launch .btn-corr-nav .full{display:none}
-  .topbar.has-notes-launch .tabs .short,
-  .topbar.has-notes-launch .btn-corr-nav .short{display:inline}
+  .topbar.has-notes-launch .tabs .full{display:none}
+  .topbar.has-notes-launch .tabs .short{display:inline}
 }
 .notes-layer{position:fixed;inset:0;z-index:57;pointer-events:none}
 .note-win{position:absolute;pointer-events:auto;display:flex;flex-direction:column;min-width:220px;min-height:160px;max-width:calc(100vw - 8px);max-height:calc(100vh - 8px);background:var(--bg2);border:1px solid var(--line2);border-radius:6px;box-shadow:0 10px 30px #000a;overflow:hidden}
@@ -65,7 +63,7 @@ body.notes-dragging .note-win{border-style:dashed}
 @media (max-width:900px){
   .topbar.has-notes-launch{padding-right:10px}
   .notes-launch{position:static;transform:none;order:1;margin-left:8px;padding:6px 10px;font-size:12px}
-  .corr-nav-wrap{order:1;margin-left:auto}
+  /* report label is laid out in app.css: full-width row under the first controls */
   .note-resize{width:44px;height:44px}
   .note-resize::before,.note-resize::after{right:8px;bottom:8px}
   .note-foot{padding-right:48px}

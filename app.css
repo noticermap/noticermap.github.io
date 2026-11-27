@@ -180,7 +180,7 @@ select{background:var(--bg2);border:1px solid var(--line2);color:var(--fg);font:
 .spinner{width:34px;height:34px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.tabs .short,.btn-corr-nav .short{display:none}
+.tabs .short{display:none}
 .help{font:11px/1.4 var(--sans);color:var(--fg3);margin:5px 0 0}
 .small{font-size:12px}.gold,.amt{color:var(--gold);font-family:var(--mono)}
 .linkish{background:none;border:0;padding:0;color:#ff8a8a;text-decoration:underline;text-decoration-color:#ff8a8a55;text-underline-offset:2px;font:inherit;text-align:left}
@@ -280,7 +280,7 @@ select{background:var(--bg2);border:1px solid var(--line2);color:var(--fg);font:
 .code{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line2);font:12px var(--mono);padding:6px;border-radius:4px}
 .dlg-actions{text-align:right;margin-top:10px}.keys{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}.keys dd{margin:0;color:var(--fg2)}
 kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;border-radius:3px;padding:0 4px;background:var(--bg3)}
-@media (max-width:1180px){.tabs .full,.btn-corr-nav .full{display:none}.tabs .short,.btn-corr-nav .short{display:inline}}
+@media (max-width:1180px){.tabs .full{display:none}.tabs .short{display:inline}}
 @media (max-width:900px){
   .topbar{flex-wrap:wrap;height:auto;padding:6px 10px 0}
   .tabs{order:3;width:100%;display:grid;grid-template-columns:repeat(7,1fr);margin:0;gap:0}
@@ -556,35 +556,27 @@ kbd{font:11px var(--mono);border:1px solid var(--line2);border-bottom-width:2px;
 @media (max-width:1500px){
   .topbar.has-thy-launch .tagline{display:none}
 }
-/* at 1280, drop the Noticing word and tighten the row so it does not spill into + Note.
-   Higher specificity than notes.css (loaded later) which forces .btn-corr-nav .short to display. */
+/* tighten tabs and the report wrap at 1360 so Theories stays left of + Note */
 @media (max-width:1360px){
-  .topbar.has-thy-launch.has-notes-launch .btn-corr-nav .full,
-  .topbar.has-thy-launch.has-notes-launch .btn-corr-nav .short,
-  .topbar.has-thy-launch .btn-corr-nav .full,
-  .topbar.has-thy-launch .btn-corr-nav .short{display:none}
-  .topbar.has-thy-launch .tabs button{padding-left:7px;padding-right:7px}
+  .topbar.has-thy-launch .tabs button{padding-left:6px;padding-right:6px}
+  .topbar.has-thy-launch .corr-nav-wrap{flex-basis:7.5rem;max-width:7.5rem}
 }
 @media (min-width:901px) and (max-width:1360px){
   .topbar.has-thy-launch{gap:12px}
 }
 @media (max-width:900px){
   /* full word "Theories" at every width; tighter so it fits beside + Note on a phone */
-  .thy-launch{position:static;transform:none;order:1;margin:0 0 0 4px;padding:4px 7px;font-size:11px;letter-spacing:.02em}
+  .thy-launch{position:static;transform:none;order:1;margin:0 0 0 auto;padding:4px 7px;font-size:11px;letter-spacing:.02em}
 }
 @media (max-width:390px){
   .topbar.has-thy-launch{gap:8px}
-  .thy-launch{padding:4px 6px;font-size:10.5px;margin:0 0 0 2px}
+  .thy-launch{padding:4px 6px;font-size:10.5px;margin:0 0 0 auto}
 }
 @media (max-width:360px){
   /* wrap the Theories pill onto the second header row so the word stays fully spelled */
   .thy-launch{order:2;margin:0 0 0 auto}
 }
-/* already icon-only Noticing at 1360; keep the 390 row tight */
-@media (max-width:520px){
-  .topbar.has-thy-launch .btn-corr-nav .full,
-  .topbar.has-thy-launch .btn-corr-nav .short{display:none}
-}
+
 @media print{.thy-launch{display:none!important}}
 
 
@@ -620,10 +612,12 @@ body.page-404 .not-found .btn{margin-top:8px}
 .tl-tip{position:fixed;z-index:45;max-width:min(360px,90vw);padding:8px 10px;background:#0d0f12f0;border:1px solid var(--line2);border-radius:4px;font:12px/1.4 var(--mono);color:var(--fg);pointer-events:none;box-shadow:0 8px 24px #000a}
 .tl-lab{font:10px/1 var(--mono);fill:var(--fg2);pointer-events:none}
 
-.corr-nav-wrap{position:relative;flex:0 0 auto;margin-left:4px;z-index:6}
-.btn-corr-nav{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;background:none;border:0;border-bottom:2px solid transparent;padding:16px 10px 14px;font:12px var(--mono);letter-spacing:.06em;color:var(--fg2);cursor:pointer}
+.corr-nav-wrap{position:relative;flex:0 1 8.75rem;margin-left:4px;z-index:6;min-width:0;max-width:8.75rem}
+.btn-corr-nav{display:inline-flex;align-items:center;gap:6px;white-space:normal;text-align:left;background:none;border:0;border-bottom:2px solid transparent;padding:6px 8px;font:10.5px/1.25 var(--mono);letter-spacing:.02em;color:var(--fg2);cursor:pointer;max-width:100%;min-width:0}
 .btn-corr-nav:hover,.btn-corr-nav[aria-expanded=true]{color:var(--fg)}
-.btn-corr-nav .ic{font-size:13px}
+.btn-corr-nav .ic{font-size:13px;flex:0 0 auto;line-height:1}
+.btn-corr-nav .full{display:inline;white-space:normal}
+.btn-corr-nav .short{display:none}
 .corr-menu{display:inline-block;position:relative}
 .corr-menu > summary{list-style:none;cursor:pointer}
 .corr-menu > summary::-webkit-details-marker{display:none}
@@ -635,13 +629,11 @@ body.page-404 .not-found .btn{margin-top:8px}
 .corr-choice:hover{color:var(--st-reported)}
 .corr-menu-row{margin-left:6px}
 .corr-menu-row > summary.corr-link{font-size:10.5px}
-@media (max-width:520px){
-  .btn-corr-nav{padding:16px 8px 14px}
+@media (max-width:900px){
+  /* sit on the existing actions row (order 2), wrapping beside Help; first row stays brand / Theories / + Note */
+  .corr-nav-wrap{order:2;flex:1 1 10rem;margin:0 0 0 auto;max-width:100%}
+  .btn-corr-nav{max-width:100%;width:auto;padding:4px 6px;font-size:11px;letter-spacing:.02em}
   .btn-corr-nav .ic{font-size:16px}
-}
-/* icon-only when there is no room for the word "Noticing"; title/aria-label still name it */
-@media (max-width:340px){
-  .btn-corr-nav .full,.btn-corr-nav .short{display:none}
 }
 @media print{.corr-nav-wrap,.corr-menu{display:none!important}}
 

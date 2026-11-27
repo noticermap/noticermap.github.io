@@ -1,4 +1,4 @@
-/* NoticerMap — built 2026-11-26T14:55:48.579Z */
+/* NoticerMap — built 2026-11-27T03:08:34.106Z */
 (function () {
 'use strict';
 // ---- 00-core.js
@@ -4132,7 +4132,7 @@ function renderTourCard() {
     <h2 id="tc-title">${esc(st.title || 'Step ' + (S.step + 1))}</h2>${st.collapsed ? `<details class="wt-details"><summary>${esc(st.summary || st.title || 'More')}</summary><p>${esc(st.text || '')}</p></details>` : `<p>${esc(st.text || '')}</p>`}
     ${tourLeadHtml(st)}
     ${ents.length ? `<div class="small">${ents.map(entBtn).join(' · ')}</div>` : ''}
-    ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)} ${lbadge(l)} ${layerChips(l)} <button type="button" class="linkish small" data-link="${esc(id)}">claim</button></li>`; }).join('')}</ul>` : ''}
+    ${lks.length ? `<ul class="claims compact">${lks.map(id => { const l = LNK.get(id); const src = S.step > 0 ? ` ${lbadge(l)} ${layerChips(l)}` : ''; return `<li>${entBtn(l.from)} <span class="verb">${esc(LT(l.type).label)}</span> ${entBtn(l.to)}${src} <button type="button" class="linkish small" data-link="${esc(id)}">claim</button></li>`; }).join('')}</ul>` : ''}
     <div class="tc-nav"><button type="button" class="btn sm" data-tour-prev ${S.step === 0 ? 'disabled' : ''}>← Back</button><span class="muted small" aria-live="polite">Step ${S.step + 1} of ${n}</span>${S.step < n - 1 ? '<button type="button" class="btn sm accent" data-tour-next>Next →</button>' : '<button type="button" class="btn sm accent" data-tour-exit>Finish</button>'}</div>`;
   c.hidden = false; document.body.classList.add('touring');
   if (typeof scrollMemEnter === 'function') { scrollMemBind(c); scrollMemEnter(c, scrollMemKey('tour', t.id + ':' + S.step)); }
