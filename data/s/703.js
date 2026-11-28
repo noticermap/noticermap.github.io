@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(703,{"jwan":[21385,144],"jwane":[21439,148]});
+window.__wiretapShard&&window.__wiretapShard(703,{"jtf":[20500,165],"jtf2":[9793,228,30595,365],"jtrig":[6459,207,6902,207]});

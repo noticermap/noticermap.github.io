@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1338,{"✅":[29016,385,29982,605,31803,605,32293,605,32734,578,33200,605,33287,605,33563,430]});
+window.__wiretapShard&&window.__wiretapShard(1338,{"діалогу":[28015,402]});

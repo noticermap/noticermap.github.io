@@ -1,18 +1,113 @@
 {
- "generated_at": "2026-11-27T15:23:26.840Z",
+ "generated_at": "2026-11-28T03:51:09.037Z",
  "summary": {
-  "likely_duplicates": 527,
-  "likely_duplicate_links": 434,
-  "cross_layer_duplicates": 100,
-  "province_mismatches": 4,
+  "likely_duplicates": 540,
+  "likely_duplicate_links": 436,
+  "cross_layer_duplicates": 119,
+  "province_mismatches": 7,
   "entities_without_sources": 9,
   "links_without_sources": 0,
-  "amount_without_kind": 3,
+  "amount_without_kind": 11,
   "reported_money_over_1m": 9,
   "alias_merges_applied": 0,
   "link_combines_applied": 0
  },
  "likely_duplicates": [
+  {
+   "a": "ent_organization_federal_court_of_appeal",
+   "a_name": "Federal Court of Appeal",
+   "b": "ent_theory_org_federal_court_of_appeal",
+   "b_name": "Federal Court of Appeal",
+   "type": "organization",
+   "score": 1,
+   "why": "same name “Federal Court of Appeal”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "immigration"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_supreme_court_of_british_columbia",
+   "a_name": "Supreme Court of British Columbia",
+   "b": "ent_organization_supreme_court_of_canada",
+   "b_name": "Supreme Court of Canada",
+   "type": "organization",
+   "score": 1,
+   "why": "similar names “BC Supreme Court” / “Supreme Court of Canada”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "immigration"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_jean_luc_brunel",
+   "a_name": "Jean-Luc Brunel",
+   "b": "ent_theory_person_jean_luc_brunel",
+   "b_name": "Jean-Luc Brunel",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Jean-Luc Brunel”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_ghislaine_maxwell",
+   "a_name": "Ghislaine Maxwell",
+   "b": "ent_theory_person_ghislaine_maxwell",
+   "b_name": "Ghislaine Maxwell",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Ghislaine Maxwell”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "fringeviews",
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_robert_maxwell",
+   "a_name": "Robert Maxwell",
+   "b": "ent_theory_person_robert_maxwell",
+   "b_name": "Robert Maxwell",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Robert Maxwell”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "fringeviews"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
   {
    "a": "ent_company_abacus_data",
    "a_name": "Abacus Data Inc.",
@@ -214,24 +309,6 @@
    ]
   },
   {
-   "a": "ent_company_hsbc",
-   "a_name": "HSBC",
-   "b": "ent_company_hsbc_bank_canada",
-   "b_name": "HSBC Bank Canada",
-   "type": "company",
-   "score": 1,
-   "why": "similar names “HSBC Bank” / “HSBC Bank Canada”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "records"
-    ],
-    [
-     "wiretap"
-    ]
-   ]
-  },
-  {
    "a": "ent_person_ferdinand_jones",
    "a_name": "Ferdinand Jones",
    "b": "ent_person_jones_ferdinand",
@@ -246,6 +323,24 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_leon_black",
+   "a_name": "Leon Black",
+   "b": "ent_theory_person_leon_black",
+   "b_name": "Leon Black",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Leon Black”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -1085,6 +1180,24 @@
   {
    "a": "ent_company_hsbc",
    "a_name": "HSBC",
+   "b": "ent_company_hsbc_bank_canada",
+   "b_name": "HSBC Bank Canada",
+   "type": "company",
+   "score": 1,
+   "why": "similar names “HSBC Bank” / “HSBC Bank Canada”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "wiretap"
+    ]
+   ]
+  },
+  {
+   "a": "ent_company_hsbc",
+   "a_name": "HSBC",
    "b": "ent_theory_org_hsbc",
    "b_name": "HSBC",
    "type": "company/organization",
@@ -1187,6 +1300,7 @@
     ],
     [
      "wiretap",
+     "epstein",
      "fringeviews"
     ]
    ]
@@ -1221,6 +1335,7 @@
    "layers": [
     [
      "wiretap",
+     "epstein",
      "fringeviews"
     ],
     [
@@ -1402,6 +1517,7 @@
    "layers": [
     [
      "wiretap",
+     "epstein",
      "records"
     ],
     [
@@ -1740,6 +1856,26 @@
    ]
   },
   {
+   "a": "ent_person_leslie_wexner",
+   "a_name": "Leslie Wexner",
+   "b": "ent_theory_person_leslie_wexner",
+   "b_name": "Leslie Wexner",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Leslie Wexner”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "fringeviews"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_organization_shiloh_israel_children_s_fund_association_of_canada",
    "a_name": "SHILOH ISRAEL CHILDREN'S FUND: ASSOCIATION OF CANADA",
    "b": "ent_organization_shiloh_israel_children_s_fund_r_a",
@@ -1754,6 +1890,24 @@
     ],
     [
      "bloodmoney"
+    ]
+   ]
+  },
+  {
+   "a": "ent_event_academy_achievement_2002",
+   "a_name": "International Achievement Summit, Dublin (6-9 June 2002)",
+   "b": "ent_theory_org_academy_achievement_2002",
+   "b_name": "International Achievement Summit, Dublin (6-9 June 2002)",
+   "type": "event/organization",
+   "score": 1,
+   "why": "same name “International Achievement Summit, Dublin (6-9 June 2002)”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -1865,42 +2019,6 @@
     ],
     [
      "theories"
-    ]
-   ]
-  },
-  {
-   "a": "ent_organization_federal_court_of_appeal",
-   "a_name": "Federal Court of Appeal",
-   "b": "ent_theory_org_federal_court_of_appeal",
-   "b_name": "Federal Court of Appeal",
-   "type": "organization",
-   "score": 1,
-   "why": "same name “Federal Court of Appeal”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "immigration"
-    ],
-    [
-     "theories"
-    ]
-   ]
-  },
-  {
-   "a": "ent_organization_supreme_court_of_british_columbia",
-   "a_name": "Supreme Court of British Columbia",
-   "b": "ent_organization_supreme_court_of_canada",
-   "b_name": "Supreme Court of Canada",
-   "type": "organization",
-   "score": 1,
-   "why": "similar names “BC Supreme Court” / “Supreme Court of Canada”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "records"
-    ],
-    [
-     "immigration"
     ]
    ]
   },
@@ -3932,6 +4050,24 @@
    ]
   },
   {
+   "a": "ent_organization_rothschild_archive",
+   "a_name": "The Rothschild Archive (London)",
+   "b": "ent_theory_org_rothschild_archive",
+   "b_name": "The Rothschild Archive (London)",
+   "type": "organization",
+   "score": 1,
+   "why": "same name “The Rothschild Archive (London)”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_event_rfe_liberal_st_john_s_2019_05_23_56",
    "a_name": "Laurier Club Reception with the Honourable Catherine McKenna",
    "b": "ent_event_rfe_liberal_vancouver_2019_04_17_38",
@@ -4112,26 +4248,6 @@
     ],
     [
      "records"
-    ]
-   ]
-  },
-  {
-   "a": "ent_person_jeffrey_epstein",
-   "a_name": "Jeffrey Epstein",
-   "b": "ent_theory_person_jeffrey_epstein",
-   "b_name": "Jeffrey Epstein",
-   "type": "person",
-   "score": 1,
-   "why": "same name “Jeffrey Epstein”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "wiretap",
-     "fringeviews",
-     "samcooper"
-    ],
-    [
-     "theories"
     ]
    ]
   },
@@ -4424,6 +4540,24 @@
    ]
   },
   {
+   "a": "ent_person_fred_dermarkar",
+   "a_name": "Fred Dermarkar",
+   "b": "ent_theory_person_fred_dermarkar",
+   "b_name": "Fred Dermarkar",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Fred Dermarkar”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_organization_government_of_ukraine",
    "a_name": "Government of Ukraine",
    "b": "ent_theory_org_government_of_ukraine",
@@ -4654,6 +4788,25 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_larry_summers",
+   "a_name": "Larry Summers",
+   "b": "ent_theory_person_larry_summers",
+   "b_name": "Lawrence Summers",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Lawrence Summers”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -4928,60 +5081,6 @@
    ]
   },
   {
-   "a": "ent_event_rfe_liberal_brampton_2024_06_03_428",
-   "a_name": "An Evening with Marc Miller",
-   "b": "ent_event_rfe_liberal_vancouver_2024_05_13_414",
-   "b_name": "An Evening with Marc Miller",
-   "type": "event",
-   "score": 1,
-   "why": "same name “An Evening with Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_coquitlam_2024_11_12_475",
-   "a_name": "An Evening with the Hon. Marc Miller",
-   "b": "ent_event_rfe_liberal_winnipeg_2024_10_17_461",
-   "b_name": "An Evening with the Hon. Marc Miller",
-   "type": "event",
-   "score": 1,
-   "why": "same name “An Evening with the Hon. Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_person_robert_g_miller",
-   "a_name": "Robert G. Miller",
-   "b": "ent_theory_person_robert_g_miller",
-   "b_name": "Robert G. Miller",
-   "type": "person",
-   "score": 1,
-   "why": "same name “Robert G. Miller”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "records"
-    ],
-    [
-     "theories"
-    ]
-   ]
-  },
-  {
    "a": "ent_person_marco_mendicino",
    "a_name": "Marco Mendicino",
    "b": "ent_theory_person_marco_mendicino",
@@ -5053,6 +5152,43 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_nat_rothschild",
+   "a_name": "Nathaniel Rothschild (5th Baron Rothschild)",
+   "b": "ent_theory_person_nat_rothschild",
+   "b_name": "Nathaniel Rothschild (5th Baron Rothschild)",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Nathaniel Rothschild (5th Baron Rothschild)”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "rothschild"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_donald_barr",
+   "a_name": "Donald Barr",
+   "b": "ent_theory_person_donald_barr",
+   "b_name": "Donald Barr",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Donald Barr”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein",
+     "fringeviews"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -5777,7 +5913,8 @@
    "cross_layer": true,
    "layers": [
     [
-     "wiretap"
+     "wiretap",
+     "epstein"
     ],
     [
      "theories"
@@ -5795,6 +5932,7 @@
    "cross_layer": true,
    "layers": [
     [
+     "epstein",
      "records"
     ],
     [
@@ -5810,6 +5948,24 @@
    "type": "person",
    "score": 1,
    "why": "same name “Sara Bronfman”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_organization_trilateral_commission",
+   "a_name": "Trilateral Commission",
+   "b": "ent_theory_org_trilateral_commission",
+   "b_name": "Trilateral Commission",
+   "type": "organization",
+   "score": 1,
+   "why": "same name “Trilateral Commission”",
    "cross_layer": true,
    "layers": [
     [
@@ -5850,6 +6006,7 @@
    "layers": [
     [
      "wiretap",
+     "epstein",
      "fringeviews",
      "samcooper"
     ],
@@ -5873,6 +6030,45 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_jeffrey_epstein",
+   "a_name": "Jeffrey Epstein",
+   "b": "ent_theory_person_jeffrey_epstein",
+   "b_name": "Jeffrey Epstein",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Jeffrey Epstein”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "fringeviews",
+     "samcooper"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_bill_richardson",
+   "a_name": "Bill Richardson",
+   "b": "ent_theory_person_bill_richardson",
+   "b_name": "Bill Richardson",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Bill Richardson”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -5929,6 +6125,26 @@
     ],
     [
      "fringeviews"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_bill_clinton",
+   "a_name": "Bill Clinton",
+   "b": "ent_theory_person_bill_clinton",
+   "b_name": "Bill Clinton",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Bill Clinton”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "fringeviews"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -6006,19 +6222,17 @@
    ]
   },
   {
-   "a": "ent_person_ghislaine_maxwell",
-   "a_name": "Ghislaine Maxwell",
-   "b": "ent_theory_person_ghislaine_maxwell",
-   "b_name": "Ghislaine Maxwell",
+   "a": "ent_person_ab_krongard",
+   "a_name": "A.B. 'Buzzy' Krongard",
+   "b": "ent_theory_person_ab_krongard",
+   "b_name": "A.B. 'Buzzy' Krongard",
    "type": "person",
    "score": 1,
-   "why": "same name “Ghislaine Maxwell”",
+   "why": "same name “A.B. 'Buzzy' Krongard”",
    "cross_layer": true,
    "layers": [
     [
-     "wiretap",
-     "fringeviews",
-     "records"
+     "epstein"
     ],
     [
      "theories"
@@ -6037,7 +6251,27 @@
    "layers": [
     [
      "wiretap",
+     "epstein",
      "fringeviews"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_alex_acosta",
+   "a_name": "Alex Acosta",
+   "b": "ent_theory_person_alexander_acosta",
+   "b_name": "Alexander Acosta",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Alexander Acosta”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein"
     ],
     [
      "theories"
@@ -6077,6 +6311,43 @@
     ],
     [
      "records"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_ariane_de_rothschild",
+   "a_name": "Ariane de Rothschild",
+   "b": "ent_theory_person_ariane_de_rothschild",
+   "b_name": "Ariane de Rothschild",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Ariane de Rothschild”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_howard_lutnick",
+   "a_name": "Howard Lutnick",
+   "b": "ent_theory_person_howard_lutnick",
+   "b_name": "Howard Lutnick",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Howard Lutnick”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein",
+     "fringeviews"
+    ],
+    [
+     "theories"
     ]
    ]
   },
@@ -6307,11 +6578,30 @@
    "b_name": "Darren Indyke",
    "type": "person",
    "score": 1,
-   "why": "similar names “Darren K. Indyke” / “Darren Indyke”",
+   "why": "same name “Darren Indyke”",
    "cross_layer": true,
    "layers": [
     [
+     "epstein",
      "fringeviews"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_person_david_wassong",
+   "a_name": "David Wassong",
+   "b": "ent_theory_person_david_wassong",
+   "b_name": "David Wassong",
+   "type": "person",
+   "score": 1,
+   "why": "same name “David Wassong”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
     ],
     [
      "theories"
@@ -6330,6 +6620,7 @@
    "layers": [
     [
      "wiretap",
+     "epstein",
      "records"
     ],
     [
@@ -6375,6 +6666,24 @@
    ]
   },
   {
+   "a": "ent_person_glenn_dubin",
+   "a_name": "Glenn Dubin",
+   "b": "ent_theory_person_glenn_dubin",
+   "b_name": "Glenn Dubin",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Glenn Dubin”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_person_raymond_poulet",
    "a_name": "Raymond Poulet",
    "b": "ent_theory_person_raymond_poulet",
@@ -6403,6 +6712,7 @@
    "cross_layer": true,
    "layers": [
     [
+     "epstein",
      "fringeviews"
     ],
     [
@@ -6496,6 +6806,7 @@
    "cross_layer": true,
    "layers": [
     [
+     "epstein",
      "samcooper"
     ],
     [
@@ -6595,6 +6906,24 @@
    ]
   },
   {
+   "a": "ent_person_lesley_groff",
+   "a_name": "Lesley Groff",
+   "b": "ent_theory_person_lesley_groff",
+   "b_name": "Lesley Groff",
+   "type": "person",
+   "score": 1,
+   "why": "same name “Lesley Groff”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "epstein"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_person_maria_saros",
    "a_name": "Maria Saros",
    "b": "ent_person_saros_maria",
@@ -6681,6 +7010,7 @@
    "cross_layer": true,
    "layers": [
     [
+     "epstein",
      "fringeviews"
     ],
     [
@@ -7178,6 +7508,27 @@
    ]
   },
   {
+   "a": "ent_person_prince_andrew",
+   "a_name": "Prince Andrew",
+   "b": "ent_theory_person_prince_andrew_andrew_mountbatten_windsor",
+   "b_name": "Prince Andrew (Andrew Mountbatten-Windsor)",
+   "type": "person",
+   "score": 0.8,
+   "why": "similar names “Andrew Mountbatten-Windsor (formerly Prince Andrew)” / “Prince Andrew (Andrew Mountbatten-Windsor)”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "wiretap",
+     "epstein",
+     "records",
+     "samcooper"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
    "a": "ent_organization_bc_ministry_of_housing_and_municipal_affairs",
    "a_name": "Government of British Columbia – Ministry of Housing and Municipal Affairs",
    "b": "ent_organization_bc_ministry_of_municipal_affairs",
@@ -7574,78 +7925,6 @@
    ]
   },
   {
-   "a": "ent_event_rfe_liberal_brampton_2024_06_03_428",
-   "a_name": "An Evening with Marc Miller",
-   "b": "ent_event_rfe_liberal_coquitlam_2024_11_12_475",
-   "b_name": "An Evening with the Hon. Marc Miller",
-   "type": "event",
-   "score": 0.8,
-   "why": "similar names “An Evening with Marc Miller” / “An Evening with the Hon. Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_brampton_2024_06_03_428",
-   "a_name": "An Evening with Marc Miller",
-   "b": "ent_event_rfe_liberal_winnipeg_2024_10_17_461",
-   "b_name": "An Evening with the Hon. Marc Miller",
-   "type": "event",
-   "score": 0.8,
-   "why": "similar names “An Evening with Marc Miller” / “An Evening with the Hon. Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_coquitlam_2024_11_12_475",
-   "a_name": "An Evening with the Hon. Marc Miller",
-   "b": "ent_event_rfe_liberal_vancouver_2024_05_13_414",
-   "b_name": "An Evening with Marc Miller",
-   "type": "event",
-   "score": 0.8,
-   "why": "similar names “An Evening with the Hon. Marc Miller” / “An Evening with Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_liberal_vancouver_2024_05_13_414",
-   "a_name": "An Evening with Marc Miller",
-   "b": "ent_event_rfe_liberal_winnipeg_2024_10_17_461",
-   "b_name": "An Evening with the Hon. Marc Miller",
-   "type": "event",
-   "score": 0.8,
-   "why": "similar names “An Evening with Marc Miller” / “An Evening with the Hon. Marc Miller”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
    "a": "ent_organization_afn_alberta_association",
    "a_name": "Assembly of First Nations Alberta Association",
    "b": "ent_organization_afn_alberta_region",
@@ -7899,24 +8178,6 @@
    ]
   },
   {
-   "a": "ent_company_westinghouse_electric_company_llc",
-   "a_name": "Westinghouse Electric Company LLC",
-   "b": "ent_theory_org_westinghouse_electric_company",
-   "b_name": "Westinghouse Electric Company",
-   "type": "company",
-   "score": 0.75,
-   "why": "similar names “Westinghouse Electric Company LLC” / “Westinghouse Electric Company”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "records"
-    ],
-    [
-     "theories"
-    ]
-   ]
-  },
-  {
    "a": "ent_company_trigon_pacific_terminals",
    "a_name": "Trigon Pacific Terminals",
    "b": "ent_company_trigon_pacific_terminals_limited",
@@ -8050,6 +8311,42 @@
    "type": "event",
    "score": 0.75,
    "why": "similar names “Prince George-Valemount Event” / “Prince George Event”",
+   "cross_layer": false,
+   "layers": [
+    [
+     "events"
+    ],
+    [
+     "events"
+    ]
+   ]
+  },
+  {
+   "a": "ent_company_westinghouse_electric_company_llc",
+   "a_name": "Westinghouse Electric Company LLC",
+   "b": "ent_theory_org_westinghouse_electric_company",
+   "b_name": "Westinghouse Electric Company",
+   "type": "company",
+   "score": 0.75,
+   "why": "similar names “Westinghouse Electric Company LLC” / “Westinghouse Electric Company”",
+   "cross_layer": true,
+   "layers": [
+    [
+     "records"
+    ],
+    [
+     "theories"
+    ]
+   ]
+  },
+  {
+   "a": "ent_event_rfe_conservative_mississauga_2023_04_27_300",
+   "a_name": "Bring it Home fundraiser with Pierre Poilievre in support of the Conse",
+   "b": "ent_event_rfe_conservative_vaughan_2023_04_20_299",
+   "b_name": "Bring it Home Fundraiser with Pierre Poilievre",
+   "type": "event",
+   "score": 0.75,
+   "why": "similar names “Bring it Home fundraiser with Pierre Poilievre in support of the Conse” / “Bring it Home Fundraiser with Pierre Poilievre”",
    "cross_layer": false,
    "layers": [
     [
@@ -8671,42 +8968,6 @@
     ],
     [
      "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_event_rfe_conservative_mississauga_2023_04_27_300",
-   "a_name": "Bring it Home fundraiser with Pierre Poilievre in support of the Conse",
-   "b": "ent_event_rfe_conservative_vaughan_2023_04_20_299",
-   "b_name": "Bring it Home Fundraiser with Pierre Poilievre",
-   "type": "event",
-   "score": 0.75,
-   "why": "similar names “Bring it Home fundraiser with Pierre Poilievre in support of the Conse” / “Bring it Home Fundraiser with Pierre Poilievre”",
-   "cross_layer": false,
-   "layers": [
-    [
-     "events"
-    ],
-    [
-     "events"
-    ]
-   ]
-  },
-  {
-   "a": "ent_organization_public_service_commission_of_canada",
-   "a_name": "Public Service Commission of Canada",
-   "b": "ent_organization_sk_public_service_commission",
-   "b_name": "Government of Saskatchewan – Public Service Commission",
-   "type": "organization",
-   "score": 0.75,
-   "why": "similar names “Public Service Commission of Canada” / “Government of Saskatchewan – Public Service Commission”",
-   "cross_layer": true,
-   "layers": [
-    [
-     "bloodmoney"
-    ],
-    [
-     "records"
     ]
    ]
   },
@@ -10880,6 +11141,40 @@
    ],
    "amounts": [
     null,
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "lnk_epstein_007_glenn_dubin__jeffrey_epstein",
+    "lnk_epstein_102_glenn_dubin__jeffrey_epstein"
+   ],
+   "from": "Glenn Dubin",
+   "to": "Jeffrey Epstein",
+   "type": "money_flow",
+   "dates": [
+    null,
+    null
+   ],
+   "amounts": [
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "lnk_epstein_040_bill_clinton__jeffrey_epstein",
+    "lnk_epstein_101_bill_clinton__jeffrey_epstein"
+   ],
+   "from": "Bill Clinton",
+   "to": "Jeffrey Epstein",
+   "type": "flew_on_plane",
+   "dates": [
+    null,
+    null
+   ],
+   "amounts": [
     null,
     null
    ]
@@ -18326,6 +18621,30 @@
    "entity_province": "QC",
    "source_implies": "AB",
    "registry": "aimco corporate website alberta investment management corporation sec edgar u.s. securities and exchange commission (edg"
+  },
+  {
+   "link": "lnk_roth_75e01345b1ee1cc2",
+   "entity": "ent_company_blc_edmond_de_rothschild_asset_management",
+   "entity_name": "BLC-Edmond de Rothschild Asset Management Inc.",
+   "entity_province": "QC",
+   "source_implies": "ON",
+   "registry": "ontario securities commission"
+  },
+  {
+   "link": "lnk_roth_86174d70de513e09",
+   "entity": "ent_company_laurentian_bank_of_canada",
+   "entity_name": "Laurentian Bank of Canada",
+   "entity_province": "QC",
+   "source_implies": "ON",
+   "registry": "ontario securities commission  ontario securities commission"
+  },
+  {
+   "link": "lnk_roth_86174d70de513e09",
+   "entity": "ent_company_blc_edmond_de_rothschild_asset_management",
+   "entity_name": "BLC-Edmond de Rothschild Asset Management Inc.",
+   "entity_province": "QC",
+   "source_implies": "ON",
+   "registry": "ontario securities commission  ontario securities commission"
   }
  ],
  "entities_without_sources": [
@@ -18417,6 +18736,70 @@
    "to": "MDA",
    "type": "contracted",
    "amount_cad": 95000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_04c2d02317efc9b2",
+   "from": "N M Rothschild & Sons £3m 3% First Mortgage Sterling bond issue for the Grand Trunk Pacific Railway (1905)",
+   "to": "Grand Trunk Pacific Railway Company",
+   "type": "financed",
+   "amount_cad": 3000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_14433b23f241c697",
+   "from": "N M Rothschild & Sons £2m 3% First Mortgage Sterling bond issue for the Grand Trunk Pacific Railway (1909)",
+   "to": "Grand Trunk Pacific Railway Company",
+   "type": "financed",
+   "amount_cad": 2000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_14b7e60aa22bf699",
+   "from": "Newfoundland and Labrador",
+   "to": "Rothschild & Co",
+   "type": "contracted",
+   "amount_cad": 5000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_ad4bb541de6c82f3",
+   "from": "N M Rothschild & Sons",
+   "to": "£4,000,000 advance to the British Government for Suez Canal shares (1875)",
+   "type": "participated_in",
+   "amount_cad": 4000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_c9dae422dfa05436",
+   "from": "Nathan Mayer Rothschild (1777-1836)",
+   "to": "West India Loan: £15 million raised for slavery compensation (1835)",
+   "type": "participated_in",
+   "amount_cad": 15000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_21c4614ed8640581",
+   "from": "N M Rothschild & Sons",
+   "to": "£9,000,000 7½% Brazil coffee security loan (1922)",
+   "type": "participated_in",
+   "amount_cad": 9000000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_e1bd5c7fc91b3405",
+   "from": "N M Rothschild & Sons",
+   "to": "£750,000 loan for the De Beers amalgamation (1887)",
+   "type": "participated_in",
+   "amount_cad": 750000,
+   "assumed": "payment"
+  },
+  {
+   "id": "lnk_roth_dcb506f5e75ded43",
+   "from": "Rothschild Bank AG (Zurich)",
+   "to": "Rothschild Bank AG DOJ non-prosecution agreement (3 June 2015)",
+   "type": "participated_in",
+   "amount_cad": 11500000,
    "assumed": "payment"
   }
  ],
@@ -18564,7 +18947,7 @@
  "overlaps_note": "Overlap found by the map, not a reported claim",
  "overlap_counts": {
   "shared_funder": {
-   "found": 4238,
+   "found": 4239,
    "kept": 4000
   },
   "shared_recipient": {
@@ -18572,15 +18955,15 @@
    "kept": 4000
   },
   "shared_people": {
-   "found": 563,
-   "kept": 563
+   "found": 572,
+   "kept": 572
   },
   "co_network": {
    "found": 2665,
    "kept": 2665
   },
   "co_cited": {
-   "found": 10197,
+   "found": 10888,
    "kept": 4000
   },
   "money_path": {
@@ -18588,8 +18971,8 @@
    "kept": 2046
   },
   "same_place": {
-   "found": 3160,
-   "kept": 3160
+   "found": 3161,
+   "kept": 3161
   }
  },
  "top_overlaps": [
@@ -26778,14 +27161,14 @@
    "partners": 159
   },
   {
-   "id": "ent_person_mark_carney",
-   "name": "Mark Carney",
-   "partners": 159
-  },
-  {
    "id": "ent_organization_government_of_canada",
    "name": "Government of Canada",
-   "partners": 157
+   "partners": 155
+  },
+  {
+   "id": "ent_person_mark_carney",
+   "name": "Mark Carney",
+   "partners": 151
   },
   {
    "id": "ent_company_carahsoft",
@@ -26815,7 +27198,7 @@
   {
    "id": "ent_person_justin_trudeau",
    "name": "Justin Trudeau",
-   "partners": 133
+   "partners": 132
   },
   {
    "id": "ent_organization_1_r32_foundation",
@@ -26863,13 +27246,13 @@
    "partners": 112
   },
   {
-   "id": "ent_organization_global_affairs_canada",
-   "name": "Global Affairs Canada",
-   "partners": 112
-  },
-  {
    "id": "ent_organization_ontario_tech_university",
    "name": "University of Ontario Institute of Technology",
+   "partners": 110
+  },
+  {
+   "id": "ent_organization_global_affairs_canada",
+   "name": "Global Affairs Canada",
    "partners": 110
   },
   {
@@ -26886,11 +27269,6 @@
    "id": "ent_organization_the_friedberg_charitable_foundation",
    "name": "THE FRIEDBERG CHARITABLE FOUNDATION",
    "partners": 106
-  },
-  {
-   "id": "ent_company_sinclair_technologies",
-   "name": "Sinclair Technologies",
-   "partners": 104
   },
   {
    "id": "ent_company_data_centre_intelligence",
@@ -26931,6 +27309,11 @@
    "id": "ent_organization_nathan_and_lily_silver_family_foundation",
    "name": "NATHAN AND LILY SILVER FAMILY FOUNDATION",
    "partners": 100
+  },
+  {
+   "id": "ent_company_sinclair_technologies",
+   "name": "Sinclair Technologies",
+   "partners": 99
   },
   {
    "id": "ent_company_thales_canada",
@@ -27159,6 +27542,14 @@
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_company_canadian_national_railway",
+   "layers": [
+    "bloodmoney",
+    "records"
    ]
   },
   {
@@ -27945,6 +28336,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_organization_apollo",
+   "layers": [
+    "epstein",
+    "rothschild"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_organization_aqueduct_foundation",
    "layers": [
     "bloodmoney",
@@ -28485,6 +28884,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_organization_edmond_de_rothschild",
+   "layers": [
+    "epstein",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_organization_elections_canada",
    "layers": [
     "bloodmoney",
@@ -28683,6 +29090,7 @@
    "id": "ent_organization_harvard_university",
    "layers": [
     "bloodmoney",
+    "epstein",
     "fringeviews"
    ]
   },
@@ -29003,6 +29411,7 @@
    "id": "ent_organization_massachusetts_institute_of_technology",
    "layers": [
     "bloodmoney",
+    "epstein",
     "fringeviews"
    ]
   },
@@ -29020,6 +29429,14 @@
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_mega_group",
+   "layers": [
+    "epstein",
+    "records"
    ]
   },
   {
@@ -29354,6 +29771,14 @@
    "layers": [
     "breach",
     "events"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_province_of_manitoba",
+   "layers": [
+    "events",
+    "records"
    ]
   },
   {
@@ -29998,6 +30423,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_organization_trilateral_commission",
+   "layers": [
+    "epstein",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_organization_united_jewish_appeal",
    "layers": [
     "bloodmoney",
@@ -30089,6 +30522,14 @@
    "id": "ent_organization_western_economic_diversification_canada",
    "layers": [
     "bloodmoney",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_organization_wexner_foundation",
+   "layers": [
+    "epstein",
     "records"
    ]
   },
@@ -30212,7 +30653,16 @@
    "kind": "e",
    "id": "ent_person_alan_dershowitz",
    "layers": [
+    "epstein",
     "fringeviews",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_alex_acosta",
+   "layers": [
+    "epstein",
     "wiretap"
    ]
   },
@@ -30220,6 +30670,7 @@
    "kind": "e",
    "id": "ent_person_alex_jones",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -30401,6 +30852,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_ari_ben_menashe",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_ariana_lagrange",
    "layers": [
     "records",
@@ -30451,6 +30910,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_barack_obama",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_barbara_perry",
    "layers": [
     "records",
@@ -30484,8 +30951,17 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_ben_shapiro",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_benjamin_netanyahu",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -30514,7 +30990,16 @@
    "kind": "e",
    "id": "ent_person_bill_clinton",
    "layers": [
+    "epstein",
     "fringeviews",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_bill_cosby",
+   "layers": [
+    "epstein",
     "wiretap"
    ]
   },
@@ -30522,6 +31007,7 @@
    "kind": "e",
    "id": "ent_person_bill_gates",
    "layers": [
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
@@ -30769,6 +31255,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_charles_bronfman",
+   "layers": [
+    "epstein",
+    "records"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_charles_hoffe",
    "layers": [
     "fringeviews",
@@ -30790,6 +31284,14 @@
    "layers": [
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_chelsea_clinton",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -30838,6 +31340,14 @@
     "records",
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_chuck_schumer",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -30900,6 +31410,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_dan_bongino",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_dan_vandal",
    "layers": [
     "bloodmoney",
@@ -30956,6 +31474,14 @@
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_darren_indyke",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -31181,12 +31707,29 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_donald_barr",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_donald_trump",
    "layers": [
     "breach",
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_doug_band",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -31210,6 +31753,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_edward_snowden",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_edward_sonshine",
    "layers": [
     "records",
@@ -31228,6 +31779,7 @@
    "kind": "e",
    "id": "ent_person_ehud_barak",
    "layers": [
+    "epstein",
     "records",
     "wiretap"
    ]
@@ -31261,6 +31813,7 @@
    "kind": "e",
    "id": "ent_person_elon_musk",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -31294,6 +31847,7 @@
    "id": "ent_person_eric_swalwell",
    "layers": [
     "bloodmoney",
+    "epstein",
     "samcooper"
    ]
   },
@@ -31489,6 +32043,7 @@
    "kind": "e",
    "id": "ent_person_george_soros",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -31506,6 +32061,7 @@
    "kind": "e",
    "id": "ent_person_ghislaine_maxwell",
    "layers": [
+    "epstein",
     "fringeviews",
     "records",
     "wiretap"
@@ -31675,6 +32231,7 @@
    "id": "ent_person_hillary_clinton",
    "layers": [
     "breach",
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -31689,8 +32246,17 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_howard_lutnick",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_hunter_biden",
    "layers": [
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
@@ -31794,6 +32360,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_jared_kushner",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_jason_james",
    "layers": [
     "samcooper",
@@ -31822,6 +32396,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_jd_vance",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_jean_charest",
    "layers": [
     "events",
@@ -31841,6 +32423,7 @@
    "kind": "e",
    "id": "ent_person_jeffrey_epstein",
    "layers": [
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
@@ -31892,6 +32475,22 @@
    "id": "ent_person_jeremy_mackenzie",
    "layers": [
     "records",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_jes_staley",
+   "layers": [
+    "epstein",
+    "samcooper"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_jill_biden",
+   "layers": [
+    "epstein",
     "wiretap"
    ]
   },
@@ -31952,6 +32551,7 @@
    "kind": "e",
    "id": "ent_person_joe_biden",
    "layers": [
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
@@ -31998,6 +32598,14 @@
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_john_kerry",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -32135,6 +32743,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_julian_assange",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_julie_dabrusin",
    "layers": [
     "bloodmoney",
@@ -32147,6 +32763,14 @@
    "layers": [
     "bloodmoney",
     "records"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_julie_k_brown",
+   "layers": [
+    "epstein",
+    "wiretap"
    ]
   },
   {
@@ -32190,6 +32814,7 @@
    "kind": "e",
    "id": "ent_person_kamala_harris",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -32208,6 +32833,7 @@
    "kind": "e",
    "id": "ent_person_kash_patel",
    "layers": [
+    "epstein",
     "fringeviews",
     "samcooper",
     "wiretap"
@@ -32235,6 +32861,14 @@
    "layers": [
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_kathy_ruemmler",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -32276,6 +32910,7 @@
    "kind": "e",
    "id": "ent_person_keir_starmer",
    "layers": [
+    "epstein",
     "samcooper",
     "wiretap"
    ]
@@ -32392,6 +33027,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_kurt_cobain",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_kyle_seeback",
    "layers": [
     "bloodmoney",
@@ -32420,10 +33063,26 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_larry_summers",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_lawrence_bishnoi",
    "layers": [
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_lawrence_krauss",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -32488,6 +33147,7 @@
    "kind": "e",
    "id": "ent_person_leslie_wexner",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -32646,6 +33306,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_marco_rubio",
+   "layers": [
+    "epstein",
+    "samcooper"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_margaret_trudeau",
    "layers": [
     "records",
@@ -32732,6 +33400,7 @@
    "layers": [
     "bloodmoney",
     "breach",
+    "epstein",
     "events",
     "fringeviews",
     "records",
@@ -32794,6 +33463,7 @@
    "id": "ent_person_mark_zuckerberg",
    "layers": [
     "breach",
+    "epstein",
     "fringeviews"
    ]
   },
@@ -32936,6 +33606,7 @@
    "kind": "e",
    "id": "ent_person_michael_flynn",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -33030,6 +33701,7 @@
    "kind": "e",
    "id": "ent_person_mike_pompeo",
    "layers": [
+    "epstein",
     "samcooper",
     "wiretap"
    ]
@@ -33170,6 +33842,7 @@
    "id": "ent_person_noam_chomsky",
    "layers": [
     "breach",
+    "epstein",
     "wiretap"
    ]
   },
@@ -33380,7 +34053,9 @@
    "kind": "e",
    "id": "ent_person_peter_mandelson",
    "layers": [
+    "epstein",
     "records",
+    "rothschild",
     "samcooper"
    ]
   },
@@ -33396,6 +34071,7 @@
    "kind": "e",
    "id": "ent_person_peter_nygard",
    "layers": [
+    "epstein",
     "events",
     "records",
     "wiretap"
@@ -33413,6 +34089,7 @@
    "kind": "e",
    "id": "ent_person_peter_thiel",
    "layers": [
+    "epstein",
     "fringeviews",
     "records"
    ]
@@ -33490,6 +34167,7 @@
    "kind": "e",
    "id": "ent_person_prince_andrew",
    "layers": [
+    "epstein",
     "records",
     "samcooper",
     "wiretap"
@@ -33623,6 +34301,7 @@
    "kind": "e",
    "id": "ent_person_reid_hoffman",
    "layers": [
+    "epstein",
     "records",
     "wiretap"
    ]
@@ -33653,10 +34332,26 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_richard_branson",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_richard_fadden",
    "layers": [
     "records",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_richard_kahn",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -33703,6 +34398,7 @@
    "kind": "e",
    "id": "ent_person_robert_maxwell",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -33785,6 +34481,14 @@
    "layers": [
     "samcooper",
     "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_samantha_power",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {
@@ -33997,6 +34701,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_steve_bannon",
+   "layers": [
+    "epstein",
+    "fringeviews"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_steve_bell",
    "layers": [
     "records",
@@ -34072,6 +34784,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_thomas_massie",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_tim_hodgson",
    "layers": [
     "events",
@@ -34105,6 +34825,14 @@
   },
   {
    "kind": "e",
+   "id": "ent_person_todd_blanche",
+   "layers": [
+    "epstein",
+    "wiretap"
+   ]
+  },
+  {
+   "kind": "e",
    "id": "ent_person_tom_korski",
    "layers": [
     "records",
@@ -34131,6 +34859,7 @@
    "kind": "e",
    "id": "ent_person_tucker_carlson",
    "layers": [
+    "epstein",
     "fringeviews",
     "wiretap"
    ]
@@ -34183,6 +34912,7 @@
    "layers": [
     "breach",
     "events",
+    "records",
     "wiretap"
    ]
   },
@@ -34233,6 +34963,14 @@
    "layers": [
     "records",
     "samcooper"
+   ]
+  },
+  {
+   "kind": "e",
+   "id": "ent_person_woody_allen",
+   "layers": [
+    "epstein",
+    "fringeviews"
    ]
   },
   {

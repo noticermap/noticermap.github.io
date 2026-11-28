@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(88,{"20k":[31051,197],"20karnei":[39612,201],"20kiryat":[39579,199]});
+window.__wiretapShard&&window.__wiretapShard(88,{"20k":[31736,196],"20karnei":[40405,201],"20kiryat":[40372,199]});

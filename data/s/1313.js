@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1313,{"şahin":[10769,578]});
+window.__wiretapShard&&window.__wiretapShard(1313,{"£2":[326,195,26584,198],"£250":[20353,135],"£2m":[276,164,3076,572,26650,337,26652,542]});

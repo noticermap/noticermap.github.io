@@ -1,6 +1,6 @@
 {
  "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing.",
- "built_at": "2026-11-27T15:23:40.545Z",
+ "built_at": "2026-11-28T03:52:13.229Z",
  "window_months": 24,
  "leads": [
   {
@@ -11126,6 +11126,186 @@
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {
+   "id": "lead_epstein_tp_law_release",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "epstein"
+   ],
+   "title": "Jeffrey Epstein",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [
+    "ent_person_jeffrey_epstein"
+   ],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "epstein"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by Epstein",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_epstein_tp_maxwell_proffer_transfer",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "epstein"
+   ],
+   "title": "Ghislaine Maxwell",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [
+    "ent_person_ghislaine_maxwell"
+   ],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "epstein"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by Epstein",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_epstein_tp_memo_bill",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "epstein"
+   ],
+   "title": "Jeffrey Epstein",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [
+    "ent_person_jeffrey_epstein"
+   ],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "epstein"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by Epstein",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_epstein_tp_release_andrew",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "epstein"
+   ],
+   "title": "Prince Andrew",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [
+    "ent_person_prince_andrew"
+   ],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "epstein"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by Epstein",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_epstein_tp_release_mandelson",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "epstein"
+   ],
+   "title": "Peter Mandelson",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [
+    "ent_person_peter_mandelson"
+   ],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "epstein"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by Epstein",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
    "id": "lead_hillier_china_visit_allied_agreement_9_days",
    "pattern": "other",
    "origin": [
@@ -12823,6 +13003,74 @@
     "gap_days": 1,
     "text": "Nathalie Drouin; David Morrison Background briefing to The Washington Post, 2024-10-13 (source: openparliament.ca); RCMP Public statement on India-linked violence, 2024-10-14 (source: rcmp.ca). Gap: 1 days."
    },
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_roth_edr_epstein_agreement_doj_resolution",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Epstein's Southern Trust letter agreement with Edmond de Rothschild Holding and the EdR Swiss Bank Program resolution, 74 days apart",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by records collector",
+   "strength": 2,
+   "detail_pending": true,
+   "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
+  },
+  {
+   "id": "lead_roth_rco_delisting_psc_same_day",
+   "pattern": "other",
+   "origin": [
+    "flagged"
+   ],
+   "flagged_by": [
+    "records"
+   ],
+   "title": "Timing pattern: Rothschild & Co delisting and new UK person with significant control, same day (11 Oct 2023)",
+   "summary": "Another timing pattern flagged by a source layer.",
+   "entities": [],
+   "link_ids": [],
+   "window": {
+    "start": null,
+    "end": null
+   },
+   "amount_cad": null,
+   "sources": [],
+   "gap_days": null,
+   "gap_basis": "none",
+   "timing": {
+    "mode": "unknown",
+    "text": "timing unknown"
+   },
+   "layers": [
+    "records"
+   ],
+   "provinces": [],
+   "origin_label": "Flagged by records collector",
+   "strength": 2,
+   "detail_pending": true,
    "disclaimer": "Pattern lead: a timing pattern in public data, not evidence of wrongdoing."
   },
   {

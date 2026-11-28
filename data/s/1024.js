@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1024,{"rjc":[4312,232,31385,420,39490,420]});
+window.__wiretapShard&&window.__wiretapShard(1024,{"reward":[33221,411],"rewarded":[33961,420],"rewards":[464,57,21262,61,27656,378],"rewired":[29758,378],"rewiring":[28566,411],"reworded":[25328,124],"rewording":[25319,167],"rewrites":[27854,651],"rewrote":[30853,605]});

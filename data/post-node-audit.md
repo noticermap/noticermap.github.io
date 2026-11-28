@@ -1,6 +1,6 @@
 # Post-node audit
 
-Generated 2026-11-27T15:23:40.545Z from graph/merged/entities.json (read-only; nothing was edited or deleted).
+Generated 2026-11-28T03:52:13.229Z from graph/merged/entities.json (read-only; nothing was edited or deleted).
 Rule: posts, articles, videos, tweets, episodes, podcasts and report documents are sources, never nodes.
 
 ## Flagged (53)
@@ -61,7 +61,7 @@ Rule: posts, articles, videos, tweets, episodes, podcasts and report documents a
 | ent_theory_promoter_andrecorbeil_credited_for_the_related_david_hawkins_video_mentioned_in_the_descr | AndreCorbeil (credited for the related David Hawkins video mentioned in the description) | person | theories | id contains a media token (video) | convert to a source on links lnk_25b283a61dbb6128 (then drop the node) |
 | ent_theory_webb_palantir_cia_front | Webb X label: Palantir as CIA front company | theory | theories | summary describes the node itself as a media item; unusual type "theory" | convert to a source on links lnk_807f626555fa930a, lnk_3a4c9abbba69894b (then drop the node) |
 
-## Checked, not flagged (64)
+## Checked, not flagged (131)
 
 Single weak signals that turned out to be organizations, outlets or platforms.
 
@@ -98,14 +98,80 @@ Single weak signals that turned out to be organizations, outlets or platforms.
 | ent_organization_canada_post_corporation | Canada Post Corporation | organization | records | id contains a media token (post) | not flagged (single weak signal) |
 | ent_organization_post_secondary_employers_association | Post-Secondary Employers' Association | organization | records | id contains a media token (post) | not flagged (single weak signal) |
 | ent_organization_sonia_furstenau_adam_olsen | "Sonia Furstenau, Adam Olsen" | organization | events | headline-like name | not flagged (single weak signal) |
+| ent_theory_ali_theory_ahern_karzai_flight | Claim (Alimcforever, citing an Instagram post): Bertie Ahern and Hamid Karzai flew on Epstein's aircraft to Dublin in June 2002 | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_archive_suppression | Claim (Alimcforever): access barriers at the Rothschild Archive and partner archives are suppressing 'a century of banking and colonial history' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_casablanca | Claim (Alimcforever): Casablanca / Leslie Epstein family-lineage theory | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_connections_web_fbi | Claim (Alimcforever): the EFTA01104262 'Connections web' was an FBI product mapping Epstein's friends | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_dermarkar_nuclear_secrets | Claim (Alimcforever): Fred Dermarkar 'is handing nuclear secrets to American interests' via the Chalk River contract | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_epstein_conduit | Claim (Alimcforever): Epstein ran 'kompromat' properties and was an intelligence-adjacent 'conduit'; she calls the leverage 'blackmail' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_irish_contacts | Claim (Alimcforever): a 2003 Maxwell email listing Eddie Irvine as an Ireland contact 'requires no interpretation' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_krongard_911_puts | Claim (Alimcforever): pre-9/11 put options point to insider knowledge linked to 'Buzzy' Krongard's circle | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_maxwell_mi6 | Claim (Alimcforever): Robert Maxwell was an MI6 intelligence asset whose publishing empire was 'narrative control', and Ghislaine continued it | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_maxwellhill | Claim (Alimcforever): the Reddit account 'maxwellhill' was Ghislaine Maxwell's | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_ali_theory_rockefeller_recruited | Claim (Alimcforever): David Rockefeller personally recruited Epstein as an 'asset' and placed him in the Trilateral Commission and Rockefeller University | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_billionaire_pedophile_nexus_miller_nygard | Epstein 'entered a pre-existing nexus of rich perverts' including Canada's Robert Miller and Peter Nygard (Ryan Dawson) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_bronfman_nxivm_epstein_circle | NXIVM, the Bronfmans, Branson and Epstein as one 'sex cult' network (Ryan Dawson) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_carney_china_brookfield_nepean_seat | Carney's China ties, Brookfield's New York move and the Nepean seat (Hillier) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_carney_pension_transition_fund_carried_interest | Carney used public pensions and the Canada Growth Fund to enrich Brookfield and himself (Hillier) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_covid_trigger_global_takeover_carney | 'Guns, gags and debt': COVID as the trigger for a coordinated takeover, with Carney as 'architect' (Hillier) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_epstein_client_list_dawson | Ryan Dawson's compiled 'Epstein client list' and claim that many 'perpetrators' were quietly jailed or paid out | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_branson_bronfman | Dawson: Branson, Bronfman heiresses (NXIVM) and Epstein 'network with each other' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_bronfman_realestate | Dawson: Manhattan property chain links Epstein, Bronfman entities, a German-American academic's trust and Lutnick | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_barak_foundation_money | Dawson film [06:52]: Wexner Foundation money went to Ehud Barak | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_barak_islands | Dawson film [35:38-35:48]: Barak was 'financed by Wexner and Epstein' and visited the islands | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_blackbook | Dawson film [40:52-41:13]: the 'little black book' lists Kevin Spacey, Bill Clinton, Larry Summers and Prince Andrew | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_bronfman_hoffenberg | Dawson film [32:17-32:28]: 'Bronfman set him up' with Steven Hoffenberg | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_bronfman_nxivm | Dawson film [04:41-05:51]: Clare Bronfman pleaded guilty in NXIVM 'as a procurer and a participant' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_coconspirators_paid | Dawson film [01:05]: two co-conspirators 'were paid 350 million dollars to be quiet' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_intel_op | Dawson film [44:45]: 'This is an intelligence operation' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_mansion_zero | Dawson film [02:07-02:26]: the Manhattan mansion ($55-77M) was given to Epstein 'for zero dollars' by Wexner | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_cm_maxwell_spy | Dawson film [11:53-11:59]: Robert Maxwell was 'an Israeli spy' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_df_black_second_financier | Dawson 2026 stream [38:04]: Leon Black is 'the number two financer after Wexner' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_df_foundation_haganah | Dawson 2026 stream [33:42]: Wexner's 'foundation was created by the Haganah' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_df_settlement_amounts | Dawson 2026 stream [31:00-31:13]: 'Prince Andrew lost 16 million', 'Deutsche Bank like 250 million, JP Morgan even more' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_brunel_procurer | Dawson stream [27:29]: Jean-Luc Brunel was 'one of his main procurers' through MC2 modelling | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_chase_hushmoney | Dawson stream [29:00]: $25,000 Chase transactions 'could have been' hush money | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_clinton_island | Dawson stream [49:52-50:00]: media under-covered 'Clinton traveling to' Epstein's island (repeated in the 2026 stream [13:03]: 'he's definitely on the islands') | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_death_homicide | Dawson stream [23:24-23:37] and [72:10-72:24]: Epstein's death was a 'very obvious suiciding' and 'they had to kill him' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_dershowitz_island | Dawson stream [35:50-35:56]: 'you did go to the island' (addressed to Alan Dershowitz) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_mansion_sold | Dawson stream [58:28]: 'Wexner sold [the] mansion to [Epstein] for a lot' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_richardson_zoning | Dawson stream [75:31] (repeated in the 2026 stream [48:03]): 'they blackmailed the governor so that he could get the different zoning laws for [the] Zorro ranch' (speaker's words) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_ds_science_compromise | Dawson stream [71:39]: 'His assignment was to compromise people in science and technology' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_gates_compromised | Dawson: Gates was 'getting compromised' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_israeli_intel | Dawson: Epstein worked with Israeli intelligence and 'fled to Israel'; Israel 'saved' him | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_mega_financing | Dawson: Wexner and Bronfman 'financing' Barak; Wexner the 'prime progenitor for financing' Epstein | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_miller_nexus | Dawson: Montreal billionaire Robert Miller belongs to the same network | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_money_total | Dawson: Epstein received $957.8M from clients | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_npa_immunity | Dawson: the 2008 deal 'gave sweeping immunity to all Epstein's cohorts' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_reiter_slamdunk | Dawson: Palm Beach police had a 'slam dunk case' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_rothschild_25m | Dawson: Rothschild bank paid Epstein $25M (and 1MDB link) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_dawson_wexner_foundation_origins | Dawson: Wexner Foundation origins and Epstein as trustee | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_fb1_fbi_connections_web | FB video 1: 'the FBI built a map of Epstein's network' (EFTA01104262) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_fb2_casablanca_lineage | FB video 2: 'Suspicious Epsteins: From Casablanca to Blackmail Island' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_epstein_israeli_intelligence_asset | Epstein worked for Israeli intelligence, and 'Israel saved' him from the Florida case (Ryan Dawson) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_epstein_mega_group_financier_network | Epstein as part of a Wexner-Bronfman 'MEGA group' financing network (Ryan Dawson) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_acosta_intelligence | Webb (citing Vicky Ward): Acosta told Trump transition Epstein 'belonged to intelligence' | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_bear_stearns_seagram | Webb: Epstein's 1981 Bear Stearns exit and the Seagram/St. Joe insider-trading case | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_benmenashe | Ben-Menashe (via Webb): Maxwell introduced Epstein to Israeli intelligence circles in the 1980s | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_carbyne_intel | Webb: Carbyne as an intelligence-linked company funded by Epstein and Barak | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_hoffenberg_leese | Webb (citing Hoffenberg): arms-trade figure Douglas Leese launched Epstein's career | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_mega_group | Webb: the Mega Group as the network behind Epstein | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w07 | Webb (ch.11): Epstein taught at Dalton under headmaster Donald Barr despite lacking a degree. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w08 | Webb (ch.11): Alan 'Ace' Greenberg's patronage at Bear Stearns; Epstein became a limited partner, then l | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w09 | Webb (ch.11): Epstein's Intercontinental Assets Group (incorporated 1981) was reportedly used to recover | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w11 | Webb (ch.11): Epstein was a consultant to Steven Hoffenberg's Towers Financial, which told the SEC he ad | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w12 | Webb (ch.11): Hoffenberg said Epstein was 'a major participant' in the arms-trade and money-laundering o | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w13 | Webb (ch.12): Epstein's Bermuda-based Liquid Funding Ltd. was set up with Bear Stearns principals. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w16 | Webb (ch.14): The Wexner Foundation paid Ehud Barak about $2.3M for 'research'. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w17 | Webb (ch.14, 21): Nicole Junkermann, a Carbyne investor, travelled with Epstein and co-invested in Barak's R | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w18 | Webb (ch.15): Robert Maxwell had deep ties to Israeli intelligence. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w19 | Webb (ch.15): Isabel Maxwell (Ghislaine's sister) was an Israeli 'back door' into Silicon Valley through | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w20 | Webb (ch.15, 17): Ghislaine Maxwell's TerraMar Project (2012) ocean NGO was a vehicle for her networking. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w21 | Webb (ch.17): Epstein made 17 visits to the Clinton White House (1993-95) after a 1993 donation to the W | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w23 | Webb (ch.18-19): Joi Ito's MIT Media Lab took Epstein money after his conviction, and Epstein allegedly ste | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w24 | Webb (ch.21): Southern Trust (USVI, 2012) was pitched as a genome-data company. | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w28 | Webb (ch.19-20): Gates met Epstein repeatedly after his conviction, including about a philanthropy fund wit | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_epstein_webb_w29 | Webb (ch.17): 'Spook Air': Epstein's aviation activities overlapped with intelligence-linked logistics n | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_eurasia_shadow_cabinet_polling_election | Eurasia Group 'shadow cabinet', pollsters and an engineered 2025 election (Hillier) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_hillier_freeland_abstract_family_influence | Hillier: abstract Freeland relationship-influence allegation | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_hillier_freeland_investment_allegation | Hillier: Freeland investment allegation | theory | theories | unusual type "theory" | not flagged (single weak signal) |
@@ -120,6 +186,7 @@ Single weak signals that turned out to be organizations, outlets or platforms.
 | ent_theory_hillier_nine_ministers_steven_mackinnon | Hillier/letter allegation — Steven MacKinnon | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_krnews_carney_most_corrupt_pm | KR News: 'Most corrupt Prime Minister in Canadian history' (David Krayden, 2026-03-22) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_melanie_sask_brookfield_moves_first | 'Remarkable Coincidences On A Schedule' (Melanie in Saskatchewan, 2026-03-18) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
+| ent_theory_rothschild_archive_offline_backup_reel | Claim (Alimcforever reel, 2026-11-14): the Rothschild Archive website is down, and the creator has backed up 'about 300' of its files | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_singh_traitors_nsicop_2024 | Theory: NSICOP's classified report shows MPs knowingly helped foreign states ('traitors') | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_trudeau_ritual_abuse_mkultra | Justin Trudeau 'ritual abuse' / CIA MKUltra mind-control theory (Rumble video v219w1u) | theory | theories | unusual type "theory" | not flagged (single weak signal) |
 | ent_theory_webb_canada_pure_drug_licence | ONUB: Richler allegation on Canada Pure Drug Company licence | theory | theories | unusual type "theory" | not flagged (single weak signal) |

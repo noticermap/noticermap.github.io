@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(969,{"rdcommunityfdn":[4305,605,19572,401],"rdii":[20803,145]});
+window.__wiretapShard&&window.__wiretapShard(969,{"r3105":[40210,194],"r32":[3505,555,10097,225,12316,573,12437,608,12714,596,24472,651,31397,467]});

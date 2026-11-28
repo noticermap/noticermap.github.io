@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1335,{"≠":[4044,184,4264,176,4525,180]});
+window.__wiretapShard&&window.__wiretapShard(1335,{"голова":[26549,177],"готовий":[28015,402]});

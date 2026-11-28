@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1315,{"банк":[4144,187]});
+window.__wiretapShard&&window.__wiretapShard(1315,{"£4":[3082,591,26668,571,26669,359,26670,378],"£4m":[5305,189,8403,174]});

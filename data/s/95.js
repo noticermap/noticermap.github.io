@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(95,{"20services":[39398,201],"20shevut":[39247,199],"20shomron":[39612,201],"20soldier":[39431,197],"20soldiers":[39351,198,39473,200],"20sommaire":[30031,189],"20statement":[30031,189],"20study":[34149,185],"20summary":[30031,189]});
+window.__wiretapShard&&window.__wiretapShard(95,{"20services":[40190,201],"20shevut":[40038,199],"20shomron":[40405,201],"20soldier":[40223,197],"20soldiers":[40143,198,40265,200],"20sommaire":[30711,189],"20statement":[30711,189],"20study":[34846,185],"20summary":[30711,189]});

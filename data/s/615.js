@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(615,{"hk":[28809,200,36575,630],"hk$1":[10818,213,30933,319],"hk1":[30933,196],"hkex":[28809,481],"hkexnews":[28809,200,36575,630],"hks":[37337,191]});
+window.__wiretapShard&&window.__wiretapShard(615,{"hfm6":[27681,188]});

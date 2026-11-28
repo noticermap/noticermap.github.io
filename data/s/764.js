@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(764,{"lop":[35049,197],"loparco":[8853,554,22184,695,28826,430,30390,453],"lopez":[591,199,6050,810,19811,715,19897,733,32234,385]});
+window.__wiretapShard&&window.__wiretapShard(764,{"lolcow":[28896,605]});

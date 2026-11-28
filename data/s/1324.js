@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1324,{"національний":[4144,187]});
+window.__wiretapShard&&window.__wiretapShard(1324,{"énergie":[173,175,226,722,6331,185,26147,196,26149,481,26153,481,26154,481,26155,467,26156,481,26157,481]});

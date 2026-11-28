@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1374,{"😬":[31599,401]});
+window.__wiretapShard&&window.__wiretapShard(1374,{"💥evan":[28519,411,28970,420],"💥explosive":[27590,442,27722,420,28469,442,28561,431,29052,420,29714,402,29801,420],"💥explosives":[29409,442],"💥exposed":[28763,420,28865,402,29011,411]});

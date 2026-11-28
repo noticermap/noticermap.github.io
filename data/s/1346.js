@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1346,{"🎥":[29016,385,29093,401]});
+window.__wiretapShard&&window.__wiretapShard(1346,{"чинний":[3250,163,29619,431]});

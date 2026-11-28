@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(885,{"p5mx":[33166,401]});
+window.__wiretapShard&&window.__wiretapShard(885,{"oz":[9444,578,13281,501,13458,84,21641,195,21862,121,21863,225,21891,148,21974,130,21996,114],"ozdemircan":[6680,578,30507,420],"ozell":[22274,115],"ozmutlu":[22070,129]});

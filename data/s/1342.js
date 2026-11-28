@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1342,{"安全与管制局":[26582,197]});
+window.__wiretapShard&&window.__wiretapShard(1342,{"нбу":[28015,402]});

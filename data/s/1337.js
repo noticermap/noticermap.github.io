@@ -1,1 +1,1 @@
-window.__wiretapShard&&window.__wiretapShard(1337,{"⚠️warning":[28185,420]});
+window.__wiretapShard&&window.__wiretapShard(1337,{"до":[28015,402]});
